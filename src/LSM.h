@@ -20,7 +20,7 @@ public:
         activeDelayMemtable = new DelayMemtable;
     }
 
-    bool isFull();
+    bool isFull(Memtable& memtable);
     void insertData(unsigned int key, int value);
     int readData(unsigned int key);
     int diskRead(unsigned int key);
