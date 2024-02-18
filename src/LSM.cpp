@@ -1,5 +1,8 @@
 #include "LSM.h"
+#include "Memtable.cpp"
 
+NormalMemtable* activeNormalMemtable;
+DelayMemtable* activeDelayMemtable;
 
 bool LSM::isFull(Memtable& memtable){
 

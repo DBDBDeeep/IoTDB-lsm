@@ -16,8 +16,8 @@ extern Disk disk;
 class LSM {
 public:
     LSM() {
-        activeNormalMemtable = new NormalMemtable;
-        activeDelayMemtable = new DelayMemtable;
+        activeNormalMemtable = new NormalMemtable();
+        activeDelayMemtable = new DelayMemtable();
     }
 
     bool isFull(Memtable& memtable);
