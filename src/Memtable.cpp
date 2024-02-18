@@ -9,6 +9,7 @@ struct Memtable{
 public:
     State state;
     virtual bool isFull();
+    virtual bool setState(State state);
 };
 
 struct NormalMemtable : public Memtable{
@@ -26,6 +27,10 @@ public:
         size_t currentSize = normalMem.size() * (sizeof(unsigned int) + sizeof(int));
         return currentSize >= LIMIT_SIZE;
     }
+    bool setState(State state) override{
+        this->state = state;
+        return true;
+    }
 };
 
 struct DelayMemtable : public Memtable{
@@ -40,5 +45,9 @@ public:
     bool isFull() override{
         size_t currentSize = delayMem.size() * (sizeof(unsigned int) + sizeof(int));
         return currentSize >= LIMIT_SIZE;
+    }
+    bool setState(State state) override{
+        this->state = state;
+        return true;
     }
 };

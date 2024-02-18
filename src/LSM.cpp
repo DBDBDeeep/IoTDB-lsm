@@ -25,5 +25,5 @@ map<unsigned int, int> LSM::range(unsigned int start, unsigned int end){
 }
 
 bool LSM::convertActiveToImm(Memtable& memtable){
-
+    return memtable.setState(IMM);
 }
