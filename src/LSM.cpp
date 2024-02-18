@@ -5,7 +5,7 @@ NormalMemtable* activeNormalMemtable;
 DelayMemtable* activeDelayMemtable;
 
 bool LSM::isFull(Memtable& memtable){
-
+    return memtable.isFull();
 }
 
 void LSM::insertData(unsigned int key, int value){

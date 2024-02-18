@@ -8,6 +8,7 @@ enum State{
 struct Memtable{
 public:
     State state;
+    virtual bool isFull();
 };
 
 struct NormalMemtable : public Memtable{
@@ -21,6 +22,7 @@ public:
     map<unsigned int, int> normalMem;
     int access; // IMM만 써
 
+    bool isFull() override{
         size_t currentSize = normalMem.size() * (sizeof(unsigned int) + sizeof(int));
         return currentSize >= LIMIT_SIZE;
     }
@@ -34,7 +36,8 @@ public:
 
     const size_t LIMIT_SIZE = 40;
     map<unsigned int, int> delayMem;
-    bool isFull(){
+
+    bool isFull() override{
         size_t currentSize = delayMem.size() * (sizeof(unsigned int) + sizeof(int));
         return currentSize >= LIMIT_SIZE;
     }
