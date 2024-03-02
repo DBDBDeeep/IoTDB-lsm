@@ -19,10 +19,12 @@ private:
 public:
     list<SSTable> normal;
     list<SSTable> delay;
+    int readCount;
 
     Disk(){
         flushCount = 0;
         compactionCount = 0;
+        readCount = 0;
     }
 
     bool compaction() { // 흉내만
