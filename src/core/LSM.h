@@ -1,9 +1,6 @@
-#ifndef IOTDB_LSM_LSM_H
-#define IOTDB_LSM_LSM_H
-
 #include <iostream>
 #include "Memtable.cpp"
-#include "../storage/Disk.cpp"
+#include "../disk/Disk.cpp"
 
 using namespace std;
 
@@ -29,6 +26,3 @@ public:
     map<unsigned int, int> range(unsigned int start, unsigned int end);
     IMemtable* transforActiveToImm(IMemtable& memtable); // normal? delay?
 };
-
-
-#endif //IOTDB_LSM_LSM_H
