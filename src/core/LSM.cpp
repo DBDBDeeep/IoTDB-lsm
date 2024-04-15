@@ -1,5 +1,5 @@
 #include "LSM.h"
-#include "../storage/Memtable.cpp"
+#include "Memtable.cpp"
 #include "stdexcept"
 
 NormalMemtable* activeNormalMemtable;

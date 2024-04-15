@@ -2,7 +2,7 @@
 #define IOTDB_LSM_LSM_H
 
 #include <iostream>
-#include "../storage/Memtable.cpp"
+#include "Memtable.cpp"
 #include "../storage/Disk.cpp"
 
 using namespace std;
