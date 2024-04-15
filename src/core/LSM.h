@@ -2,17 +2,15 @@
 #define IOTDB_LSM_LSM_H
 
 #include <iostream>
-#include "Memtable.cpp"
-#include "Disk.cpp"
+#include "../storage/Memtable.cpp"
+#include "../storage/Disk.cpp"
 
 using namespace std;
 
-const size_t DELAY_SIZE = 40;
-const size_t NORMAL_SIZE = 80;
 extern NormalMemtable* activeNormalMemtable;
 extern DelayMemtable* activeDelayMemtable;
-extern NormalMemtable* immNormalMemtable;
-extern DelayMemtable* activeDelayMemtable;
+extern vector<NormalMemtable*> immNormalMemtableList;
+extern vector<DelayMemtable*> immDelayMemtableList;
 extern Disk* disk;
 
 class LSM {
@@ -22,16 +20,14 @@ public:
         activeDelayMemtable = new DelayMemtable();
     }
 
-    bool isFull(Memtable& memtable);
+//    bool isFull(IMemtable& memtable);
     void insert(unsigned int key, int value);
-    void insertData(Memtable& memtable, unsigned int key, int value);
+    void insertData(IMemtable& memtable, unsigned int key, int value);
     int readData(unsigned int key);
     int diskRead(unsigned int key);
     int diskRange(unsigned int start, unsigned int end);
     map<unsigned int, int> range(unsigned int start, unsigned int end);
-    bool convertActiveToImm(Memtable& memtable); // normal? delay?
-    bool createActiveNormalMemtable();
-    bool createActiveDelayMemtable();
+    IMemtable* transforActiveToImm(IMemtable& memtable); // normal? delay?
 };
 
 

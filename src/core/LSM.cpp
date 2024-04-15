@@ -1,22 +1,20 @@
 #include "LSM.h"
-#include "Memtable.cpp"
+#include "../storage/Memtable.cpp"
+#include "stdexcept"
 
 NormalMemtable* activeNormalMemtable;
 DelayMemtable* activeDelayMemtable;
 Disk* disk;
 
-bool LSM::isFull(Memtable& memtable){
-    return memtable.isFull();
-}
-
 bool isDelayData(unsigned int key) {
     return activeNormalMemtable->normalMem.begin()->first <= key;
 }
 
-void LSM::insertData(Memtable& memtable, unsigned int key, int value){
-    if (isFull(memtable)) {
+void LSM::insertData(IMemtable& memtable, unsigned int key, int value){
+    if (memtable.isFull()) {
         try {
-            convertActiveToImm(memtable);
+            memtable = *transforActiveToImm(memtable);
+            memtable.setStartKey(key);
         } catch (exception &e) {
             cerr << e.what() << "\n";
         }
@@ -35,6 +33,7 @@ void LSM::insert(unsigned int key, int value){
 
 
 
+// TODO : Imm으로 고쳐라..
 int LSM::readData(unsigned int key){
     auto active_mem_it = activeNormalMemtable->normalMem.find(key);
     if (active_mem_it != activeNormalMemtable->normalMem.end()) {
@@ -84,7 +83,18 @@ map<unsigned int, int> LSM::range(unsigned int start, unsigned int end){
     return resultMap;
 }
 
-bool LSM::convertActiveToImm(Memtable& memtable){
+IMemtable* LSM::transforActiveToImm(IMemtable& memtable){
     memtable.setState(IMM);
-
+    memtable.setLastKey();
+    // TODO : 대충함. 주소비교방식으로.. 클래스비교방식으로 시도해보든가
+    if(&memtable == activeNormalMemtable) {
+        immNormalMemtableList.emplace_back(activeNormalMemtable);
+        return activeNormalMemtable = new NormalMemtable();
+    }
+    else if(&memtable == activeDelayMemtable) {
+        immDelayMemtableList.emplace_back(activeDelayMemtable);
+        return activeDelayMemtable = new DelayMemtable();
+    }
+    else
+        throw logic_error("transforActiveToImm 주소비교.. 뭔가 문제가 있는 듯 하오.");
 }

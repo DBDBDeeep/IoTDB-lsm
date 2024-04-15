@@ -5,18 +5,23 @@ enum State{
     ACTIVE, IMM
 };
 
-struct Memtable{
+struct IMemtable{
 public:
     State state;
+    unsigned int startKey;
+    unsigned int lastKey;
     virtual bool isFull();
+    virtual void put(unsigned int key, int value);
     virtual bool setState(State state);
+    virtual bool setStartKey(unsigned int key);
+    virtual bool setLastKey();
 };
 
-struct NormalMemtable : public Memtable{
+struct NormalMemtable : public IMemtable{
 public:
     NormalMemtable(){
         state = ACTIVE;
-        access = 0;
+        access = 0; startKey = 0; lastKey = -1;
     }
 
     const size_t LIMIT_SIZE = 80;
@@ -31,12 +36,22 @@ public:
         this->state = state;
         return true;
     }
+    void put(unsigned int key, int value) override{
+        normalMem.emplace(key, value);
+    }
+    bool setStartKey(unsigned int key){
+        startKey = key;
+    }
+    bool setLastKey(){
+        lastKey = normalMem.end()->first;
+    }
 };
 
-struct DelayMemtable : public Memtable{
+struct DelayMemtable : public IMemtable{
 public:
     DelayMemtable(){
         state = ACTIVE;
+        startKey = 0; lastKey = -1;
     }
 
     const size_t LIMIT_SIZE = 40;
@@ -49,5 +64,14 @@ public:
     bool setState(State state) override{
         this->state = state;
         return true;
+    }
+    void put(unsigned int key, int value) override{
+        delayMem.emplace(key, value);
+    }
+    bool setStartKey(unsigned int key){
+        startKey = key;
+    }
+    bool setLastKey(){
+        lastKey = delayMem.end()->first;
     }
 };
