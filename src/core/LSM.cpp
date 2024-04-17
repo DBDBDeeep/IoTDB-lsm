@@ -2,8 +2,14 @@
 #include "LSM.h"
 
 
-bool isDelayData(unsigned int key) {
-    return activeNormalMemtable->normalMem.begin()->first <= key;
+bool LSM::isDelayData(uint64_t key){
+    if(activeNormalMemtable->mem.empty()){ //비어있을때는 delay data가 아니다.
+        return false;
+    }else{
+        return activeNormalMemtable->mem.begin()->first > key;
+
+    }
+
 }
 
 void LSM::insertData(IMemtable& memtable, unsigned int key, int value){
