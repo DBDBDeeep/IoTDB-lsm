@@ -16,7 +16,7 @@ bool LSM::isDelayData(uint64_t key){
 
     if (memtable.isFull()) {
         try {
-            IMemtable* newMemtable = transforActiveToImm(&memtable);
+            IMemtable* newMemtable = transformActiveToImm(&memtable);
             newMemtable->setStartKey(key);
             memtable.put(key, value);
             return;
@@ -91,7 +91,7 @@ map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
 
 
 
-IMemtable* LSM::transforActiveToImm(IMemtable* memtable){  //0 normal 1 delay
+IMemtable* LSM::transformActiveToImm(IMemtable* memtable){  //0 normal 1 delay
 
 
     if(immMemtableList.size()==memtableNum){

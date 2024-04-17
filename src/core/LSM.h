@@ -37,7 +37,7 @@ public:
     map<uint64_t, int> range(uint64_t start, uint64_t end);
     int diskRead(uint64_t key);
     map<uint64_t, int> diskRange(uint64_t start, uint64_t end);
-    IMemtable* transforActiveToImm(IMemtable* memtable); // normal? delay?
+    IMemtable* transformActiveToImm(IMemtable* memtable); // normal? delay?
     int flush();
 
 
