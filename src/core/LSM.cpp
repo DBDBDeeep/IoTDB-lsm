@@ -51,13 +51,11 @@ int LSM::readData(uint64_t key){
     return diskRead(key); //빈함수
 }
 
-int LSM::diskRead(unsigned int key){
+int LSM::diskRead(uint64_t key){
     cout<<"reading Disk data~ \n";
-    // TODO : disk 훑기
     disk->readCount++;
-    return -1;
-}
 
+    return disk->read(key);
 }
 
 map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
