@@ -18,7 +18,7 @@ void LSM::insertData(IMemtable& memtable, uint64_t key, int value){
         try {
             IMemtable* newMemtable = transformActiveToImm(&memtable);
             newMemtable->setStartKey(key);
-            memtable.put(key, value);
+            newMemtable->put(key, value);
             return;
         } catch (exception &e) {
             cerr << e.what() << "\n";
