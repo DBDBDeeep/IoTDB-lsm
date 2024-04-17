@@ -31,10 +31,43 @@ int Disk::read(uint64_t key) {
 }
 
 map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
+
+    map<uint64_t, int> results;
+    for (auto ss : normalSSTables) {
+        for (auto it = ss->ss.lower_bound(start); it != ss->ss.end() && it->first <= end; ++it) {
+            results[it->first] = it->second;
+        }
+    }
+    for (auto ss : delaySSTables) {
+        for (auto it = ss->ss.lower_bound(start); it != ss->ss.end() && it->first <= end; ++it) {
+            results[it->first] = it->second;
+        }
+    }
+    return results;
+}
+
+bool Disk::flush(IMemtable* mem) {
+    SSTable* newSSTable = new SSTable();
+
+    for (const auto& entry : mem->mem) {
+        newSSTable->put(entry.first, entry.second);
     }
 
+    newSSTable->setStartKey(newSSTable->ss.begin()->first);
+    newSSTable->setLastKey(newSSTable->ss.rbegin()->first);
+
+    if (auto normalPtr = dynamic_cast<NormalMemtable*>(mem)) {
+        newSSTable->setType(N);
+        normalSSTables.push_back(newSSTable);
+
+    } else if (auto delayPtr = dynamic_cast<DelayMemtable*>(mem)) {
+        newSSTable->setType(D);
+        delaySSTables.push_back(newSSTable);
     }
 
+
+    return true;
 }
     }
 
+}
