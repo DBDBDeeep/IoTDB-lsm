@@ -22,8 +22,8 @@ bool DelayMemtable::setState(State newState) {
     return true;
 }
 
-void DelayMemtable::put(uint64_t key, int value) {
-    mem.insert({key, value});
+bool DelayMemtable::put(uint64_t key, int value) {
+    return mem.insert({key, value}).second;
 }
 
 bool DelayMemtable::setStartKey(uint64_t key) {

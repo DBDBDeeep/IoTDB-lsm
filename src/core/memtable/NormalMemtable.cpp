@@ -17,8 +17,8 @@ bool NormalMemtable::isFull() {
     return (getSize() + incomingDataSize) >= memtableSize;
 }
 
-void NormalMemtable::put(uint64_t key, int value) {
-    mem.insert({key, value});
+bool NormalMemtable::put(uint64_t key, int value) {
+    return mem.insert({key, value}).second;
 }
 
 bool NormalMemtable::setState(State state) {

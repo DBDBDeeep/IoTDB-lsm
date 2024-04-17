@@ -13,9 +13,8 @@ bool IMemtable::isFull(){
     size_t incomingDataSize = sizeof(uint64_t) + sizeof(int);
     return (getSize() + incomingDataSize) >= memtableSize;
 }
-void IMemtable::put(uint64_t key, int value){
-
-    return;
+bool IMemtable::put(uint64_t key, int value){
+    return true;
 
 }
 bool IMemtable::setState(State state){

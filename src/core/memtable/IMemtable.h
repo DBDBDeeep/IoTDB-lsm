@@ -20,7 +20,7 @@ public:
 
     virtual ~IMemtable() = default;
     virtual bool isFull() = 0;
-    virtual void put(uint64_t key, int value) = 0;
+    virtual bool put(uint64_t key, int value) = 0;
     virtual bool setState(State state) = 0;
     virtual bool setStartKey(uint64_t key) = 0;
     virtual bool setLastKey(uint64_t key) = 0;
@@ -31,7 +31,7 @@ class NormalMemtable : public IMemtable {
 public:
     NormalMemtable(int memtableId);
     bool isFull() override;
-    void put(uint64_t key, int value) override;
+    bool put(uint64_t key, int value) override;
     bool setState(State state) override;
     bool setStartKey(uint64_t key) override;
     bool setLastKey(uint64_t key) override;
@@ -43,7 +43,7 @@ public:
     DelayMemtable(int memtableId);
     bool isFull() override;
     bool setState(State state) override;
-    void put(uint64_t key, int value) override;
+    bool put(uint64_t key, int value) override;
     bool setStartKey(uint64_t key) override;
     bool setLastKey(uint64_t key) override;
     size_t getSize();
