@@ -131,3 +131,35 @@ int LSM::flush(){
 
 }
 
+void LSM::printActiveMemtable(){
+
+    cout<<"\n=======print Active Nomal Memtable=====\n";
+    for(const auto& pair:activeNormalMemtable->mem){
+        std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+    }
+    cout<<"\n";
+
+    cout<<"\n======print Active Delay Memtable======\n";
+    for(const auto& pair:activeDelayMemtable->mem){
+        std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+    }
+    cout<<"\n";
+
+    return;
+
+}
+
+
+void LSM::printImmMemtable(){
+
+    cout<<"\n============ImmMemtable===========\n";
+    for(auto imm: immMemtableList){
+        string state = (imm->state == 1) ? "normal" : "delay";
+        cout << "[ " << state << " ]  key: " << imm->startKey << " ~ " << imm->lastKey << " | #: " << imm->mem.size() << "\n";
+    }
+
+    cout<<"\n";
+
+    return;
+
+}

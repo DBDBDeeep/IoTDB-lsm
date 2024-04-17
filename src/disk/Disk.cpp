@@ -68,6 +68,18 @@ bool Disk::flush(IMemtable* mem) {
 
     return true;
 }
+
+void Disk::printSSTableList() {
+
+    cout<<"\n============NormalSSTable===========\n";
+    int i=1;
+    for(auto table: normalSSTables){
+        cout<<"[ "<<i++<<" ]  key: " <<table->startKey<<" ~ "<<table->lastKey<<" | #: "<<table->ss.size()<<"\n";
+    }
+    cout<<"\n============DelaySSTable===========\n";
+    i=1;
+    for(auto table: delaySSTables){
+        cout<<"[ "<<i++<<" ]  key: "<<table->startKey<<" ~ "<<table->lastKey<<" | #: "<<table->ss.size()<<"\n";
     }
 
 }
