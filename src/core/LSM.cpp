@@ -58,11 +58,6 @@ int LSM::diskRead(unsigned int key){
     return -1;
 }
 
-int LSM::diskRange(unsigned int start, unsigned int end){
-    cout<<"reading Disk datas~ \n";
-    // TODO : disk 훑기
-    disk->readCount += 10;
-    return -1;
 }
 
 map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
@@ -84,6 +79,12 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
     resultMap.insert(delayResultMap.begin(), delayResultMap.end());
 
     return resultMap;
+map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
+    cout<<"reading Disk datas~ \n";
+    map<uint64_t, int> diskData = disk->range( start, end);
+    disk->readCount += diskData.size();
+
+    return diskData;
 }
 
 IMemtable* LSM::transforActiveToImm(IMemtable& memtable){
