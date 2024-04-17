@@ -35,17 +35,16 @@ void LSM::insert(unsigned int key, int value){
 
 
 
-// TODO : Imm으로 고쳐라..
-int LSM::readData(unsigned int key){
-    auto active_mem_it = activeNormalMemtable->normalMem.find(key);
-    if (active_mem_it != activeNormalMemtable->normalMem.end()) {
-        activeNormalMemtable->access++;
-        return active_mem_it->second;
+int LSM::readData(uint64_t key){
+
+    for (auto imm : immMemtableList) {
+        // 맵에서 키 검색
+        auto it = imm->mem.find(key);
+        if (it != imm->mem.end()) {
+            return it->second;  // 키를 찾았으면 값 반환
+        }
     }
-    auto delay_mem_it = activeDelayMemtable->delayMem.find(key);
-    if (delay_mem_it != activeDelayMemtable->delayMem.end()) {
-        return delay_mem_it->second;
-    }
+
     return diskRead(key); //빈함수
 }
 
@@ -63,14 +62,13 @@ int LSM::diskRange(unsigned int start, unsigned int end){
     return -1;
 }
 
-map<unsigned int, int> LSM::range(unsigned int start, unsigned int end){
-    // active, delay에서 찾기
-    map<unsigned int, int> normalResultMap(activeNormalMemtable->normalMem.lower_bound(start), activeNormalMemtable->normalMem.upper_bound(end));
-    map<unsigned int, int> delayResultMap(activeDelayMemtable->delayMem.lower_bound(start), activeDelayMemtable->delayMem.upper_bound(end));
+map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
 
-    if(normalResultMap.empty() && delayResultMap.empty()) {
-        diskRead(start);
-        throw empty("no data!!\n");
+    map<uint64_t, int> results;
+    for (auto imm : immMemtableList) {
+        for (auto it = imm->mem.lower_bound(start); it != imm->mem.end() && it->first <= end; ++it) {
+            results[it->first] = it->second;
+        }
     }
 
     // access 추가
