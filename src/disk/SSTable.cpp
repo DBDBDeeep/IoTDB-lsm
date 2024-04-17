@@ -1,6 +1,6 @@
 #include "SSTable.h"
 
-SSTable::SSTable() : type(N), startKey(0), lastKey(0) {
+SSTable::SSTable(int id) : type(N), startKey(0), lastKey(0), sstableId(id){
     // 초기화 리스트를 사용하여 멤버 변수를 초기화합니다.
 }
 

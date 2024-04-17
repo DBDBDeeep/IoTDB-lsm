@@ -20,8 +20,9 @@ public:
     uint64_t lastKey;
     //size_t sstableSize = 16 * 1024 * 1024;
     size_t sstableSize = 4 * 1024;
+    int sstableId;
 
-    SSTable(); // 생성자 선언
+    SSTable(int id); // 생성자 선언
     void setType(Type type);
     bool isFull();
     void put(uint64_t key, int value);

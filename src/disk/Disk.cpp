@@ -47,7 +47,7 @@ map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
 }
 
 bool Disk::flush(IMemtable* mem) {
-    SSTable* newSSTable = new SSTable();
+    SSTable* newSSTable = new SSTable(mem->memtableId);
 
     for (const auto& entry : mem->mem) {
         newSSTable->put(entry.first, entry.second);

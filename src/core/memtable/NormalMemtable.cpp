@@ -1,9 +1,10 @@
 #include "IMemtable.h"
 
-NormalMemtable::NormalMemtable() {
-    state = ACTIVE;
-    startKey = 0;
-    lastKey = static_cast<uint64_t>(-1);
+NormalMemtable::NormalMemtable(int memtableId) {
+    this->state = ACTIVE;
+    this->startKey = 0;
+    this->lastKey = static_cast<uint64_t>(-1);
+    this->memtableId = memtableId;
 }
 
 size_t NormalMemtable::getSize() {

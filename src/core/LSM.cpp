@@ -103,7 +103,7 @@ IMemtable* LSM::transformActiveToImm(IMemtable* memtable){  //0 normal 1 delay
         activeNormalMemtable->setStartKey(activeNormalMemtable->mem.begin()->first);
         activeNormalMemtable->setLastKey(activeNormalMemtable->mem.rbegin()->first);
         immMemtableList.push_back(activeNormalMemtable);
-        activeNormalMemtable = new NormalMemtable();
+        activeNormalMemtable = new NormalMemtable(++currentId);
         return dynamic_cast<NormalMemtable*>(activeNormalMemtable);
 
     } else if (auto delayPtr = dynamic_cast<DelayMemtable*>(memtable)){
@@ -111,7 +111,7 @@ IMemtable* LSM::transformActiveToImm(IMemtable* memtable){  //0 normal 1 delay
         activeDelayMemtable->setStartKey(activeDelayMemtable->mem.begin()->first);
         activeDelayMemtable->setLastKey(activeDelayMemtable->mem.rbegin()->first);
         immMemtableList.push_back(activeDelayMemtable);
-        activeDelayMemtable = new DelayMemtable();
+        activeDelayMemtable = new DelayMemtable(++currentId);
         return dynamic_cast<DelayMemtable*>(activeDelayMemtable);
     }
 

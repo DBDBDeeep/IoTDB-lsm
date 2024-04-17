@@ -19,11 +19,11 @@ using namespace std;
 class LSM {
 public:
     LSM() {
-        activeNormalMemtable = new NormalMemtable();
-        activeDelayMemtable = new DelayMemtable();
+        activeNormalMemtable = new NormalMemtable(++currentId);
+        activeDelayMemtable = new DelayMemtable(++currentId);
         disk = new Disk();
     }
-
+    int currentId = 0;
     int memtableNum = 2;
     list<IMemtable*> immMemtableList;
     NormalMemtable* activeNormalMemtable;
