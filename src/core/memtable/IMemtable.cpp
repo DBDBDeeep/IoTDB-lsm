@@ -1,15 +1,17 @@
-//
-// Created by 이해나 on 4/16/24.
-//
-
 #include "IMemtable.h"
 #include <iostream>
 
+size_t IMemtable::getSize() {
+    // 현재 map size
+    size_t currentMapSize = mem.size() * (sizeof(uint64_t) + sizeof(int));
+    // 객체 크기
+    size_t instanceSize = sizeof(*this);
+    return instanceSize + currentMapSize;
+}
+
 bool IMemtable::isFull(){
-
-
-    return true;
-
+    size_t incomingDataSize = sizeof(uint64_t) + sizeof(int);
+    return (getSize() + incomingDataSize) >= memtableSize;
 }
 void IMemtable::put(uint64_t key, int value){
 

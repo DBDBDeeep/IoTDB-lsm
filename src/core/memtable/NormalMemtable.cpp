@@ -1,4 +1,3 @@
-//#include "NormalMemtable.h"
 #include "IMemtable.h"
 
 NormalMemtable::NormalMemtable() {
@@ -7,9 +6,14 @@ NormalMemtable::NormalMemtable() {
     lastKey = static_cast<uint64_t>(-1);
 }
 
+size_t NormalMemtable::getSize() {
+    size_t currentMapSize = mem.size() * (sizeof(uint64_t) + sizeof(int));
+    return sizeof(*this) + currentMapSize;
+}
+
 bool NormalMemtable::isFull() {
-    size_t currentSize = mem.size() * (sizeof(uint64_t) + sizeof(int));
-    return currentSize >= memtableSize;
+    size_t incomingDataSize = sizeof(uint64_t) + sizeof(int);
+    return (getSize() + incomingDataSize) >= memtableSize;
 }
 
 void NormalMemtable::put(uint64_t key, int value) {

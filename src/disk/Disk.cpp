@@ -10,7 +10,7 @@ int Disk::read(uint64_t key) {
 
     //normal SStale 뒤지기
     for (auto ss : normalSSTables) {
-                // 맵에서 키 검색
+        // 맵에서 키 검색
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
             return it->second;  // 키를 찾았으면 값 반환

@@ -1,4 +1,3 @@
-//#include "DelayMemtable.h"
 #include "IMemtable.h"
 
 DelayMemtable::DelayMemtable() {
@@ -7,9 +6,14 @@ DelayMemtable::DelayMemtable() {
     lastKey = static_cast<uint64_t>(-1);
 }
 
-bool DelayMemtable::isFull (){
-    size_t currentSize = mem.size() * (sizeof(uint64_t) + sizeof(int));
-    return currentSize >= memtableSize;
+size_t DelayMemtable::getSize() {
+    size_t currentMapSize = mem.size() * (sizeof(uint64_t) + sizeof(int));
+    return sizeof(*this) + currentMapSize;
+}
+
+bool DelayMemtable::isFull () {
+    size_t incomingDataSize = sizeof(uint64_t) + sizeof(int);
+    return (getSize() + incomingDataSize) >= memtableSize;
 }
 
 bool DelayMemtable::setState(State newState) {
