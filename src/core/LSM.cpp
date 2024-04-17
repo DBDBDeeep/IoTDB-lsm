@@ -12,19 +12,22 @@ bool LSM::isDelayData(uint64_t key){
 
 }
 
-void LSM::insertData(IMemtable& memtable, unsigned int key, int value){
+ void LSM::insertData(IMemtable& memtable, uint64_t key, int value){
+
     if (memtable.isFull()) {
         try {
-            memtable = *transforActiveToImm(memtable);
-            memtable.setStartKey(key);
+            IMemtable* newMemtable = transforActiveToImm(&memtable);
+            newMemtable->setStartKey(key);
         } catch (exception &e) {
             cerr << e.what() << "\n";
         }
     }
     memtable.put(key, value);
+
+    return;
 }
 
-void LSM::insert(unsigned int key, int value){
+void LSM::insert(uint64_t key, int value){
     if(!isDelayData(key)) {
         insertData(*activeNormalMemtable, key, value);
     }
