@@ -87,13 +87,8 @@ map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
     return diskData;
 }
 
-IMemtable* LSM::transforActiveToImm(IMemtable& memtable){
-    memtable.setState(IMM);
-    memtable.setLastKey();
-    // TODO : 대충함. 주소비교방식으로.. 클래스비교방식으로 시도해보든가
-    if(&memtable == activeNormalMemtable) {
-        immNormalMemtableList.emplace_back(activeNormalMemtable);
-        return activeNormalMemtable = new NormalMemtable();
+
+
 IMemtable* LSM::transforActiveToImm(IMemtable* memtable){  //0 normal 1 delay
 
 
