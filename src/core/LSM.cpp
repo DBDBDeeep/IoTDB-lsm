@@ -12,7 +12,7 @@ bool LSM::isDelayData(uint64_t key){
 
 }
 
- void LSM::insertData(IMemtable& memtable, uint64_t key, int value){
+void LSM::insertData(IMemtable& memtable, uint64_t key, int value){
 
     if (memtable.isFull()) {
         try {
@@ -46,6 +46,7 @@ int LSM::readData(uint64_t key){
         // 맵에서 키 검색
         auto it = imm->mem.find(key);
         if (it != imm->mem.end()) {
+            cout<<"(found in id:"<<imm->memtableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -54,7 +55,7 @@ int LSM::readData(uint64_t key){
 }
 
 int LSM::diskRead(uint64_t key){
-    cout<<"reading Disk data~ \n";
+    cout<<"reading Disk data~";
     disk->readCount++;
 
     return disk->read(key);
@@ -82,7 +83,7 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
 }
 
 map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
-    cout<<"reading Disk datas~ \n";
+    cout<<"ranging Disk datas~ ";
     map<uint64_t, int> diskData = disk->range( start, end);
     disk->readCount += diskData.size();
 
@@ -116,7 +117,7 @@ IMemtable* LSM::transformActiveToImm(IMemtable* memtable){  //0 normal 1 delay
     }
 
     else
-        throw logic_error("transforActiveToImm 주소비교.. 뭔가 문제가 있는 듯 하오.");
+        throw logic_error("transformActiveToImm 주소비교.. 뭔가 문제가 있는 듯 하오.");
 
 
 }
@@ -136,13 +137,19 @@ int LSM::flush(){
 void LSM::printActiveMemtable(){
 
     cout<<"\n=======print Active Nomal Memtable=====\n";
+    std::cout << "Memtable Id: "<< activeNormalMemtable->memtableId << ", "
+              << "Memtable Size: "<< activeNormalMemtable->getSize() << ", "
+              << "total data : "<< activeNormalMemtable->mem.size() << "\n";
     for(const auto& pair:activeNormalMemtable->mem){
         std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
     }
     cout<<"\n";
 
     cout<<"\n======print Active Delay Memtable======\n";
-    for(const auto& pair:activeDelayMemtable->mem){
+    std::cout << "Memtable Id: "<< activeDelayMemtable->memtableId << ", "
+            << "Memtable Size: "<< activeDelayMemtable->getSize() << ", "
+            << "total data: "<< activeDelayMemtable->mem.size() << "\n";
+    for (const auto &pair: activeDelayMemtable->mem) {
         std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
     }
     cout<<"\n";
@@ -157,7 +164,7 @@ void LSM::printImmMemtable(){
     cout<<"\n============ImmMemtable===========\n";
     for(auto imm: immMemtableList){
         string state = (imm->state == 1) ? "normal" : "delay";
-        cout << "[ " << state << " ]  key: " << imm->startKey << " ~ " << imm->lastKey << " | #: " << imm->mem.size() << "\n";
+        cout << "[ " << state <<" id("<<imm->memtableId<< ") ]  key: " << imm->startKey << " ~ " << imm->lastKey << " | #: " << imm->mem.size() << "\n";
     }
 
     cout<<"\n";

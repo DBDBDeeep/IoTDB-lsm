@@ -31,7 +31,8 @@ bool SSTable::setLastKey(uint64_t key) {
 
 void SSTable::printSStable(SSTable *table) {
 
-    cout<<"print Active Delay Memtable\n";
+    cout<<"===== print Active Delay SSTable ";
+    cout <<" id: "<< table->sstableId <<" =====\n";
     for(const auto& pair:table->ss){
         std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
     }

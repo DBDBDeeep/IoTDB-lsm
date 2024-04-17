@@ -13,6 +13,7 @@ int Disk::read(uint64_t key) {
         // 맵에서 키 검색
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
+            cout<<"(found in normalSSTable:"<<ss->sstableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -22,6 +23,7 @@ int Disk::read(uint64_t key) {
         // 맵에서 키 검색
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
+            cout<<"(found in delaySStale:"<<ss->sstableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -32,17 +34,40 @@ int Disk::read(uint64_t key) {
 
 map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
 
+    // 로깅
+    list<string> normalSSTableIds;
+    list<string> delaySSTableIds;
+
     map<uint64_t, int> results;
+    bool flag;
     for (auto ss : normalSSTables) {
+        flag = false;
         for (auto it = ss->ss.lower_bound(start); it != ss->ss.end() && it->first <= end; ++it) {
+            flag = true;
             results[it->first] = it->second;
         }
+        if(flag) normalSSTableIds.push_back("("+to_string(ss->sstableId)+")");
     }
     for (auto ss : delaySSTables) {
+        flag = false;
         for (auto it = ss->ss.lower_bound(start); it != ss->ss.end() && it->first <= end; ++it) {
+            flag = true;
             results[it->first] = it->second;
         }
+        if(flag) delaySSTableIds.push_back("("+to_string(ss->sstableId)+")");
     }
+    // 로깅
+    if(!normalSSTableIds.empty()) {
+        cout << "found in normalSSTables ";
+        for (auto id: normalSSTableIds) cout << id;
+        cout <<"\n";
+    }
+    if(!delaySSTableIds.empty()) {
+        cout<<"found in delaySSTables ";
+        for(auto id : delaySSTableIds) cout << id;
+        cout <<"\n";
+    }
+
     return results;
 }
 
@@ -72,14 +97,12 @@ bool Disk::flush(IMemtable* mem) {
 void Disk::printSSTableList() {
 
     cout<<"\n============NormalSSTable===========\n";
-    int i=1;
     for(auto table: normalSSTables){
-        cout<<"[ "<<i++<<" ]  key: " <<table->startKey<<" ~ "<<table->lastKey<<" | #: "<<table->ss.size()<<"\n";
+        cout<<"[ "<<table->sstableId<<" ]  key: " <<table->startKey<<" ~ "<<table->lastKey<<" | #cnt: "<<table->ss.size()<<"\n";
     }
     cout<<"\n============DelaySSTable===========\n";
-    i=1;
     for(auto table: delaySSTables){
-        cout<<"[ "<<i++<<" ]  key: "<<table->startKey<<" ~ "<<table->lastKey<<" | #: "<<table->ss.size()<<"\n";
+        cout<<"[ "<<table->sstableId<<" ]  key: "<<table->startKey<<" ~ "<<table->lastKey<<" | #cnt: "<<table->ss.size()<<"\n";
     }
 
 }
