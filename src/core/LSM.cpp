@@ -162,9 +162,10 @@ void LSM::printActiveMemtable(){
 void LSM::printImmMemtable(){
 
     cout<<"\n============ImmMemtable===========\n";
-    for(auto imm: immMemtableList){
-        string state = (imm->state == 1) ? "normal" : "delay";
-        cout << "[ " << state <<" id("<<imm->memtableId<< ") ]  key: " << imm->startKey << " ~ " << imm->lastKey << " | #: " << imm->mem.size() << "\n";
+    for (auto imm: immMemtableList) {
+        string state = (typeid(*imm) == typeid(NormalMemtable))?"normal" : "delay";
+        cout << "[ " << state << " id(" << imm->memtableId << ") ]  key: " << imm->startKey << " ~ " << imm->lastKey
+             << " | #: " << imm->mem.size() << "\n";
     }
 
     cout<<"\n";
