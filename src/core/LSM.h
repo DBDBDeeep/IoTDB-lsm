@@ -42,10 +42,8 @@ public:
 
 
     //디버깅용
-    void printActiveMemtable();
+    void printActiveMemtable(bool printKV);
     void printImmMemtable();
-
-
 
 };
 

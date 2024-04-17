@@ -63,17 +63,32 @@ int LSM::diskRead(uint64_t key){
 
 map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
 
+    // 로깅 ====
+    list<string> ids;
+    bool flag;
+    // ======
+
     map<uint64_t, int> results;
     for (auto imm : immMemtableList) {
+        flag = false;
         for (auto it = imm->mem.lower_bound(start); it != imm->mem.end() && it->first <= end; ++it) {
             results[it->first] = it->second;
+            flag = true;
         }
+        if(flag) ids.push_back("("+to_string(imm->memtableId)+")");
     }
 
     // 만약 start 범위가 disk일 가능성이 있을때
     map<uint64_t, int> diskData;
+
     if(start<results.begin()->first){
         diskData=diskRange(start, end);
+    }
+
+    if(!ids.empty()){
+        cout << "found in immMemtables ";
+        for (auto id: ids) cout << id;
+        cout <<"\n";
     }
 
     //병합
@@ -134,14 +149,21 @@ int LSM::flush(){
 
 }
 
-void LSM::printActiveMemtable(){
+void LSM::printActiveMemtable(bool printKV){
 
     cout<<"\n=======print Active Nomal Memtable=====\n";
     std::cout << "Memtable Id: "<< activeNormalMemtable->memtableId << ", "
-              << "Memtable Size: "<< activeNormalMemtable->getSize() << ", "
+            << "Memtable Size: "<< activeNormalMemtable->getSize() << ", "
               << "total data : "<< activeNormalMemtable->mem.size() << "\n";
-    for(const auto& pair:activeNormalMemtable->mem){
-        std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+
+    if(!activeNormalMemtable->mem.empty()) {
+        std::cout << "(startKey: " << activeNormalMemtable->startKey << ", "
+                  << "lastKey: " << activeNormalMemtable->mem.rbegin()->first << ")\n";
+    }
+    if(printKV) {
+        for (const auto &pair: activeNormalMemtable->mem) {
+            std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+        }
     }
     cout<<"\n";
 
@@ -149,8 +171,14 @@ void LSM::printActiveMemtable(){
     std::cout << "Memtable Id: "<< activeDelayMemtable->memtableId << ", "
             << "Memtable Size: "<< activeDelayMemtable->getSize() << ", "
             << "total data: "<< activeDelayMemtable->mem.size() << "\n";
-    for (const auto &pair: activeDelayMemtable->mem) {
-        std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+    if(!activeDelayMemtable->mem.empty()) {
+        std::cout << "(startKey: " << activeDelayMemtable->startKey << ", "
+                  << "lastKey: " << activeDelayMemtable->mem.rbegin()->first << ")\n";
+    }
+    if(printKV) {
+        for (const auto &pair: activeDelayMemtable->mem) {
+            std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+        }
     }
     cout<<"\n";
 
