@@ -67,16 +67,18 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
         }
     }
 
-    // access 추가
-    activeNormalMemtable->access += normalResultMap.size();
+    // 만약 start 범위가 disk일 가능성이 있을때
+    map<uint64_t, int> diskData;
+    if(start<results.begin()->first){
+        diskData=diskRange(start, end);
+    }
 
+    //병합
+    results.insert(diskData.begin(), diskData.end());
 
-    // 병합
-    map<unsigned int, int> resultMap;
-    resultMap.insert(normalResultMap.begin(), normalResultMap.end());
-    resultMap.insert(delayResultMap.begin(), delayResultMap.end());
+    return results;
+}
 
-    return resultMap;
 map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
     cout<<"reading Disk datas~ \n";
     map<uint64_t, int> diskData = disk->range( start, end);
