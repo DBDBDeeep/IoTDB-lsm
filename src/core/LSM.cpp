@@ -92,11 +92,32 @@ IMemtable* LSM::transforActiveToImm(IMemtable& memtable){
     if(&memtable == activeNormalMemtable) {
         immNormalMemtableList.emplace_back(activeNormalMemtable);
         return activeNormalMemtable = new NormalMemtable();
+IMemtable* LSM::transforActiveToImm(IMemtable* memtable){  //0 normal 1 delay
+
+
+    if(immMemtableList.size()==memtableNum){
+        flush();
     }
-    else if(&memtable == activeDelayMemtable) {
-        immDelayMemtableList.emplace_back(activeDelayMemtable);
-        return activeDelayMemtable = new DelayMemtable();
+
+    if (auto normalPtr = dynamic_cast<NormalMemtable*>(memtable)){
+        activeNormalMemtable->setState(IMM);
+        activeNormalMemtable->setStartKey(activeNormalMemtable->mem.begin()->first);
+        activeNormalMemtable->setLastKey(activeNormalMemtable->mem.rbegin()->first);
+        immMemtableList.push_back(activeNormalMemtable);
+        activeNormalMemtable = new NormalMemtable();
+        return dynamic_cast<NormalMemtable*>(activeNormalMemtable);
+
+    } else if (auto delayPtr = dynamic_cast<DelayMemtable*>(memtable)){
+        activeDelayMemtable->setState(IMM);
+        activeDelayMemtable->setStartKey(activeDelayMemtable->mem.begin()->first);
+        activeDelayMemtable->setLastKey(activeDelayMemtable->mem.rbegin()->first);
+        immMemtableList.push_back(activeDelayMemtable);
+        activeDelayMemtable = new DelayMemtable();
+        return dynamic_cast<DelayMemtable*>(activeDelayMemtable);
     }
+
     else
         throw logic_error("transforActiveToImm 주소비교.. 뭔가 문제가 있는 듯 하오.");
+
+
 }
