@@ -18,6 +18,8 @@ bool LSM::isDelayData(uint64_t key){
         try {
             IMemtable* newMemtable = transforActiveToImm(&memtable);
             newMemtable->setStartKey(key);
+            memtable.put(key, value);
+            return;
         } catch (exception &e) {
             cerr << e.what() << "\n";
         }
