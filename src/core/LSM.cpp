@@ -1,9 +1,6 @@
-#include "LSM.h"
-#include "stdexcept"
 
-NormalMemtable* activeNormalMemtable;
-DelayMemtable* activeDelayMemtable;
-Disk* disk;
+#include "LSM.h"
+
 
 bool isDelayData(unsigned int key) {
     return activeNormalMemtable->normalMem.begin()->first <= key;

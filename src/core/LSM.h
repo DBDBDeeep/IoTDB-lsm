@@ -1,28 +1,54 @@
+
+#ifndef LSM_H
+#define LSM_H
+
 #include <iostream>
-#include "Memtable.cpp"
-#include "../disk/Disk.cpp"
+#include <queue>
+#include "../disk/Disk.h"
+#include "stdexcept"
+
 
 using namespace std;
 
-extern NormalMemtable* activeNormalMemtable;
-extern DelayMemtable* activeDelayMemtable;
-extern vector<NormalMemtable*> immNormalMemtableList;
-extern vector<DelayMemtable*> immDelayMemtableList;
-extern Disk* disk;
+
+//extern vector<NormalMemtable*> immNormalMemtableList;
+//extern vector<DelayMemtable*> immDelayMemtableList;
+
+
 
 class LSM {
 public:
     LSM() {
         activeNormalMemtable = new NormalMemtable();
         activeDelayMemtable = new DelayMemtable();
+        disk = new Disk();
     }
 
-//    bool isFull(IMemtable& memtable);
-    void insert(unsigned int key, int value);
-    void insertData(IMemtable& memtable, unsigned int key, int value);
-    int readData(unsigned int key);
-    int diskRead(unsigned int key);
-    int diskRange(unsigned int start, unsigned int end);
-    map<unsigned int, int> range(unsigned int start, unsigned int end);
-    IMemtable* transforActiveToImm(IMemtable& memtable); // normal? delay?
+    int memtableNum = 2;
+    list<IMemtable*> immMemtableList;
+    NormalMemtable* activeNormalMemtable;
+    DelayMemtable* activeDelayMemtable;
+    Disk* disk;
+
+    bool isDelayData(uint64_t key);
+    void insert(uint64_t key, int value);
+    void insertData(IMemtable& memtable, uint64_t key, int value);
+    int readData(uint64_t key);
+    map<uint64_t, int> range(uint64_t start, uint64_t end);
+    int diskRead(uint64_t key);
+    map<uint64_t, int> diskRange(uint64_t start, uint64_t end);
+    IMemtable* transforActiveToImm(IMemtable* memtable); // normal? delay?
+    int flush();
+
+
+    //디버깅용
+    void printActiveMemtable();
+    void printImmMemtable();
+
+
+
 };
+
+#endif
+
+
