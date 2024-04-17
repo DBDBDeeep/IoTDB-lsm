@@ -119,3 +119,16 @@ IMemtable* LSM::transforActiveToImm(IMemtable* memtable){  //0 normal 1 delay
 
 
 }
+
+int LSM::flush(){
+
+    IMemtable* flushMemtable=immMemtableList.front();
+
+    disk->flush(flushMemtable);
+
+    immMemtableList.pop_front();
+
+    return 0;
+
+}
+
