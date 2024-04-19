@@ -175,14 +175,16 @@ void 딜레이테스트(){
         cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
     }
 
-    cout<<"\n[range] 하나 DelaySStalble range : 330~340\n";
+
+
+    cout<<"\n[range] 하나의 DelaySStalble range : 330~340\n";
     map<uint64_t, int> result1 = tree->range(330,340);
     for(auto data: result1){
         cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
     }
 
-    cout<<"\n[range] 여러개 DelaySStalble range : 330~400\n";
-    map<uint64_t, int> result2 = tree->range(330,400);
+    cout<<"\n[range] DelaySStalble ~ normalSStable 걸친 range : 330~410\n";
+    map<uint64_t, int> result2 = tree->range(330,410);
     for(auto data: result2){
         cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
     }
@@ -190,6 +192,12 @@ void 딜레이테스트(){
     cout<<"\n[range] 여러개 immMemtable range : 2860~2865\n";
     map<uint64_t, int> result3 = tree->range(2860,2865);
     for(auto data: result3){
+        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
+    }
+
+    cout<<"\n[range] immMemtable, sstable 걸치게 range : 2860~3100\n";
+    map<uint64_t, int> result4 = tree->range(2860,3100);
+    for(auto data: result4){
         cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
     }
 
