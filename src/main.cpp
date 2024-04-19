@@ -1,41 +1,38 @@
 
 
 #include "core/LSM.h"
+#include "test/dataFactory.h"
 #include <iostream>
 
 using namespace std;
 
-LSM* tree;
+//LSM* tree;
 
 // 테스트 리스트
 void 기본테스트();
 void 딜레이테스트();
 
 int main(){
-//    기본테스트();
-    딜레이테스트();
+
+    dataFactory factory;
+
+    /**parameter 설정
+        o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/
+    int n = 4000; // 데이터셋 크기
+    double outOfOrderRatio = 0.1; // out of order 비율
+    int numSegments = 10; // out of order 세그먼트 개수
+
+    /**out of order 없는 data 테스트**/
+
+//    factory.generateNormalDataset(n);
+//    factory.NormalTest();
+
+    /**out of order data 테스트**/
+    factory.generateDelayedDataset(n,outOfOrderRatio,numSegments);
+    factory.delayedTest();
+
     return 0;
 
-}
-
-
-void 기본테스트(){
-    tree = new LSM();
-    //normal test
-    for(int i=1;i<2400;i++){
-        tree->insert(i, i*2);
-    }
-
-    tree->printActiveMemtable(true);
-    tree->printImmMemtable();
-    tree->disk->printSSTableList();
-
-    cout<<"\n\n\n\n========read/range test=========\n";
-
-    cout<<"[Read] key : "<<2009<<" value : "<<tree->readData(2009)<<"\n"; // normal ImmMemtable read
-    cout<<"[Read] key : "<<2010<<" value : "<<tree->readData(2010)<<"\n"; // normal ImmMemtable read
-    cout<<"[Read] key : "<<2011<<" value : "<<tree->readData(2011)<<"\n"; // normal ImmMemtable read
-    cout<<"[Read] key : "<<1000<<" value : "<<tree->readData(1000)<<"\n"; // normalSSTable read
     cout<<"[Read] key : "<<1200<<" value : "<<tree->readData(1200)<<"\n"; // normalSSTable read
     // Active에만 있는 data를 읽으려 할 때 불가! : -1
     cout<<"[Read] key : "<<2390<<" value : "<<tree->readData(2390)<<"\n";
@@ -75,36 +72,41 @@ void 기본테스트(){
     }
 
 
-    delete tree;
 }
 
-//void 기본테스트_한개의_normal_ImmMemtable_range(){
-//    map<uint64_t, int> result = tree->range(1400,1410);
-//    cout<<"\n[range] 1400 ~ 1410\n";
+
+//void 기본테스트(){
+//    tree = new LSM();
+//    //normal test
+//    for(int i=1;i<100;i++){
+//        tree->insert(i, i*2);
+//    }
+//
+//    tree->printActiveMemtable(true);
+//    tree->printImmMemtable();
+//    tree->disk->printSSTableList();
+//
+//    cout<<"\n\n\n\n========read/range test=========\n";
+//
+//    cout<<"[Read] key : "<<2009<<" value : "<<tree->readData(2009)<<"\n"; // normal ImmMemtable read
+//    map<uint64_t, int> result = tree->range(2020,2030);
 //    for(auto data: result){
 //        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
 //    }
-//}
-//
-//void 기본테스트_여러개의_normal_ImmMemtable_range() {
-//    map<uint64_t, int> result1 = tree->range(1365, 1375);
-//    cout << "\n[range] 1365 ~ 1375\n";
-//    for (auto data: result1) {
-//        cout << "key : " << data.first << " value : " << data.second << "\n";
+//    // 여러개의 normal ImmMemtable range
+//    cout<<"\n[range] 여러개의 normal ImmMemtable range : 2005 ~ 2015\n";
+//    map<uint64_t, int> result1 = tree->range(2005,2015);
+//    for(auto data: result1){
+//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
 //    }
-//}
 //
-//void 기본테스트_한개의_SStalble_range() {
-//    map<uint64_t, int> result2 = tree->range(10, 20);
-//    cout << "\n[range] 10 ~ 20\n";
-//    for (auto data: result2) {
-//        cout << "key : " << data.first << " value : " << data.second << "\n";
+//    // 한개의 SStalble range
+//    cout<<"\n[range] 한개의 SStalble range : 700 ~ 710\n";
+//    map<uint64_t, int> result2 = tree->range(700,710);
+//    for(auto data: result2){
+//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
 //    }
-//}
 //
-//void 기본테스트_여러개의_SStalble_range() {
-//    map<uint64_t, int> result3 = tree->range(340, 350);
-//    cout << "\n[range] 340 ~ 350\n";
 //    for (auto data: result3) {
 //        cout << "key : " << data.first << " value : " << data.second << "\n";
 //    }
@@ -195,3 +197,4 @@ void 딜레이테스트(){
 
     delete tree;
 }
+//}
