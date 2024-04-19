@@ -1,12 +1,12 @@
 #include "../core/LSM.h"
-#include "dataFactory.h"
+#include "DataFactory.h"
 #include <random>
 #include <iostream>
 
 using namespace std;
 
 //o3 데이터 없이 데이터셋 생성
-void dataFactory:: generateNormalDataset(int n){
+void DataFactory:: generateNormalDataset(int n){
     tree = new LSM();
     for (uint64_t i = 1; i <= n; ++i) {
         auto data = make_pair(i, static_cast<int>(i * 2));
@@ -14,7 +14,7 @@ void dataFactory:: generateNormalDataset(int n){
     }
 }
 
-void dataFactory:: NormalTest(){
+void DataFactory:: NormalTest(){
     tree->printActiveMemtable(true);
     tree->printImmMemtable();
     tree->disk->printSSTableList();
@@ -67,7 +67,7 @@ void dataFactory:: NormalTest(){
 }
 
 // o3데이터 포함 데이터셋 생성 함수
-void dataFactory:: generateDelayedDataset(int n, double outOfOrderRatio, int numSegments) {
+void DataFactory:: generateDelayedDataset(int n, double outOfOrderRatio, int numSegments) {
     vector<pair<uint64_t, int>> dataset;
     tree = new LSM();
 
@@ -146,7 +146,7 @@ void dataFactory:: generateDelayedDataset(int n, double outOfOrderRatio, int num
 }
 
 
-void dataFactory:: delayedTest(){
+void DataFactory:: delayedTest(){
 
     tree->printActiveMemtable(false);
     tree->printImmMemtable();

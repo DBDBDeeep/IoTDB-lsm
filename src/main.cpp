@@ -1,7 +1,7 @@
 
 
 #include "core/LSM.h"
-#include "test/dataFactory.h"
+#include "test/DataFactory.h"
 #include <iostream>
 
 using namespace std;
@@ -14,7 +14,7 @@ void 딜레이테스트();
 
 int main(){
 
-    dataFactory factory;
+    DataFactory factory;
 
     /**parameter 설정
         o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/

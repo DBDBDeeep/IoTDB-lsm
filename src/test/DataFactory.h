@@ -2,7 +2,7 @@
 #ifndef dataFactory_H
 #define dataFactory_H
 using namespace std;
-class dataFactory {
+class DataFactory {
 public:
     void generateNormalDataset(int n);
     void NormalTest();

@@ -11,7 +11,7 @@ add_executable(IoTDB_lsm
         src/core/memtable/NormalMemtable.cpp
         src/disk/Disk.cpp
         src/disk/SSTable.cpp
-        src/test/dataFactory.cpp
+        src/test/DataFactory.cpp
 )
 
 
