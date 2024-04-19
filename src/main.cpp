@@ -95,6 +95,7 @@ int main(){
 //    delete tree;
 //}
 
+
 ////void 기본테스트_한개의_normal_ImmMemtable_range(){
 ////    map<uint64_t, int> result = tree->range(1400,1410);
 ////    cout<<"\n[range] 1400 ~ 1410\n";
@@ -212,3 +213,4 @@ int main(){
 //
 //    delete tree;
 //}
+

@@ -81,7 +81,8 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
     // 만약 start 범위가 disk일 가능성이 있을때
     map<uint64_t, int> diskData;
 
-    if(start<results.begin()->first){
+    if(results.empty() || start < results.begin()->first
+                       || end !=results.rbegin()->first){
         diskData=diskRange(start, end);
     }
 
