@@ -177,7 +177,7 @@ void LSM::printActiveMemtable(bool printKV){
     }
     if(!printKV) {
         for (const auto &pair: activeDelayMemtable->mem) {
-            std::cout << "activeDelayMemtable Key: " << pair.first << ", activeDelayMemtable Value: " << pair.second << "\n";
+            std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
         }
     }
     cout<<"\n";
