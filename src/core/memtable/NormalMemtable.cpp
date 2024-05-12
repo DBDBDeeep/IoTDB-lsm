@@ -2,6 +2,7 @@
 
 NormalMemtable::NormalMemtable(int memtableId) {
     this->state = ACTIVE;
+    this->type = NI;
     this->startKey = 0;
     this->lastKey = static_cast<uint64_t>(-1);
     this->memtableId = memtableId;

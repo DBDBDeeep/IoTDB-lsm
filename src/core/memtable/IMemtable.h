@@ -6,12 +6,16 @@
 enum State{
     ACTIVE, IMM
 };
+enum MemType {
+    NI, DI
+};
 
 // Abstract class for memtables
 class IMemtable {
 public:
     std::map<uint64_t, int> mem;
     State state;
+    MemType type;
     uint64_t startKey;
     uint64_t lastKey;
 //    size_t memtableSize = 16 * 1024 * 1024;
@@ -25,6 +29,7 @@ public:
     virtual bool setStartKey(uint64_t key) = 0;
     virtual bool setLastKey(uint64_t key) = 0;
     virtual size_t getSize() = 0;
+
 };
 
 class NormalMemtable : public IMemtable {

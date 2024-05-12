@@ -2,6 +2,7 @@
 
 DelayMemtable::DelayMemtable(int memtableId) {
     this->state = ACTIVE;
+    this->type = DI;
     this->startKey = 0;
     this->lastKey = static_cast<uint64_t>(-1);
     this->memtableId = memtableId;
@@ -39,4 +40,8 @@ bool DelayMemtable::setLastKey(uint64_t key) {
 //    }
     lastKey=key;
     return true;
+}
+
+int DelayMemtable::getDataNum(){
+    return mem.size();
 }
