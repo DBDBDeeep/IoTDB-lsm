@@ -198,3 +198,23 @@ void DataFactory:: delayedTest(){
 //    }
     delete tree;
 };
+
+void DataFactory::printDelayData(){
+
+    int delaySSTableNum= tree->disk->delaySSTables.size();
+    int delaySSTableSize=0;
+    if(delaySSTableNum!= 0){
+        delaySSTableSize= tree->disk->delaySSTables.front()->ss.size();
+    }
+
+    cout<<"the number of delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
+
+    int delayImmMemtableNum=0;
+    int delayActiveMemtableNum=tree->activeDelayMemtable->mem.size();
+    for(auto memtable : tree->immMemtableList){
+        if(memtable->type=='D') delayImmMemtableNum++;
+    }
+
+    cout<<"the number of delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
+
+}

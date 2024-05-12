@@ -52,6 +52,8 @@ public:
     bool setStartKey(uint64_t key) override;
     bool setLastKey(uint64_t key) override;
     size_t getSize();
+    int getDataNum();
+
 };
 
 #endif // MEMTABLE_H

@@ -30,6 +30,7 @@ int main(){
     /**out of order data 테스트**/
     factory.generateDelayedDataset(n,outOfOrderRatio,numSegments);
     factory.delayedTest();
+    factory.printDelayData();
 
     return 0;
 

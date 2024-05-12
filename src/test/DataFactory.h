@@ -8,6 +8,7 @@ public:
     void NormalTest();
     void generateDelayedDataset(int n, double outOfOrderRatio, int numSegments);
     void delayedTest();
+    void printDelayData();
 private:
     LSM* tree;
     int outOfOrderCount;    //o3 data 몇개인지 (o3데이터 어디에 있는지 위치 계산할 때 필요)
