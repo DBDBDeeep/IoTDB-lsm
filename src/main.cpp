@@ -19,8 +19,9 @@ int main(){
     /**parameter 설정
         o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/
     int n = 4000; // 데이터셋 크기
-    double outOfOrderRatio = 0.1; // out of order 비율
     int numSegments = 10; // out of order 세그먼트 개수
+    double outOfOrderRatio = 0.1; // out of order 비율
+
 
     /**out of order 없는 data 테스트**/
 
@@ -29,8 +30,14 @@ int main(){
 
     /**out of order data 테스트**/
     factory.generateDelayedDataset(n,outOfOrderRatio,numSegments);
-    factory.delayedTest();
+    //factory.delayedTest();
     factory.printDelayData();
+
+    size_t size = 4 * 1024; // 예: 4KB
+
+    factory.writeToFile(size);
+    factory.readFromFile(size);
+
 
     return 0;
 

@@ -2,6 +2,9 @@
 #include "DataFactory.h"
 #include <random>
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <chrono>
 
 using namespace std;
 
@@ -216,5 +219,49 @@ void DataFactory::printDelayData(){
     }
 
     cout<<"the number of delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
+
+}
+
+void DataFactory::writeToFile(size_t bytes){
+
+    ofstream file(filename, ios::binary);
+    vector<char> data(bytes);
+
+    if(!file.is_open()){
+        cout<<"안녕ㄹ\n";
+    }
+
+    // 데이터를 무작위로 생성
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(0, 255);
+
+    for (size_t i = 0; i < bytes; ++i) {
+        data[i] = static_cast<char>(distrib(gen));
+    }
+
+    auto start = chrono::high_resolution_clock::now();
+    file.write(data.data(), data.size());
+    auto end = chrono::high_resolution_clock::now();
+
+    chrono::duration<double, std::milli> elapsed = end - start;
+    cout << "Write time: " << elapsed.count() << " ms" << endl;
+
+    file.close();
+
+}
+void DataFactory::readFromFile(size_t bytes){
+
+    ifstream file(filename, ios::binary);
+    vector<char> data(bytes);
+
+    auto start = chrono::high_resolution_clock::now();
+    file.read(data.data(), bytes);
+    auto end = chrono::high_resolution_clock::now();
+
+    chrono::duration<double, std::milli> elapsed = end - start;
+    cout << "Read time: " << elapsed.count() << " ms" << endl;
+
+    file.close();
 
 }
