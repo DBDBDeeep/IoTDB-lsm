@@ -34,3 +34,5 @@
 /cmake-build-debug
 .idea/
 tests/lib/
+
+.DS_Store
