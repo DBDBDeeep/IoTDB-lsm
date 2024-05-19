@@ -79,9 +79,11 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
     map<uint64_t, int> results;
     for (auto imm : immMemtableList) {
         flag = false;
-        for (auto it = imm->mem.lower_bound(start); it != imm->mem.end() && it->first <= end; ++it) {
-            results[it->first] = it->second;
-            flag = true;
+        for (const auto& entry : imm->mem) {
+            if (entry.first >= start && entry.first <= end) {
+                results[entry.first] = entry.second;
+                flag = true;
+            }
         }
         if(flag) ids.push_back("("+to_string(imm->memtableId)+")");
     }
@@ -115,35 +117,42 @@ map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
 }
 
 
-
-IMemtable* LSM::transformActiveToImm(IMemtable* memtable){  //0 normal 1 delay
-
+IMemtable* LSM::transformActiveToImm(IMemtable* memtable) {
 
     if(immMemtableList.size()==memtableNum){
         flush();
     }
 
-    if (auto normalPtr = dynamic_cast<NormalMemtable*>(memtable)){
-        activeNormalMemtable->setState(IMM);
-        activeNormalMemtable->setStartKey(activeNormalMemtable->mem.begin()->first);
-        activeNormalMemtable->setLastKey(activeNormalMemtable->mem.rbegin()->first);
-        immMemtableList.push_back(activeNormalMemtable);
-        activeNormalMemtable = new NormalMemtable(++currentId);
-        return dynamic_cast<NormalMemtable*>(activeNormalMemtable);
+    uint64_t minKey = numeric_limits<uint64_t>::max();
+    uint64_t maxKey = numeric_limits<uint64_t>::min();
 
+    auto updateKeys = [&](auto memtablePtr) {
+        for (const auto& entry : memtablePtr->mem) {
+            if (entry.first < minKey) minKey = entry.first;
+            if (entry.first > maxKey) maxKey = entry.first;
+        }
+        memtablePtr->setState(IMM);
+        if (minKey != numeric_limits<uint64_t>::max()) {
+            memtablePtr->setStartKey(minKey);
+        }
+        if (maxKey != numeric_limits<uint64_t>::min()) {
+            memtablePtr->setLastKey(maxKey);
+        }
+        immMemtableList.push_back(memtablePtr);
+    };
+
+    if (auto normalPtr = dynamic_cast<NormalMemtable*>(memtable)){
+        updateKeys(activeNormalMemtable);
+        activeNormalMemtable = new NormalMemtable(++currentId);
+        activeNormalMemtable->setStartKey(maxKey);
+        return dynamic_cast<NormalMemtable*>(activeNormalMemtable);
     } else if (auto delayPtr = dynamic_cast<DelayMemtable*>(memtable)){
-        activeDelayMemtable->setState(IMM);
-        activeDelayMemtable->setStartKey(activeDelayMemtable->mem.begin()->first);
-        activeDelayMemtable->setLastKey(activeDelayMemtable->mem.rbegin()->first);
-        immMemtableList.push_back(activeDelayMemtable);
+        updateKeys(activeDelayMemtable);
         activeDelayMemtable = new DelayMemtable(++currentId);
         return dynamic_cast<DelayMemtable*>(activeDelayMemtable);
-    }
-
-    else
+    } else {
         throw logic_error("transformActiveToImm 주소비교.. 뭔가 문제가 있는 듯 하오.");
-
-
+    }
 }
 
 int LSM::flush(){
@@ -157,36 +166,46 @@ int LSM::flush(){
     return 0;
 
 }
-
 void LSM::printActiveMemtable(bool printKV){
+    auto findMinMaxKeys = [](const auto& memMap) {
+        uint64_t minKey = std::numeric_limits<uint64_t>::max();
+        uint64_t maxKey = std::numeric_limits<uint64_t>::min();
+        for (const auto& pair : memMap) {
+            if (pair.first < minKey) minKey = pair.first;
+            if (pair.first > maxKey) maxKey = pair.first;
+        }
+        return std::make_pair(minKey, maxKey);
+    };
 
-    cout<<"\n=======print Active Nomal Memtable=====\n";
-    std::cout << "Memtable Id: "<< activeNormalMemtable->memtableId << ", "
-            << "Memtable Size: "<< activeNormalMemtable->getSize() << ", "
-              << "total data : "<< activeNormalMemtable->mem.size() << "\n";
+    cout << "\n=======print Active Nomal Memtable=====\n";
+    cout << "Memtable Id: " << activeNormalMemtable->memtableId << ", "
+         << "Memtable Size: " << activeNormalMemtable->getSize() << ", "
+         << "total data : " << activeNormalMemtable->mem.size() << "\n";
 
-    if(!activeNormalMemtable->mem.empty()) {
-        std::cout << "(startKey: " << activeNormalMemtable->startKey << ", "
-                  << "lastKey: " << activeNormalMemtable->mem.rbegin()->first << ")\n";
+    if (!activeNormalMemtable->mem.empty()) {
+        auto keys = findMinMaxKeys(activeNormalMemtable->mem);
+        cout << "(startKey: " << keys.first << ", "
+             << "lastKey: " << keys.second << ")\n";
     }
-    if(printKV) {
+    if (printKV) {
         for (const auto &pair: activeNormalMemtable->mem) {
-            std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+            cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
         }
     }
-    cout<<"\n";
+    cout << "\n";
 
-    cout<<"\n======print Active Delay Memtable======\n";
-    std::cout << "Memtable Id: "<< activeDelayMemtable->memtableId << ", "
-            << "Memtable Size: "<< activeDelayMemtable->getSize() << ", "
-            << "total data: "<< activeDelayMemtable->mem.size() << "\n";
-    if(!activeDelayMemtable->mem.empty()) {
-        std::cout << "(startKey: " << activeDelayMemtable->startKey << ", "
-                  << "lastKey: " << activeDelayMemtable->mem.rbegin()->first << ")\n";
+    cout << "\n======print Active Delay Memtable======\n";
+    cout << "Memtable Id: " << activeDelayMemtable->memtableId << ", "
+         << "Memtable Size: " << activeDelayMemtable->getSize() << ", "
+         << "total data: " << activeDelayMemtable->mem.size() << "\n";
+    if (!activeDelayMemtable->mem.empty()) {
+        auto keys = findMinMaxKeys(activeDelayMemtable->mem);
+        cout << "(startKey: " << keys.first << ", "
+             << "lastKey: " << keys.second << ")\n";
     }
-    if(printKV) {
+    if (printKV) {
         for (const auto &pair: activeDelayMemtable->mem) {
-            std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+            cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
         }
     }
     cout<<"\n";

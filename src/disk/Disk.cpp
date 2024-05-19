@@ -42,25 +42,32 @@ map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
     bool flag;
     for (auto ss : normalSSTables) {
         flag = false;
-        for (auto it = ss->ss.lower_bound(start); it != ss->ss.end() && it->first <= end; ++it) {
-            flag = true;
-            results[it->first] = it->second;
+        for (const auto& entry : ss->ss) {
+            if (entry.first >= start && entry.first <= end) {
+                results[entry.first] = entry.second;
+                flag = true;
+            }
         }
-        if(flag) normalSSTableIds.push_back("("+to_string(ss->sstableId)+")");
+        if (flag) normalSSTableIds.push_back("(" + to_string(ss->sstableId) + ")");
     }
+
+    // Delay SSTables
     for (auto ss : delaySSTables) {
         flag = false;
-        for (auto it = ss->ss.lower_bound(start); it != ss->ss.end() && it->first <= end; ++it) {
-            flag = true;
-            results[it->first] = it->second;
+        for (const auto& entry : ss->ss) {
+            if (entry.first >= start && entry.first <= end) {
+                results[entry.first] = entry.second;
+                flag = true;
+            }
         }
-        if(flag) delaySSTableIds.push_back("("+to_string(ss->sstableId)+")");
+        if (flag) delaySSTableIds.push_back("(" + to_string(ss->sstableId) + ")");
     }
+
     // 로깅
-    if(!normalSSTableIds.empty()) {
+    if (!normalSSTableIds.empty()) {
         cout << "found in normalSSTables ";
-        for (auto id: normalSSTableIds) cout << id;
-        cout <<"\n";
+        for (auto id : normalSSTableIds) cout << id;
+        cout << "\n";
     }
     if(!delaySSTableIds.empty()) {
         cout<<"found in delaySSTables ";
@@ -74,12 +81,25 @@ map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
 bool Disk::flush(IMemtable* mem) {
     SSTable* newSSTable = new SSTable(mem->memtableId);
 
+    uint64_t minKey = std::numeric_limits<uint64_t>::max();
+    uint64_t maxKey = std::numeric_limits<uint64_t>::min();
+
     for (const auto& entry : mem->mem) {
         newSSTable->put(entry.first, entry.second);
+        if (entry.first < minKey) {
+            minKey = entry.first;
+        }
+        if (entry.first > maxKey) {
+            maxKey = entry.first;
+        }
     }
 
-    newSSTable->setStartKey(newSSTable->ss.begin()->first);
-    newSSTable->setLastKey(newSSTable->ss.rbegin()->first);
+    if (minKey != std::numeric_limits<uint64_t>::max()) {
+        newSSTable->setStartKey(minKey);
+    }
+    if (maxKey != std::numeric_limits<uint64_t>::min()) {
+        newSSTable->setLastKey(maxKey);
+    }
 
     if (auto normalPtr = dynamic_cast<NormalMemtable*>(mem)) {
         newSSTable->setType(N);

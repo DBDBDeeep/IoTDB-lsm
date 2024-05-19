@@ -14,7 +14,7 @@ enum Type {
 
 struct SSTable {
 public:
-    std::map<uint64_t, int> ss;
+    unordered_map<uint64_t, int> ss;
     Type type;
     uint64_t startKey;
     uint64_t lastKey;

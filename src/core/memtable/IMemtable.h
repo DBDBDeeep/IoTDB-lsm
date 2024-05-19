@@ -1,7 +1,9 @@
 #ifndef MEMTABLE_H
 #define MEMTABLE_H
 
-#include <map>
+#include <iostream>
+
+using namespace std;
 
 enum State{
     ACTIVE, IMM
@@ -13,7 +15,7 @@ enum MemType {
 // Abstract class for memtables
 class IMemtable {
 public:
-    std::map<uint64_t, int> mem;
+    unordered_map<uint64_t, int> mem;
     State state;
     MemType type;
     uint64_t startKey;

@@ -12,8 +12,8 @@ private:
     int flushCount;
 
 public:
-    std::list<SSTable*> normalSSTables;
-    std::list<SSTable*> delaySSTables;
+    list<SSTable*> normalSSTables;
+    list<SSTable*> delaySSTables;
     int readCount;
 
     bool compaction();

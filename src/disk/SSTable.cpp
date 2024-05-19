@@ -34,7 +34,7 @@ void SSTable::printSStable(SSTable *table) {
     cout<<"===== print Active Delay SSTable ";
     cout <<" id: "<< table->sstableId <<" =====\n";
     for(const auto& pair:table->ss){
-        std::cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
+        cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
     }
     cout<<"\n";
 
