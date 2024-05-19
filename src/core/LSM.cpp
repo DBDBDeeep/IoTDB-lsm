@@ -3,12 +3,15 @@
 
 
 bool LSM::isDelayData(uint64_t key){
-    if(activeNormalMemtable->mem.empty()){ //비어있을때는 delay data가 아니다.
-        return false;
-    }else{
-        return activeNormalMemtable->mem.begin()->first > key;
+    //비어있을때도 start key는 있음
+//    if(activeNormalMemtable->mem.empty()){ //비어있을때는 delay data가 아니다.
+//        return false;
+//    }else{
+//        return activeNormalMemtable->mem.begin()->first > key;
+//
+//    }
 
-    }
+    return activeNormalMemtable->startKey > key;
 
 }
 
@@ -17,8 +20,13 @@ void LSM::insertData(IMemtable& memtable, uint64_t key, int value){
     if (memtable.isFull()) {
         try {
             IMemtable* newMemtable = transformActiveToImm(&memtable);
-            newMemtable->setStartKey(key);
-            newMemtable->put(key, value);
+            if(newMemtable->startKey>key){  //delay data
+                insertData(*activeDelayMemtable, key, value);
+            }else{ //normal data
+                newMemtable->setStartKey(key);
+                newMemtable->put(key, value);
+            }
+
             return;
         } catch (exception &e) {
             cerr << e.what() << "\n";
