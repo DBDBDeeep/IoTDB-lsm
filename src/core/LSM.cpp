@@ -246,3 +246,25 @@ void LSM::printImmMemtable(){
     return;
 
 }
+
+void LSM::makeFile(const std::vector<std::pair<uint64_t, int>>& sortedData ,int flag) {
+
+    string filename;
+
+    if(flag){  //normal
+        filename ="../src/test/SSTable/NormalSStable" + to_string(++fileCounter) + ".txt";
+    }else{  //delay
+        filename ="../src/test/SSTable/DelaySStable" + to_string(++fileCounter) + ".txt";
+    }
+
+    ofstream outputFile(filename);
+    if (!outputFile.is_open()) {
+        cerr << "Failed to open output file: " << filename << endl;
+        return;
+    }
+    for (const auto& pair : sortedData) {
+        outputFile << pair.first << "\t" << pair.second << "\n";
+    }
+    outputFile.close();
+    cout << "Data written to " << filename << endl;
+}

@@ -3,6 +3,8 @@
 #define LSM_H
 
 #include <iostream>
+#include <fstream>
+#include <map>
 #include <queue>
 #include "../disk/Disk.h"
 #include "stdexcept"
@@ -29,6 +31,7 @@ public:
     NormalMemtable* activeNormalMemtable;
     DelayMemtable* activeDelayMemtable;
     Disk* disk;
+    int fileCounter = 0;  //testㅑㅜ
 
     bool isDelayData(uint64_t key);
     void insert(uint64_t key, int value);
@@ -44,6 +47,7 @@ public:
     //디버깅용
     void printActiveMemtable(bool printKV);
     void printImmMemtable();
+    void makeFile(const vector<pair<uint64_t, int>>& sortedData,int flag);
 
 };
 
