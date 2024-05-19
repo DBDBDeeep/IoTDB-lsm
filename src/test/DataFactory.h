@@ -9,6 +9,7 @@ public:
     void generateDelayedDataset(int n, double outOfOrderRatio, int numSegments);
     void delayedTest();
     void printDelayData();
+    void deleteAllSSTable();
     void writeToFile(size_t bytes);
     void readFromFile(size_t bytes);
 private:
