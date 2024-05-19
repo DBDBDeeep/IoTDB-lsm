@@ -157,7 +157,24 @@ IMemtable* LSM::transformActiveToImm(IMemtable* memtable) {
 
 int LSM::flush(){
 
+    int flag=0; //0: delay, 1: normal
+
     IMemtable* flushMemtable=immMemtableList.front();
+
+    if(immMemtableList.front()->type==NI){
+        flag=1;
+    }
+
+    // unordered_map에서 데이터 추출
+    vector<std::pair<uint64_t, int>> sortedData(flushMemtable->mem.begin(), flushMemtable->mem.end());
+
+    // vector를 정렬
+    sort(sortedData.begin(), sortedData.end(), [](const auto& a, const auto& b) {
+        return a.first < b.first;
+    });
+
+    //파일 만들기
+    makeFile(sortedData, flag);
 
     disk->flush(flushMemtable);
 
