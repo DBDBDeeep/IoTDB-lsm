@@ -284,6 +284,57 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
     }
 }
 
+void DataFactory::writeToInitFile(string filePath, vector<uint64_t>& dataset) {
+    ofstream outputFile(filePath);
+    std::cout << ">> Write to Init File Progress \n";
+
+    if (!outputFile.is_open()) {
+        cerr << "ERR: workload dataset 파일 열기 오류" << endl;
+        return;
+    }
+    const uint64_t progressInterval = dataset.size() / 10; // 1%마다 진행률 출력
+    for(int i=0; i<dataset.size(); i++){
+        outputFile << "INSERT," << dataset[i] << endl;
+        if (i % progressInterval == 0) {
+            std::cout << "Progress: " << (i * 100 / dataset.size()) << "%\n";
+        }
+    }
+
+    cout<<"100% file write완료\n";
+    outputFile.close();
+}
+
+
+
+//파일에 워크로드 데이터를 쓰는 함수
+void DataFactory::writeToWorkloadFile(string filePath, vector<Record>& dataset) {
+    ofstream outputFile(filePath);
+    if (!outputFile.is_open()) {
+        cerr << "workload dataset 파일 열기 오류" << endl;
+        return;
+    }
+    const uint64_t progressInterval = dataset.size() / 10; // 1%마다 진행률 출력
+//    for(int i=0; i<dataset.size(); i++){
+//        outputFile << "INSERT," << dataset[i] << endl;
+//        if (i % progressInterval == 0) {
+//            std::cout << "Progress: " << (i * 100 / dataset.size()) << "%\n";
+//        }
+//    }
+    std::cout << ">> Write to Workload File Progress \n";
+    for(int i=0; i<dataset.size(); i++){
+        if (strcmp(dataset[i].op.c_str(), "RANGE")==0) {
+            outputFile << dataset[i].op << "," << dataset[i].start_key << " " << dataset[i].end_key << endl;
+        } else {
+            outputFile << dataset[i].op << "," << dataset[i].key << endl;
+        }
+
+        if (i % progressInterval == 0) {
+            cout << (i * 100 / dataset.size()) << "%\n";
+        }
+    }
+    cout<<"100% file write완료\n";
+    outputFile.close();
+}
 // workload 데이터셋 생성 함수
 void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string filePath, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
 
