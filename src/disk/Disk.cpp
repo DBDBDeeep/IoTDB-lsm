@@ -13,7 +13,7 @@ int Disk::read(uint64_t key) {
         // 맵에서 키 검색
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
-            cout<<"(found in normalSSTable:"<<ss->sstableId<<")";
+//            cout<<"(found in normalSSTable:"<<ss->sstableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -23,7 +23,7 @@ int Disk::read(uint64_t key) {
         // 맵에서 키 검색
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
-            cout<<"(found in delaySStale:"<<ss->sstableId<<")";
+//            cout<<"(found in delaySStale:"<<ss->sstableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -57,16 +57,16 @@ map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
         if(flag) delaySSTableIds.push_back("("+to_string(ss->sstableId)+")");
     }
     // 로깅
-    if(!normalSSTableIds.empty()) {
-        cout << "found in normalSSTables ";
-        for (auto id: normalSSTableIds) cout << id;
-        cout <<"\n";
-    }
-    if(!delaySSTableIds.empty()) {
-        cout<<"found in delaySSTables ";
-        for(auto id : delaySSTableIds) cout << id;
-        cout <<"\n";
-    }
+//    if(!normalSSTableIds.empty()) {
+//        cout << "found in normalSSTables ";
+//        for (auto id: normalSSTableIds) cout << id;
+//        cout <<"\n";
+//    }
+//    if(!delaySSTableIds.empty()) {
+//        cout<<"found in delaySSTables ";
+//        for(auto id : delaySSTableIds) cout << id;
+//        cout <<"\n";
+//    }
 
     return results;
 }

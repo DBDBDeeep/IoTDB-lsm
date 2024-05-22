@@ -46,7 +46,7 @@ int LSM::readData(uint64_t key){
         // 맵에서 키 검색
         auto it = imm->mem.find(key);
         if (it != imm->mem.end()) {
-            cout<<"(found in id:"<<imm->memtableId<<")";
+//            cout<<"(found in id:"<<imm->memtableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -55,7 +55,7 @@ int LSM::readData(uint64_t key){
 }
 
 int LSM::diskRead(uint64_t key){
-    cout<<"reading Disk data~";
+//    cout<<"reading Disk data~";
     disk->readCount++;
 
     return disk->read(key);
@@ -86,11 +86,11 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
         diskData=diskRange(start, end);
     }
 
-    if(!ids.empty()){
-        cout << "found in immMemtables ";
-        for (auto id: ids) cout << id;
-        cout <<"\n";
-    }
+//    if(!ids.empty()){
+//        cout << "found in immMemtables ";
+//        for (auto id: ids) cout << id;
+//        cout <<"\n";
+//    }
 
     //병합
     results.insert(diskData.begin(), diskData.end());
@@ -99,7 +99,7 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
 }
 
 map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
-    cout<<"ranging Disk datas~ ";
+//    cout<<"ranging Disk datas~ ";
     map<uint64_t, int> diskData = disk->range( start, end);
     disk->readCount += diskData.size();
 
