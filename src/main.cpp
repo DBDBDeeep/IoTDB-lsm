@@ -1,7 +1,6 @@
 
-
-#include "core/LSM.h"
 #include "test/DataFactory.h"
+#include "test/workload/Workload.h"
 #include <iostream>
 
 using namespace std;
@@ -15,30 +14,61 @@ void 딜레이테스트();
 int main(){
 
     DataFactory factory;
+    Workload workloadA, workloadB;
+    /**해나 시간 측정 테스트**/
+    // size_t size = 4 * 1024; // 예: 4KB
+    // factory.writeToFile(size);
+    // factory.readFromFile(size);
 
+
+
+    /**out of order data 생성 및 파일 쓰기**/
     /**parameter 설정
-        o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/
-    int n = 4000; // 데이터셋 크기
-    int numSegments = 10; // out of order 세그먼트 개수
-    double outOfOrderRatio = 0.1; // out of order 비율
+       o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/
+    int initDataCount = 10000; // 데이터셋 크기
+    int numSegments = 4; // out of order 세그먼트 개수
+    double outOfOrderRatio = 0.4; // out of order 비율
+    string initfilePath = "../src/test/dataset/initData.txt";
+
+    factory.generateDelayedDataset(initDataCount,outOfOrderRatio,numSegments);
+    vector<Record> initdataset = workloadA.readFile(initfilePath);
+
+    /**workloadA
+     * Insert 100 Read 0
+     * **/
+
+    string filePath = "../src/test/dataset/workloadA.txt";
+    double readProportion = 0.2; // 읽기 작업 비율
+    double insertProportion = 0.8; // 삽입 작업 비율
+    double singleReadProportion = 0.5; // 단일 read 작업에 대한 읽기 작업 비율
+    double rangeReadProportion = 0.5; // range 읽기 작업 비율
+
+    factory.generateWorkloadDataset(initdataset, filePath, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
+    vector<Record> datasetA = workloadA.readFile(filePath);
+    workloadA.executeWorkload(datasetA);
 
 
-    /**out of order 없는 data 테스트**/
+    LSM* tree = workloadA.getTree();
+    tree->printActiveMemtable(false);
+    tree->printImmMemtable();
+    tree->disk->printSSTableList();
 
-//    factory.generateNormalDataset(n);
-//    factory.NormalTest();
-
-    /**out of order data 테스트**/
-    factory.generateDelayedDataset(n,outOfOrderRatio,numSegments);
-    //factory.delayedTest();
-    factory.printDelayData();
-
-    size_t size = 4 * 1024; // 예: 4KB
-
-    factory.writeToFile(size);
-    factory.readFromFile(size);
-
-
+    /**workloadB
+    * Insert 70 Read 30
+    * **/
+//    string filePathB = "../src/test/dataset/workloadB.txt";
+//    double readProportion = 0.3; // 읽기 작업 비율
+//    double insertProportion = 0.7; // 삽입 작업 비율
+//    double singleReadProportion = 0.5; // 단일 read 작업에 대한 읽기 작업 비율
+//    double rangeReadProportion = 0.5; // range 읽기 작업 비율
+    /**workloadC
+    * Insert 80 Read 20
+    * **/
+//    string filePathC = "../src/test/dataset/workloadC.txt";
+//    double readProportion = 0.2; // 읽기 작업 비율
+//    double insertProportion = 0.8; // 삽입 작업 비율
+//    double singleReadProportion = 0.5; // 단일 read 작업에 대한 읽기 작업 비율
+//    double rangeReadProportion = 0.5; // range 읽기 작업 비율
     return 0;
 
 }
