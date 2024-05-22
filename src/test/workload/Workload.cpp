@@ -47,6 +47,29 @@ vector<Record> Workload::readFile(const string& filePath) {
     file.close();
     return dataset;
 }
+void Workload::executeWorkload(vector<Record>& dataset){
+
+    cout<<"workload 실행 시작\n";
+    const uint64_t progressInterval = dataset.size() / 10; // 1%마다 진행률 출력
+
+    for(int i=0; i<dataset.size(); i++){
+
+        if (dataset[i].op == "READ") {
+            tree->readData(dataset[i].key);
+        } else if (dataset[i].op == "RANGE") {
+            tree->range(dataset[i].start_key, dataset[i].end_key);
+        } else {
+            tree->insert(dataset[i].key, dataset[i].key*2);
+        }
+        if (i % progressInterval == 0) {
+            cout << (i * 100 / dataset.size()) << "%\n";
+        }
+    }
+
+    cout<<"workload 실행 끝\n";
+
+
+}
 
 LSM* Workload::getTree() {
     return tree;
