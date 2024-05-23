@@ -1,6 +1,6 @@
 
 
-#include "core/LSM.h"
+#include "core/DBmanager.h"
 #include "test/DataFactory.h"
 #include <iostream>
 
@@ -18,7 +18,7 @@ int main(){
 
     /**parameter 설정
         o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/
-    int n = 4000; // 데이터셋 크기
+    int n = 1000; // 데이터셋 크기
     int numSegments = 10; // out of order 세그먼트 개수
     double outOfOrderRatio = 0.1; // out of order 비율
 
@@ -29,14 +29,15 @@ int main(){
 //    factory.NormalTest();
 
     /**out of order data 테스트**/
+    factory.DBmanager();
     factory.generateDelayedDataset(n,outOfOrderRatio,numSegments);
-    //factory.delayedTest();
+    factory.delayedTest();
     factory.printDelayData();
 
-    size_t size = 4 * 1024; // 예: 4KB
-
-    factory.writeToFile(size);
-    factory.readFromFile(size);
+//    size_t size = 4 * 1024; // 예: 4KB
+//
+//    factory.writeToFile(size);
+//    factory.readFromFile(size);
 
 
     return 0;
@@ -53,7 +54,7 @@ int main(){
 //
 //    tree->printActiveMemtable(true);
 //    tree->printImmMemtable();
-//    tree->disk->printSSTableList();
+//    tree->MockDisk->printSSTableList();
 //
 //    cout<<"\n\n\n\n========read/range test=========\n";
 //
@@ -188,12 +189,12 @@ int main(){
 //
 //    tree->printActiveMemtable(false);
 //    tree->printImmMemtable();
-//    tree->disk->printSSTableList();
+//    tree->MockDisk->printSSTableList();
 //
 //    cout<<"\n\n\n\n========read/range test=========\n";
 //
 //    cout<<"key : "<<1200<<" value : "<<tree->readData(1200)<<"\n"; // normal ImmMemtable read
-//    cout<<"key : "<<1000<<" value : "<<tree->readData(1000)<<"\n"; // disk read
+//    cout<<"key : "<<1000<<" value : "<<tree->readData(1000)<<"\n"; // MockDisk read
 //
 //    cout<<"\n[range] 한개의 DelaySStalble range : 1~10\n";
 //    map<uint64_t, int> result = tree->range(1,10);

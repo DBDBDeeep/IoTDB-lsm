@@ -1,4 +1,4 @@
-#include "../core/LSM.h"
+#include "../core/DBmanager.h"
 #include "DataFactory.h"
 #include <random>
 #include <iostream>
@@ -10,7 +10,7 @@ using namespace std;
 
 //o3 데이터 없이 데이터셋 생성
 void DataFactory:: generateNormalDataset(int n){
-    tree = new LSM();
+    tree = new DBmanager();
     for (uint64_t i = 1; i <= n; ++i) {
         auto data = make_pair(i, static_cast<int>(i * 2));
         tree->insert(data.first, data.second);
@@ -72,7 +72,7 @@ void DataFactory:: NormalTest(){
 // o3데이터 포함 데이터셋 생성 함수
 void DataFactory:: generateDelayedDataset(int n, double outOfOrderRatio, int numSegments) {
     vector<pair<uint64_t, int>> dataset;
-    tree = new LSM();
+    tree = new DBmanager();
 
     // out of order 데이터 개수 계산
      outOfOrderCount = static_cast<int>(n * outOfOrderRatio);
@@ -139,7 +139,7 @@ void DataFactory:: generateDelayedDataset(int n, double outOfOrderRatio, int num
 
         }
     }
-    tree = new LSM();
+    tree = new DBmanager();
     // 데이터셋 tree에 삽입
     cout << "최종 DataSet" << endl;
     for (const auto& pair : dataset) {
@@ -257,7 +257,7 @@ void DataFactory::writeToFile(size_t bytes){
     file.write(data.data(), data.size());
     auto end = chrono::high_resolution_clock::now();
 
-    chrono::duration<double, std::milli> elapsed = end - start;
+    chrono::duration<double, milli> elapsed = end - start;
     cout << "Write time: " << elapsed.count() << " ms" << endl;
 
     file.close();
@@ -272,7 +272,7 @@ void DataFactory::readFromFile(size_t bytes){
     file.read(data.data(), bytes);
     auto end = chrono::high_resolution_clock::now();
 
-    chrono::duration<double, std::milli> elapsed = end - start;
+    chrono::duration<double, milli> elapsed = end - start;
     cout << "Read time: " << elapsed.count() << " ms" << endl;
 
     file.close();

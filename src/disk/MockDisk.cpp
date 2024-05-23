@@ -1,12 +1,12 @@
-#include "Disk.h"
+#include "MockDisk.h"
 
 
-bool Disk::compaction() {
+bool MockDisk::compaction() {
     //Todo: 구현
     return true;
 }
 
-int Disk::read(uint64_t key) {
+int MockDisk::read(uint64_t key) {
 
     //normal SStale 뒤지기
     for (auto ss : normalSSTables) {
@@ -32,14 +32,15 @@ int Disk::read(uint64_t key) {
     return -1;
 }
 
-map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
-
+map<uint64_t, int> MockDisk::range(uint64_t start, uint64_t end) {
     // 로깅
     list<string> normalSSTableIds;
     list<string> delaySSTableIds;
 
     map<uint64_t, int> results;
     bool flag;
+
+    // Normal SSTables
     for (auto ss : normalSSTables) {
         flag = false;
         for (const auto& entry : ss->ss) {
@@ -69,16 +70,16 @@ map<uint64_t, int> Disk::range(uint64_t start, uint64_t end) {
         for (auto id : normalSSTableIds) cout << id;
         cout << "\n";
     }
-    if(!delaySSTableIds.empty()) {
-        cout<<"found in delaySSTables ";
-        for(auto id : delaySSTableIds) cout << id;
-        cout <<"\n";
+    if (!delaySSTableIds.empty()) {
+        cout << "found in delaySSTables ";
+        for (auto id : delaySSTableIds) cout << id;
+        cout << "\n";
     }
 
     return results;
 }
 
-bool Disk::flush(IMemtable* mem) {
+bool MockDisk::flush(IMemtable* mem) {
     SSTable* newSSTable = new SSTable(mem->memtableId);
 
     uint64_t minKey = std::numeric_limits<uint64_t>::max();
@@ -110,11 +111,10 @@ bool Disk::flush(IMemtable* mem) {
         delaySSTables.push_back(newSSTable);
     }
 
-
     return true;
 }
 
-void Disk::printSSTableList() {
+void MockDisk::printSSTableList() {
 
     cout<<"\n============NormalSSTable===========\n";
     for(auto table: normalSSTables){

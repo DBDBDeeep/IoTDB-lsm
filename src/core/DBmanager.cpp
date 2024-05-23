@@ -1,8 +1,8 @@
 
-#include "LSM.h"
+#include "DBManager.h"
 
 
-bool LSM::isDelayData(uint64_t key){
+bool DBManager::isDelayData(uint64_t key){
     //비어있을때도 start key는 있음
 //    if(activeNormalMemtable->mem.empty()){ //비어있을때는 delay data가 아니다.
 //        return false;
@@ -15,7 +15,7 @@ bool LSM::isDelayData(uint64_t key){
 
 }
 
-void LSM::insertData(IMemtable& memtable, uint64_t key, int value){
+void DBManager::insertData(IMemtable& memtable, uint64_t key, int value){
 
     if (memtable.isFull()) {
         try {
@@ -37,7 +37,7 @@ void LSM::insertData(IMemtable& memtable, uint64_t key, int value){
     return;
 }
 
-void LSM::insert(uint64_t key, int value){
+void DBManager::insert(uint64_t key, int value){
     if(!isDelayData(key)) {
         insertData(*activeNormalMemtable, key, value);
     }
@@ -48,7 +48,7 @@ void LSM::insert(uint64_t key, int value){
 
 
 
-int LSM::readData(uint64_t key){
+int DBManager::readData(uint64_t key){
 
     for (auto imm : immMemtableList) {
         // 맵에서 키 검색
@@ -59,24 +59,22 @@ int LSM::readData(uint64_t key){
         }
     }
 
-    return diskRead(key); //빈함수
+    return DiskRead(key); //빈함수
 }
 
-int LSM::diskRead(uint64_t key){
+int DBManager::DiskRead(uint64_t key){
     cout<<"reading Disk data~";
-    disk->readCount++;
+    Disk->readCount++;
 
-    return disk->read(key);
+    return Disk->read(key);
 }
 
-map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
-
-    // 로깅 ====
+map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
     list<string> ids;
     bool flag;
-    // ======
-
     map<uint64_t, int> results;
+
+    // unordered_map을 스캔하여 범위 내 데이터 추출
     for (auto imm : immMemtableList) {
         flag = false;
         for (const auto& entry : imm->mem) {
@@ -88,36 +86,35 @@ map<uint64_t, int> LSM::range(uint64_t start, uint64_t end){
         if(flag) ids.push_back("("+to_string(imm->memtableId)+")");
     }
 
-    // 만약 start 범위가 disk일 가능성이 있을때
-    map<uint64_t, int> diskData;
-
-    if(results.empty() || start < results.begin()->first
-                       || end !=results.rbegin()->first){
-        diskData=diskRange(start, end);
+    // 만약 start 범위가 Disk일 가능성이 있을때
+    map<uint64_t, int> DiskData;
+    if(results.empty() || start < results.begin()->first || end != results.rbegin()->first){
+        DiskData = DiskRange(start, end);
     }
 
     if(!ids.empty()){
         cout << "found in immMemtables ";
         for (auto id: ids) cout << id;
-        cout <<"\n";
+        cout << "\n";
     }
 
     //병합
-    results.insert(diskData.begin(), diskData.end());
+    results.insert(DiskData.begin(), DiskData.end());
 
     return results;
 }
 
-map<uint64_t, int> LSM::diskRange(uint64_t start, uint64_t end){
-    cout<<"ranging Disk datas~ ";
-    map<uint64_t, int> diskData = disk->range( start, end);
-    disk->readCount += diskData.size();
 
-    return diskData;
+map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
+    cout<<"ranging Disk datas~ ";
+    map<uint64_t, int> DiskData = Disk->range(start, end);
+    Disk->readCount += DiskData.size();
+
+    return DiskData;
 }
 
 
-IMemtable* LSM::transformActiveToImm(IMemtable* memtable) {
+IMemtable* DBManager::transformActiveToImm(IMemtable* memtable) {
 
     if(immMemtableList.size()==memtableNum){
         flush();
@@ -155,7 +152,8 @@ IMemtable* LSM::transformActiveToImm(IMemtable* memtable) {
     }
 }
 
-int LSM::flush(){
+
+int DBManager::flush(){
 
     int flag=0; //0: delay, 1: normal
 
@@ -176,14 +174,14 @@ int LSM::flush(){
     //파일 만들기
     makeFile(sortedData, flag);
 
-    disk->flush(flushMemtable);
+    Disk->flush(flushMemtable);
 
     immMemtableList.pop_front();
 
     return 0;
 
 }
-void LSM::printActiveMemtable(bool printKV){
+void DBManager::printActiveMemtable(bool printKV){
     auto findMinMaxKeys = [](const auto& memMap) {
         uint64_t minKey = std::numeric_limits<uint64_t>::max();
         uint64_t maxKey = std::numeric_limits<uint64_t>::min();
@@ -225,14 +223,14 @@ void LSM::printActiveMemtable(bool printKV){
             cout << "Key: " << pair.first << ", Value: " << pair.second << "\n";
         }
     }
-    cout<<"\n";
+    cout << "\n";
 
     return;
-
 }
 
 
-void LSM::printImmMemtable(){
+
+void DBManager::printImmMemtable(){
 
     cout<<"\n============ImmMemtable===========\n";
     for (auto imm: immMemtableList) {
@@ -247,7 +245,7 @@ void LSM::printImmMemtable(){
 
 }
 
-void LSM::makeFile(const std::vector<std::pair<uint64_t, int>>& sortedData ,int flag) {
+void DBManager::makeFile(const std::vector<std::pair<uint64_t, int>>& sortedData ,int flag) {
 
     string filename;
 

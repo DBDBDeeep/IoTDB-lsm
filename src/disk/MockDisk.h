@@ -1,12 +1,12 @@
-#ifndef DISK_H
-#define DISK_H
+#ifndef MockDisk_H
+#define MockDisk_H
 
 #include <list>
 #include "SSTable.h" //
 #include "../core/memtable/IMemtable.h"
 
 
-struct Disk {
+struct MockDisk {
 private:
     int compactionCount;
     int flushCount;
@@ -23,4 +23,4 @@ public:
     void printSSTableList();
 };
 
-#endif // DISK_H
+#endif // MockDisk_H

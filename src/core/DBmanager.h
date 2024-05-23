@@ -1,12 +1,12 @@
 
-#ifndef LSM_H
-#define LSM_H
+#ifndef DBManager_H
+#define DBManager_H
 
 #include <iostream>
 #include <fstream>
 #include <map>
 #include <queue>
-#include "../disk/Disk.h"
+#include "disk/MockDisk.h"
 #include "stdexcept"
 
 
@@ -18,19 +18,19 @@ using namespace std;
 
 
 
-class LSM {
+class DBManager {
 public:
-    LSM() {
+    DBManager() {
         activeNormalMemtable = new NormalMemtable(++currentId);
         activeDelayMemtable = new DelayMemtable(++currentId);
-        disk = new Disk();
+        Disk = new MockDisk();
     }
     int currentId = 0;
     int memtableNum = 2;
     list<IMemtable*> immMemtableList;
     NormalMemtable* activeNormalMemtable;
     DelayMemtable* activeDelayMemtable;
-    Disk* disk;
+    MockDisk* Disk;
     int fileCounter = 0;  //testㅑㅜ
 
     bool isDelayData(uint64_t key);
@@ -38,8 +38,8 @@ public:
     void insertData(IMemtable& memtable, uint64_t key, int value);
     int readData(uint64_t key);
     map<uint64_t, int> range(uint64_t start, uint64_t end);
-    int diskRead(uint64_t key);
-    map<uint64_t, int> diskRange(uint64_t start, uint64_t end);
+    int DiskRead(uint64_t key);
+    map<uint64_t, int> DiskRange(uint64_t start, uint64_t end);
     IMemtable* transformActiveToImm(IMemtable* memtable); // normal? delay?
     int flush();
 
