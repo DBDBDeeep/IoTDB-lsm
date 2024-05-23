@@ -13,6 +13,7 @@ add_executable(IoTDB_lsm
         src/disk/SSTable.cpp
         src/test/DataFactory.cpp
         src/workload/workload.h
+        src/test/CompactionTest.cpp
 )
 
 

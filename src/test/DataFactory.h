@@ -9,7 +9,7 @@ public:
     void generateDelayedDataset(int n, double outOfOrderRatio, int numSegments);
     void delayedTest();
     void printDelayData();
-    void DBManager();
+    void deleteAllSSTable();
     //N바이트 쓸때 시간 측정
     void writeToFile(size_t bytes);
     void readFromFile(size_t bytes);

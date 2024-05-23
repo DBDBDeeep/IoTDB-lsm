@@ -1,4 +1,4 @@
-#include "../core/DBmanager.h"
+#include "../core/DBManager.h"
 #include "DataFactory.h"
 #include <random>
 #include <iostream>
@@ -10,7 +10,7 @@ using namespace std;
 
 //o3 데이터 없이 데이터셋 생성
 void DataFactory:: generateNormalDataset(int n){
-    tree = new DBmanager();
+    tree = new DBManager();
     for (uint64_t i = 1; i <= n; ++i) {
         auto data = make_pair(i, static_cast<int>(i * 2));
         tree->insert(data.first, data.second);
@@ -20,7 +20,7 @@ void DataFactory:: generateNormalDataset(int n){
 void DataFactory:: NormalTest(){
     tree->printActiveMemtable(true);
     tree->printImmMemtable();
-    tree->disk->printSSTableList();
+    tree->Disk->printSSTableList();
 
     //parameter case별로 테스트 결과 달라짐
 //    cout<<"\n\n\n\n========read/range test=========\n";
@@ -72,7 +72,7 @@ void DataFactory:: NormalTest(){
 // o3데이터 포함 데이터셋 생성 함수
 void DataFactory:: generateDelayedDataset(int n, double outOfOrderRatio, int numSegments) {
     vector<pair<uint64_t, int>> dataset;
-    tree = new DBmanager();
+    tree = new DBManager();
 
     // out of order 데이터 개수 계산
      outOfOrderCount = static_cast<int>(n * outOfOrderRatio);
@@ -139,7 +139,7 @@ void DataFactory:: generateDelayedDataset(int n, double outOfOrderRatio, int num
 
         }
     }
-    tree = new DBmanager();
+    tree = new DBManager();
     // 데이터셋 tree에 삽입
     cout << "최종 DataSet" << endl;
     for (const auto& pair : dataset) {
@@ -153,7 +153,7 @@ void DataFactory:: delayedTest(){
 
     tree->printActiveMemtable(false);
     tree->printImmMemtable();
-    tree->disk->printSSTableList();
+    tree->Disk->printSSTableList();
 
     //parameter case별로 테스트 결과 달라짐
 //    cout<<"\n\n\n\n========read/range test=========\n";
@@ -204,10 +204,10 @@ void DataFactory:: delayedTest(){
 
 void DataFactory::printDelayData(){
 
-    int delaySSTableNum= tree->disk->delaySSTables.size();
+    int delaySSTableNum= tree->Disk->delaySSTables.size();
     int delaySSTableSize=0;
     if(delaySSTableNum!= 0){
-        delaySSTableSize= tree->disk->delaySSTables.front()->ss.size();
+        delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
     }
 
     cout<<"the number of delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
