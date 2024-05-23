@@ -2,6 +2,7 @@
 
 #include "core/DBmanager.h"
 #include "test/DataFactory.h"
+#include "test/CompactionTest.h"
 #include <iostream>
 
 using namespace std;
@@ -20,7 +21,7 @@ int main(){
         o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/
     int n = 1000; // 데이터셋 크기
     int numSegments = 10; // out of order 세그먼트 개수
-    double outOfOrderRatio = 0.1; // out of order 비율
+    double outOfOrderRatio = 0.3; // out of order 비율
 
 
     /**out of order 없는 data 테스트**/
@@ -29,10 +30,13 @@ int main(){
 //    factory.NormalTest();
 
     /**out of order data 테스트**/
-    factory.DBmanager();
+    factory.deleteAllSSTable();
     factory.generateDelayedDataset(n,outOfOrderRatio,numSegments);
-    factory.delayedTest();
     factory.printDelayData();
+
+    CompactionTest compaction;
+    compaction.runCompaction();
+
 
 //    size_t size = 4 * 1024; // 예: 4KB
 //
