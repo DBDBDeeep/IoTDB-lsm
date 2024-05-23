@@ -36,3 +36,5 @@
 tests/lib/
 
 .DS_Store
+
+test/SSTable
