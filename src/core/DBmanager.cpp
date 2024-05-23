@@ -260,6 +260,8 @@ void DBManager::makeFile(const std::vector<std::pair<uint64_t, int>>& sortedData
         cerr << "Failed to open output file: " << filename << endl;
         return;
     }
+    outputFile<<sortedData.size()<<"\n";  //사이즈
+    outputFile<<sortedData.begin()->first<<"\t"<<sortedData.rbegin()->first<<"\n"; //처음키, 마지막키
     for (const auto& pair : sortedData) {
         outputFile << pair.first << "\t" << pair.second << "\n";
     }
