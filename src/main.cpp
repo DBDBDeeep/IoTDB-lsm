@@ -14,7 +14,7 @@ void 딜레이테스트();
 int main(){
 
     DataFactory factory;
-    Workload workloadA, workloadB;
+    Workload workloadA;
     /**해나 시간 측정 테스트**/
     // size_t size = 4 * 1024; // 예: 4KB
     // factory.writeToFile(size);
@@ -25,13 +25,13 @@ int main(){
     /**out of order data 생성 및 파일 쓰기**/
     /**parameter 설정
        o3데이터 없이 생성하고 싶으면 outOfOrderRatio = 0, numSegments = 0**/
-    int initDataCount = 10000; // 데이터셋 크기
-    int numSegments = 4; // out of order 세그먼트 개수
-    double outOfOrderRatio = 0.4; // out of order 비율
+    int initDataCount = 1000000; // 데이터셋 크기
+    int numSegments = 8; // out of order 세그먼트 개수
+    double outOfOrderRatio = 0.2; // out of order 비율
     string initfilePath = "../src/test/dataset/initData.txt";
 
     factory.generateDelayedDataset(initDataCount,outOfOrderRatio,numSegments);
-    vector<Record> initdataset = workloadA.readFile(initfilePath);
+    vector<Record> initDataSet = workloadA.readFile(initfilePath);
 
     /**workloadA
      * Insert 100 Read 0
@@ -42,16 +42,6 @@ int main(){
     double insertProportion = 0.8; // 삽입 작업 비율
     double singleReadProportion = 0.5; // 단일 read 작업에 대한 읽기 작업 비율
     double rangeReadProportion = 0.5; // range 읽기 작업 비율
-
-    factory.generateWorkloadDataset(initdataset, filePath, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
-    vector<Record> datasetA = workloadA.readFile(filePath);
-    workloadA.executeWorkload(datasetA);
-
-
-    LSM* tree = workloadA.getTree();
-    tree->printActiveMemtable(false);
-    tree->printImmMemtable();
-    tree->disk->printSSTableList();
 
     /**workloadB
     * Insert 70 Read 30
@@ -69,6 +59,18 @@ int main(){
 //    double insertProportion = 0.8; // 삽입 작업 비율
 //    double singleReadProportion = 0.5; // 단일 read 작업에 대한 읽기 작업 비율
 //    double rangeReadProportion = 0.5; // range 읽기 작업 비율
+
+    factory.generateWorkloadDataset(initDataSet, filePath, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
+    vector<Record> datasetA = workloadA.readFile(filePath);
+    workloadA.executeWorkload(datasetA);
+
+
+    LSM* tree = workloadA.getTree();
+    tree->printActiveMemtable(false);
+    tree->printImmMemtable();
+    tree->disk->printSSTableList();
+
+
     return 0;
 
 }
