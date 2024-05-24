@@ -11,6 +11,9 @@
 
 #include "../core/LSM.h"
 
+#define LOG_PROGRESS(iteration, datasetSize) \
+    cout << (iteration * 100 / datasetSize.size()) << "% \n";
+
 using namespace std;
 struct Record {
     string op;
