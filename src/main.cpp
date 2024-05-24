@@ -75,8 +75,7 @@ int main(){
     CompactionTest compaction;
     compaction.runCompaction();
 
-
-
+    
 
     DBManager* tree = workloadA.getTree();
     tree->printActiveMemtable(false);

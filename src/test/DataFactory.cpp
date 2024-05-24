@@ -15,7 +15,7 @@ void DataFactory:: generateNormalDataset(int n){
 }
 
 
-// o3데이터 포함 데이터셋 생성 함수
+/** DelayData 포함 Data 생성 함수*/
 void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, int numSegments) {
     int iteration = 0; // 진행률 표시를 위한 변수
     int outOfOrderCount = static_cast<int>(dataNum * outOfOrderRatio); // out of order 데이터 총 개수
@@ -26,17 +26,18 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
     mt19937 gen(rd()); // Mersenne Twister 난수 생성기
 
 
-    /**1~dataNum 범위 dataset 초기화*/
+    /**1~dataNum 범위 dataset 초기화
+     * */
     vector<uint64_t> dataSet(dataNum);
 
-    // dataSet 초기화 (1부터 dataNum까지)
     cout<< "dataSet 1부터 dataNum까지 초기화\n";
     std::iota(dataSet.begin(), dataSet.end(), 1);
     cout<< "dataSet 초기화 완료\n";
 
 
-    
-    /**out of order data 각 segment 크기 설정*/
+
+    /**out of order data 각 segment 크기 설정
+     * */
     int remaining = outOfOrderCount / 2;
     int size;
 
@@ -51,7 +52,8 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
     sizes.push_back(remaining); // 남은 크기를 마지막 구간에 추가
 
 
-    /**out of order data segment에 들어갈 key 선정*/
+    /**out of order data segment에 들어갈 key 선정
+     * */
     uniform_int_distribution<> dis( 1, outOfOrderCount / 2);
     int delayedKey = dis(gen); // 첫번째 delaydata 선정
 
@@ -82,7 +84,8 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
 
 
 
-    // outOfOrderKeysPerSegment에 포함되는 key를 찾아 outOfOrderKeys에 저장
+    /**out of order segment에 포함되는 key들 찾아 dataSet에서 제거
+     * */
     unordered_set<uint64_t> outOfOrderKeys;
     for (const auto& segment : outOfOrderKeysPerSegment) {
         for (const auto& key : segment) {
@@ -90,7 +93,6 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
         }
     }
 
-    // outOfOrderKeys에 포함되는 key를 제외한 나머지 key를 dataSet에 저장
     dataSet.erase(
             remove_if(dataSet.begin(), dataSet.end(), [&](uint64_t key) {
                 return outOfOrderKeys.find(key) != outOfOrderKeys.end();
@@ -98,7 +100,9 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
             dataSet.end()
     );
 
-    // 단일 out of order data 선정하여 randomKeys에 저장
+
+    /**out of order 단일 key 선정
+     * */
     vector<uint64_t> remainingKeys(dataSet.begin(), dataSet.end());
     srand(static_cast<unsigned>(std::time(0))); // 난수 생성기 초기화
 
@@ -117,9 +121,10 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
             dataSet.end()
     );
 
-    // 각 구간에 단일 out of order data 추가
-    cout<<"\n단일 Out of order data 추가\n";
 
+    /** dataset에 단일 out of order data 추가
+     * */
+    cout<<"\n단일 Out of order data 추가\n";
     for(const auto &key : randomKeys) {
         int randomChoice = rand() % 100 + 1;
         if (randomChoice <= 30) {
@@ -147,14 +152,13 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
     }
 
 
-    // 각 구간에 out of order segment를 추가
+    /** dataset에 out of order data segment 추가
+     * */
     cout<<">> Out of order dataSet 추가\n";
     iteration=0;
     for(const auto &segment : outOfOrderKeysPerSegment){
-        //현재 segment의 마지막 key값보다 큰 인덱스에 랜덤 생성
-        //TODO: offset 설정하기
+        //현재 segment의 마지막 key값보다 큰 인덱스에 랜덤 생성(offset)
         int randomChoice = rand() % 100 + 1;
-
         int isIndexValid;
         if (randomChoice <= 30) {
             randomIndex = rand() % 500 + 1; // 1~500 범위 내
@@ -187,7 +191,8 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
     }
 
 
-    // 데이터셋이 비어있지 않을 때에만 파일에 쓰기
+    /** File에 쓰기
+    * */
     if (!dataSet.empty()) {
         writeToInitFile("../src/test/dataset/initData.txt", dataSet);
     } else {
@@ -216,19 +221,13 @@ void DataFactory::writeToInitFile(string filePath, vector<uint64_t>& dataset) {
 
 
 
-//파일에 워크로드 데이터를 쓰는 함수
+/**File에 Workload 쓰기 함수*/
 void DataFactory::writeToWorkloadFile(string filePath, vector<Record>& dataset) {
     ofstream outputFile(filePath);
     if (!outputFile.is_open()) {
         cerr << "workload dataset 파일 열기 오류" << endl;
         return;
     }
-//    for(int i=0; i<dataset.size(); i++){
-//        outputFile << "INSERT," << dataset[i] << endl;
-//        if (i != 0 && progressInterval != 0 && i % progressInterval == 0) {
-//            std::cout << "Progress " << (i * 100 / dataset.size()) << "%\n";
-//        }
-//    }
     std::cout << "\n>> Write to Workload File Progress \n";
     for(int i=0; i<dataset.size(); i++){
         if (strcmp(dataset[i].op.c_str(), "RANGE")==0) {
@@ -244,7 +243,8 @@ void DataFactory::writeToWorkloadFile(string filePath, vector<Record>& dataset) 
     cout<<"100%\n file write완료\n";
     outputFile.close();
 }
-// workload 데이터셋 생성 함수
+
+/** Workload 데이터 생성 함수*/
 void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string filePath, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
 
     vector<Record> dataset;
@@ -287,22 +287,56 @@ void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string fi
             record.op = "RANGE";
             --rangeCount;
         }
-        //Todo: offset설정해서 적용
-        dataset.insert(dataset.begin() + initFileRecordCount/2 + randomReadKey, record); // 워크로드 데이터셋 랜덤한 위치에 삽입
+        // 워크로드 삽입
+        dataset.insert(dataset.begin() + initFileRecordCount/2 + randomReadKey, record);
         completedWorkCount++;
 
+        /**진행률 출력*/
         if (completedWorkCount % (totalWorkCount / 100) == 0) {
             cout << (completedWorkCount * 100 / totalWorkCount) << "%\n";
         }
     }
 
-    // 파일에 생성된 워크로드 데이터셋 쓰기
+    /**파일에 쓰기*/
     writeToWorkloadFile(filePath, dataset);
-
 
     return;
 }
 
+
+
+void DataFactory::deleteAllSSTable() {
+    std::string directoryPath = "../src/test/SSTable"; // SSTable 폴더의 경로
+    try {
+        // 디렉터리 내의 모든 파일 순회
+        for (const auto& entry : filesystem::directory_iterator(directoryPath)) {
+            filesystem::remove(entry.path()); // 파일 삭제
+            cout << "Deleted: " << entry.path() << endl;
+        }
+    } catch (const std::filesystem::filesystem_error& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+}
+
+void DataFactory::printDelayData(){
+
+    int delaySSTableNum= tree->Disk->delaySSTables.size();
+    int delaySSTableSize=0;
+    if(delaySSTableNum!= 0){
+        delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
+    }
+
+    cout<<"the number of delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
+
+    int delayImmMemtableNum=0;
+    int delayActiveMemtableNum=tree->activeDelayMemtable->mem.size();
+    for(auto memtable : tree->immMemtableList){
+        if(memtable->type=='D') delayImmMemtableNum++;
+    }
+
+    cout<<"the number of delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
+
+}
 
 void DataFactory::writeToFile(size_t bytes){
 
@@ -331,41 +365,6 @@ void DataFactory::writeToFile(size_t bytes){
 
     file.close();
 
-}
-
-
-void DataFactory::printDelayData(){
-
-    int delaySSTableNum= tree->Disk->delaySSTables.size();
-    int delaySSTableSize=0;
-    if(delaySSTableNum!= 0){
-        delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
-    }
-
-    cout<<"the number of delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
-
-    int delayImmMemtableNum=0;
-    int delayActiveMemtableNum=tree->activeDelayMemtable->mem.size();
-    for(auto memtable : tree->immMemtableList){
-        if(memtable->type=='D') delayImmMemtableNum++;
-    }
-
-    cout<<"the number of delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
-
-}
-
-
-void DataFactory::deleteAllSSTable() {
-    std::string directoryPath = "../src/test/SSTable"; // SSTable 폴더의 경로
-    try {
-        // 디렉터리 내의 모든 파일 순회
-        for (const auto& entry : filesystem::directory_iterator(directoryPath)) {
-            filesystem::remove(entry.path()); // 파일 삭제
-            cout << "Deleted: " << entry.path() << endl;
-        }
-    } catch (const std::filesystem::filesystem_error& e) {
-        cerr << "Error: " << e.what() << endl;
-    }
 }
 
 void DataFactory::readFromFile(size_t bytes){
