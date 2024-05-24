@@ -39,4 +39,3 @@ public:
 
 };
 #endif //IOTDB_LSM_WORKLOAD_H
-

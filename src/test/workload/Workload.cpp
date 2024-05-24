@@ -11,8 +11,10 @@ vector<Record> Workload::readFile(const string& filePath) {
     }
 
     string line;
+    int lineCount = 0; // 현재까지 읽은 줄 수를 추적하기 위한 변수
 
-    cout<<"file 읽어오기 시작\n";
+
+    cout<<filePath<<" 읽어오기 시작\n";
     while (getline(file, line)) {
         istringstream iss(line);
         string op;
@@ -41,8 +43,13 @@ vector<Record> Workload::readFile(const string& filePath) {
         } else {
             cerr << "ERR: 잘못된 형식의 레코드입니다: " << line << endl;
         }
+        // 진행률 출력 (전체 크기 기준으로 출력하기 어려우므로 임의의 기준으로 출력)
+        ++lineCount; // 읽은 줄 수를 증가시킴
+        if (lineCount % (dataset.size() / 100) == 0) { // 1000줄마다 진행률 출력
+            LOG_PROGRESS(lineCount, dataset);
+        }
     }
-    cout<<"file 읽어오기 끝\n";
+    cout<<filePath<<" 읽어오기 끝\n";
 
     file.close();
     return dataset;
@@ -50,7 +57,6 @@ vector<Record> Workload::readFile(const string& filePath) {
 void Workload::executeWorkload(vector<Record>& dataset){
 
     cout<<"workload 실행 시작\n";
-    const uint64_t progressInterval = dataset.size() / 10; // 1%마다 진행률 출력
 
     for(int i=0; i<dataset.size(); i++){
 
@@ -61,12 +67,12 @@ void Workload::executeWorkload(vector<Record>& dataset){
         } else {
             tree->insert(dataset[i].key, dataset[i].key*2);
         }
-        if (i % progressInterval == 0) {
-            cout << (i * 100 / dataset.size()) << "%\n";
+        if (i != 0 && i % (dataset.size() / 100) == 0) {
+            LOG_PROGRESS(i, dataset);
         }
     }
 
-    cout<<"workload 실행 끝\n";
+    cout<<"\nworkload 실행 끝\n";
 
 
 }
