@@ -16,8 +16,10 @@ bool DBManager::isDelayData(uint64_t key){
 }
 
 void DBManager::insertData(IMemtable& memtable, uint64_t key, int value){
+    cout<<key<<" "<<memtable.isFull()<<"\n";
 
     if (memtable.isFull()) {
+        cout<<"꽉찼어\n";
         try {
             IMemtable* newMemtable = transformActiveToImm(&memtable);
             if(newMemtable->startKey>key){  //delay data
@@ -32,8 +34,9 @@ void DBManager::insertData(IMemtable& memtable, uint64_t key, int value){
             cerr << e.what() << "\n";
         }
     }
+    cout<<"여기\n";
     memtable.put(key, value);
-
+    cout<<key<<" "<<value<<"put 완료\n";
     return;
 }
 
@@ -172,7 +175,7 @@ int DBManager::flush(){
     });
 
     //파일 만들기
-    makeFile(sortedData, flag);
+//    makeFile(sortedData, flag);
 
     Disk->flush(flushMemtable);
 
