@@ -14,115 +14,9 @@ void DataFactory:: generateNormalDataset(int n){
     }
 }
 
-void DataFactory:: NormalTest(){
-    tree->printActiveMemtable(true);
-    tree->printImmMemtable();
-    tree->Disk->printSSTableList();
-
-    //parameter case별로 테스트 결과 달라짐
-//    cout<<"\n\n\n\n========read/range test=========\n";
-//
-//    cout<<"[Read] key : "<<2009<<" value : "<<tree->readData(2009)<<"\n"; // normal ImmMemtable read
-//    cout<<"[Read] key : "<<2010<<" value : "<<tree->readData(2010)<<"\n"; // normal ImmMemtable read
-//    cout<<"[Read] key : "<<2011<<" value : "<<tree->readData(2011)<<"\n"; // normal ImmMemtable read
-//    cout<<"[Read] key : "<<1000<<" value : "<<tree->readData(1000)<<"\n"; // normalSSTable read
-//    cout<<"[Read] key : "<<1200<<" value : "<<tree->readData(1200)<<"\n"; // normalSSTable read
-//    // Active에만 있는 data를 읽으려 할 때 불가! : -1
-//    cout<<"[Read] key : "<<2390<<" value : "<<tree->readData(2390)<<"\n";
-//
-//    // 하나의 normal ImmMemtable range
-//    cout<<"\n[range] 하나의 normal ImmMemtable range : 2020 ~ 2030\n";
-//    map<uint64_t, int> result = tree->range(2020,2030);
-//    for(auto data: result){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//    // 여러개의 normal ImmMemtable range
-//    cout<<"\n[range] 여러개의 normal ImmMemtable range : 2005 ~ 2015\n";
-//    map<uint64_t, int> result1 = tree->range(2005,2015);
-//    for(auto data: result1){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//
-//    // 한개의 SStalble range
-//    cout<<"\n[range] 한개의 SStalble range : 700 ~ 710\n";
-//    map<uint64_t, int> result2 = tree->range(700,710);
-//    for(auto data: result2){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//
-//    // 여러개의 SStalble range
-//    cout<<"\n[range] 여러개의 SStalble range : 330 ~ 340\n";
-//    map<uint64_t, int> result3 = tree->range(330,340);
-//    for(auto data: result3){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//
-//    // ImmTable과 SStable에 섞여있을때
-//    cout<<"\n[range] ImmTable과 SStable에 섞여있을때 : 1670 ~ 1680\n";
-//    map<uint64_t, int> result4 = tree->range(1670,1680);
-//    for(auto data: result4){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-    delete tree;
-}
-
-
-void DataFactory:: delayedTest(){
-
-    tree->printActiveMemtable(false);
-    tree->printImmMemtable();
-    tree->Disk->printSSTableList();
-
-    //parameter case별로 테스트 결과 달라짐
-//    cout<<"\n\n\n\n========read/range test=========\n";
-//
-//    cout<<"[Read] key : "<<2009<<" value : "<<tree->readData(2009)<<"\n"; // normal ImmMemtable read
-//    cout<<"[Read] key : "<<2010<<" value : "<<tree->readData(2010)<<"\n"; // normal ImmMemtable read
-//    cout<<"[Read] key : "<<2011<<" value : "<<tree->readData(2011)<<"\n"; // normal ImmMemtable read
-//    cout<<"[Read] key : "<<1000<<" value : "<<tree->readData(1000)<<"\n"; // normalSSTable read
-//    cout<<"[Read] key : "<<1200<<" value : "<<tree->readData(1200)<<"\n"; // normalSSTable read
-//    // Active에만 있는 data를 읽으려 할 때 불가! : -1
-//    cout<<"[Read] key : "<<2390<<" value : "<<tree->readData(2390)<<"\n";
-//
-//    // 하나의 normal ImmMemtable range
-//    cout<<"\n[range] 하나의 normal ImmMemtable range : 2020 ~ 2030\n";
-//    map<uint64_t, int> result = tree->range(2020,2030);
-//    for(auto data: result){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//    // 여러개의 normal ImmMemtable range
-//    cout<<"\n[range] 여러개의 normal ImmMemtable range : 2005 ~ 2015\n";
-//    map<uint64_t, int> result1 = tree->range(2005,2015);
-//    for(auto data: result1){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//
-//    // 한개의 SStalble range
-//    cout<<"\n[range] 한개의 SStalble range : 700 ~ 710\n";
-//    map<uint64_t, int> result2 = tree->range(700,710);
-//    for(auto data: result2){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//
-//    // 여러개의 SStalble range
-//    cout<<"\n[range] 여러개의 SStalble range : 330 ~ 340\n";
-//    map<uint64_t, int> result3 = tree->range(330,340);
-//    for(auto data: result3){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-//
-//    // ImmTable과 SStable에 섞여있을때
-//    cout<<"\n[range] ImmTable과 SStable에 섞여있을때 : 1670 ~ 1680\n";
-//    map<uint64_t, int> result4 = tree->range(1670,1680);
-//    for(auto data: result4){
-//        cout<<"key : "<<data.first<<" value : "<<data.second<<"\n";
-//    }
-    delete tree;
-};
 
 // o3데이터 포함 데이터셋 생성 함수
 void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, int numSegments) {
-    vector<uint64_t> dataset;
     int iteration = 0; // 진행률 표시를 위한 변수
     int outOfOrderCount = static_cast<int>(dataNum * outOfOrderRatio); // out of order 데이터 총 개수
     vector<vector<uint64_t>> outOfOrderKeysPerSegment(numSegments/2);  //segment 묶음 단위 out of order 데이터들을 저장할 벡터
@@ -131,7 +25,18 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
     random_device rd; // 난수 생성기 시드
     mt19937 gen(rd()); // Mersenne Twister 난수 생성기
 
-    // segment의 크기 설정
+
+    /**1~dataNum 범위 dataset 초기화*/
+    vector<uint64_t> dataSet(dataNum);
+
+    // dataSet 초기화 (1부터 dataNum까지)
+    cout<< "dataSet 1부터 dataNum까지 초기화\n";
+    std::iota(dataSet.begin(), dataSet.end(), 1);
+    cout<< "dataSet 초기화 완료\n";
+
+
+    
+    /**out of order data 각 segment 크기 설정*/
     int remaining = outOfOrderCount / 2;
     int size;
 
@@ -142,9 +47,11 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
         sizes.push_back(size);
         remaining -= size;
     }
+
     sizes.push_back(remaining); // 남은 크기를 마지막 구간에 추가
 
-    // 1부터 outOfOrderCount/2 사이의 랜덤한 숫자 생성
+
+    /**out of order data segment에 들어갈 key 선정*/
     uniform_int_distribution<> dis( 1, outOfOrderCount / 2);
     int delayedKey = dis(gen); // 첫번째 delaydata 선정
 
@@ -154,7 +61,6 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
         for (int j = 0; j < sizes[i]; j++) {
             outOfOrderKeysPerSegment[i].push_back(delayedKey + j);
         }
-
 
         if (delayedKey + sizes[i] <= dataNum - outOfOrderCount / 2) {
             uniform_int_distribution<> dis2(delayedKey + sizes[i], dataNum - outOfOrderCount / 2);
@@ -173,12 +79,8 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
         }
 
     }
-    vector<uint64_t> dataSet(dataNum);
 
-    // dataSet 초기화 (1부터 dataNum까지)
-    cout<< "dataSet 1부터 dataNum까지 초기화\n";
-    std::iota(dataSet.begin(), dataSet.end(), 1);
-    cout<< "dataSet 초기화 완료\n";
+
 
     // outOfOrderKeysPerSegment에 포함되는 key를 찾아 outOfOrderKeys에 저장
     unordered_set<uint64_t> outOfOrderKeys;

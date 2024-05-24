@@ -14,7 +14,6 @@ vector<Record> Workload::readFile(const string& filePath) {
     string line;
     int lineCount = 0; // 현재까지 읽은 줄 수를 추적하기 위한 변수
 
-
     cout<<filePath<<" 읽어오기 시작\n";
     while (getline(file, line)) {
         istringstream iss(line);
@@ -44,8 +43,8 @@ vector<Record> Workload::readFile(const string& filePath) {
         } else {
             cerr << "ERR: 잘못된 형식의 레코드입니다: " << line << endl;
         }
-        // 진행률 출력 (전체 크기 기준으로 출력하기 어려우므로 임의의 기준으로 출력)
-        ++lineCount; // 읽은 줄 수를 증가시킴
+        /**진행률 출력 (전체 크기 기준으로 출력하기 어려우므로 임의의 기준으로 출력)*/
+        ++lineCount;
         if (lineCount % 1000 == 0){
             cout<<lineCount<<"개 읽음\n";
         }
@@ -69,6 +68,7 @@ void Workload::executeWorkload(vector<Record>& dataset){
         }else{
             cerr << "ERR: 잘못된 형식의 레코드입니다: " << dataset[i].op << endl;
         }
+        /**진헹률 출력*/
         if (i != 0 && i % (dataset.size() / 100) == 0) {
             LOG_PROGRESS(i, dataset);
         }
