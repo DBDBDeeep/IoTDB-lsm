@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[]) {
     Workload workloadA;
-    string filePath = "../src/test/dataset/workloadA.txt";
+    string filePath = argv[1]; //ex) "../src/test/dataset/R0.3_I0.7_V2.txt";
 
     vector<Record> datasetA = workloadA.readFile(filePath);
     workloadA.executeWorkload(datasetA);
