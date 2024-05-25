@@ -45,7 +45,7 @@ vector<Record> Workload::readFile(const string& filePath) {
         }
         /**진행률 출력 (전체 크기 기준으로 출력하기 어려우므로 임의의 기준으로 출력)*/
         ++lineCount;
-        if (lineCount % 1000 == 0){
+        if (lineCount % 5000000 == 0){
             cout<<lineCount<<"개 읽음\n";
         }
     }
@@ -58,7 +58,7 @@ void Workload::executeWorkload(vector<Record>& dataset){
 
     cout<<"workload 실행 시작\n";
     for(int i=0; i<dataset.size(); i++){
-        cout<<dataset[i].op<<" "<<dataset[i].key<<"\n";
+        //cout<<dataset[i].op<<" "<<dataset[i].key<<"\n";
         if (dataset[i].op == "READ") {
             tree->readData(dataset[i].key);
         } else if (dataset[i].op == "RANGE") {

@@ -16,7 +16,6 @@ bool DBManager::isDelayData(uint64_t key){
 }
 
 void DBManager::insertData(IMemtable& memtable, uint64_t key, int value){
-    cout<<key<<" "<<memtable.isFull()<<"\n";
 
     if (memtable.isFull()) {
         try {
@@ -93,9 +92,9 @@ map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
     }
 
     if(!ids.empty()){
-        cout << "found in immMemtables ";
-        for (auto id: ids) cout << id;
-        cout << "\n";
+//        cout << "found in immMemtables ";
+//        for (auto id: ids) cout << id;
+//        cout << "\n";
     }
 
     //병합
