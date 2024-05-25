@@ -34,7 +34,6 @@ public:
 
     void writeToInitFile(string filePath, vector<uint64_t>& dataset);
 
-    void deleteAllSSTable();
     //N바이트 쓸때 시간 측정
 
     void writeToFile(size_t bytes);

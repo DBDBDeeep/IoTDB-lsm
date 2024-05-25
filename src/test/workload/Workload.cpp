@@ -86,3 +86,65 @@ void Workload::cleanup() {
     delete tree;
     tree = nullptr;
 }
+
+void Workload::deleteAllSSTable() {
+    std::string directoryPath = "../src/test/SSTable"; // SSTable 폴더의 경로
+    try {
+        // 디렉터리 내의 모든 파일 순회
+        for (const auto& entry : filesystem::directory_iterator(directoryPath)) {
+            filesystem::remove(entry.path()); // 파일 삭제
+        }
+    } catch (const std::filesystem::filesystem_error& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+}
+
+void Workload::makeSSTable() {
+
+    deleteAllSSTable(); //기존 파일 삭제
+
+    int fileCounter=0;
+
+    string filename="../src/test/SSTable/NormalSStable";
+
+    for(auto sstable:tree->Disk->normalSSTables){
+
+        ofstream outputFile(filename);
+        if (!outputFile.is_open()) {
+            cerr << "Failed to open output file: " << filename << endl;
+            return;
+        }
+
+        filename+=  to_string(++fileCounter) + ".txt";
+        outputFile<<sstable->ss.size()<<"\n";  //사이즈
+        outputFile<<sstable->ss.begin()->first<<"\t"<<sstable->ss.end()->first<<"\n"; //처음키, 마지막키
+        for (const auto& pair : sstable->ss) {
+            outputFile << pair.first << "\t" << pair.second << "\n";
+        }
+
+        outputFile.close();
+    }
+
+    fileCounter=0;
+
+     filename="../src/test/SSTable/DelaySStable";
+
+    for(auto sstable:tree->Disk->delaySSTables){
+
+        ofstream outputFile(filename);
+        if (!outputFile.is_open()) {
+            cerr << "Failed to open output file: " << filename << endl;
+            return;
+        }
+
+        filename+=  to_string(++fileCounter) + ".txt";
+        outputFile<<sstable->ss.size()<<"\n";  //사이즈
+        outputFile<<sstable->ss.begin()->first<<"\t"<<sstable->ss.end()->first<<"\n"; //처음키, 마지막키
+        for (const auto& pair : sstable->ss) {
+            outputFile << pair.first << "\t" << pair.second << "\n";
+        }
+
+        outputFile.close();
+    }
+
+}

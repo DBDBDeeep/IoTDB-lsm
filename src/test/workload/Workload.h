@@ -35,6 +35,8 @@ public:
     void executeWorkload(vector<Record>& dataset);
     void cleanup();
     DBManager* getTree();
+    void deleteAllSSTable();
+    void makeSSTable();
 
 };
 #endif //IOTDB_LSM_WORKLOAD_H
