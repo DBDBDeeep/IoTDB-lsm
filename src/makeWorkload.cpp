@@ -16,6 +16,6 @@ int main(int argc, char* argv[]) {
     double singleReadProportion = stod(argv[3]); // 단일 read 작업에 대한 비율
     double rangeReadProportion = stod(argv[4]); // range 읽기 작업 비율
 
-    string filePath = "../src/test/dataset/workloadA.txt";
-    factory.generateWorkloadDataset(initDataSet, filePath, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
+
+    factory.generateWorkloadDataset(initDataSet, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
 }
