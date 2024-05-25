@@ -8,6 +8,7 @@
 #include <vector>
 #include <chrono>
 #include <unordered_set>
+#include <sstream>
 
 #include "../core/DBManager.h"
 
@@ -39,7 +40,7 @@ public:
 
     void writeToFile(size_t bytes);
     void readFromFile(size_t bytes);
-    void generateWorkloadDataset(vector<Record>& initDataSet, string filePath, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);
+    void generateWorkloadDataset(vector<Record>& initDataSet, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);
     void writeToWorkloadFile(string filePath, vector<Record>& dataset);
 private:
     DBManager* tree;
