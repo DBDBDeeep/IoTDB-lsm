@@ -16,14 +16,45 @@ void DataFactory:: generateNormalDataset(int n){
 
 
 /** DelayData 포함 Data 생성 함수*/
-void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, int numSegments) {
-    int iteration = 0; // 진행률 표시를 위한 변수
+void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio) {
     int outOfOrderCount = static_cast<int>(dataNum * outOfOrderRatio); // out of order 데이터 총 개수
-    vector<vector<uint64_t>> outOfOrderKeysPerSegment(numSegments);  //segment 묶음 단위 out of order 데이터들을 저장할 벡터
+    int segmentDataNum= outOfOrderCount/2;
+    int numSegments= segmentDataNum/20;  //하이퍼파라미터
+    int iteration = 0; // 진행률 표시를 위한 변수
 
-    srand(time(0));
-    random_device rd; // 난수 생성기 시드
-    mt19937 gen(rd()); // Mersenne Twister 난수 생성기
+    std::vector<int> indices(segmentDataNum);
+    std::iota(indices.begin(), indices.end(), 0);
+
+    // Randomly shuffle the indices
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(indices.begin(), indices.end(), g);
+
+    // Create y empty groups
+    std::vector<std::vector<int>> outOfOrderKeysPerSegment(numSegments);
+    std::vector<std::vector<int>> groups(numSegments);
+    // Distribute the indices into y groups
+
+    for (int i = 0; i < segmentDataNum; ++i) {
+        groups[i % numSegments].push_back(indices[i]);
+    }
+
+    for (int i = 0; i < groups.size(); ++i) {
+        std::cout << "Group " << i + 1 << ": ";
+        for (int j : groups[i]) {
+            std::cout << j << " ";
+            sizes.push_back(groups[i].size());
+        }
+        std::cout << std::endl;
+    }
+
+
+
+//    vector<vector<uint64_t>> outOfOrderKeysPerSegment(numSegments);  //segment 묶음 단위 out of order 데이터들을 저장할 벡터
+
+//    srand(time(0));
+//    random_device rd; // 난수 생성기 시드
+//    mt19937 gen(rd()); // Mersenne Twister 난수 생성기
 
 
     /**1~dataNum 범위 dataset 초기화
@@ -38,24 +69,26 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
 
     /**out of order data 각 segment 크기 설정
      * */
-    int remaining = outOfOrderCount / 2;
-    int size;
-
-    for (int i = 0; i < numSegments-1; ++i) {
-        do{
-            size = rand() % (remaining - 4) + 2; // remaining이 2 이상이어야하고, 현재 size도 2 이상이어야함
-        }while(size<=0);
-        sizes.push_back(size);
-        remaining -= size;
-    }
-
-    sizes.push_back(remaining); // 남은 크기를 마지막 구간에 추가
+//    int remaining = outOfOrderCount / 2;
+//    int size;
+//
+//    for (int i = 0; i < numSegments-1; ++i) {
+//        cout << "numSegments" << numSegments << endl;
+//        do{
+//            size = rand() % (remaining - 4) + 2; // remaining이 2 이상이어야하고, 현재 size도 2 이상이어야함
+//        }while(size<=0);
+//        sizes.push_back(size);
+//        remaining -= size;
+//        cout<<"remaining"<<remaining<<endl;
+//    }
+//
+//    sizes.push_back(remaining); // 남은 크기를 마지막 구간에 추가
 
 
     /**out of order data segment에 들어갈 key 선정
      * */
     uniform_int_distribution<> dis( 1, outOfOrderCount / 2);
-    int delayedKey = dis(gen); // 첫번째 delaydata 선정
+    int delayedKey = dis(g); // 첫번째 delaydata 선정
 
     for (size_t i = 0; i < sizes.size(); i++) {
         cout << "\n구간 " << i + 1 << " (" << sizes[i] << "개) : " << delayedKey << " ~ " << delayedKey + sizes[i] - 1 << "\n";;
@@ -66,7 +99,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
 
         if (delayedKey + sizes[i] <= dataNum - outOfOrderCount / 2) {
             uniform_int_distribution<> dis2(delayedKey + sizes[i], dataNum - outOfOrderCount / 2);
-            delayedKey = dis2(gen);
+            delayedKey = dis2(g);
         }
         else {
             if(i == sizes.size()-1){

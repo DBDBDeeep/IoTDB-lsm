@@ -4,7 +4,7 @@ project(IoTDB_lsm)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(IoTDB_lsm
-        src/main.cpp
+        #src/main.cpp
         src/core/DBManager.cpp
         src/core/memtable/IMemtable.cpp
         src/core/memtable/DelayMemtable.cpp
@@ -14,6 +14,9 @@ add_executable(IoTDB_lsm
         src/test/DataFactory.cpp
         src/test/CompactionTest.cpp
         src/test/workload/Workload.cpp
+        src/makeDataset.cpp
+#        src/testIoTDB.cpp
+#        src/makeWorkload.cpp
 )
 
 

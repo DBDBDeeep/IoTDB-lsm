@@ -28,7 +28,7 @@ class DataFactory {
 public:
     void generateNormalDataset(int n);
     void NormalTest();
-    void generateDelayedDataset(int n, double outOfOrderRatio, int numSegments);
+    void generateDelayedDataset(int n, double outOfOrderRatio);
     void delayedTest();
     void printDelayData();
 

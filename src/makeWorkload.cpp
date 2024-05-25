@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     vector<Record> initDataSet = workloadA.readFile(initfilePath);
     double readProportion = stod(argv[1]); // 읽기 작업 비율
     double insertProportion = stod(argv[2]); // 삽입 작업 비율
-    double singleReadProportion = stod(argv[3]); // 단일 read 작업에 대한 읽기 작업 비율
+    double singleReadProportion = stod(argv[3]); // 단일 read 작업에 대한 비율
     double rangeReadProportion = stod(argv[4]); // range 읽기 작업 비율
 
     string filePath = "../src/test/dataset/workloadA.txt";
