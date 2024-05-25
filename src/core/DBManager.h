@@ -6,6 +6,8 @@
 #include <fstream>
 #include <map>
 #include <queue>
+#include <algorithm>
+#include <limits>
 #include "disk/MockDisk.h"
 #include "stdexcept"
 

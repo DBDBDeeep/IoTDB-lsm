@@ -2,6 +2,7 @@
 #define MockDisk_H
 
 #include <list>
+#include <limits>
 #include "SSTable.h" //
 #include "../core/memtable/IMemtable.h"
 
