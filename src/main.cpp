@@ -1,7 +1,7 @@
 
 #include "test/DataFactory.h"
 #include "test/workload/Workload.h"
-#include "core/DBmanager.h"
+#include "core/DBManager.h"
 #include "test/CompactionTest.h"
 #include <iostream>
 
