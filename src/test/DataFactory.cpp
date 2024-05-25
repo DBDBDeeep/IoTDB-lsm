@@ -19,7 +19,7 @@ void DataFactory:: generateNormalDataset(int n){
 void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, int numSegments) {
     int iteration = 0; // 진행률 표시를 위한 변수
     int outOfOrderCount = static_cast<int>(dataNum * outOfOrderRatio); // out of order 데이터 총 개수
-    vector<vector<uint64_t>> outOfOrderKeysPerSegment(numSegments/2);  //segment 묶음 단위 out of order 데이터들을 저장할 벡터
+    vector<vector<uint64_t>> outOfOrderKeysPerSegment(numSegments);  //segment 묶음 단위 out of order 데이터들을 저장할 벡터
 
     srand(time(0));
     random_device rd; // 난수 생성기 시드
@@ -41,7 +41,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
     int remaining = outOfOrderCount / 2;
     int size;
 
-    for (int i = 0; i < (numSegments / 2)-1; ++i) {
+    for (int i = 0; i < numSegments-1; ++i) {
         do{
             size = rand() % (remaining - 4) + 2; // remaining이 2 이상이어야하고, 현재 size도 2 이상이어야함
         }while(size<=0);
@@ -124,7 +124,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
 
     /** dataset에 단일 out of order data 추가
      * */
-    cout<<"\n단일 Out of order data 추가\n";
+    cout<<"\n>> 단일 Out of order data 추가\n\n";
     for(const auto &key : randomKeys) {
         int randomChoice = rand() % 100 + 1;
         if (randomChoice <= 30) {
@@ -146,7 +146,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
 
         iteration++;
         if ( iteration % (randomKeys.size() / 100) == 0) {
-            LOG_PROGRESS(iteration, randomKeys);
+            VECTOR_LOG_PROGRESS(iteration, randomKeys);
         }
 
     }
@@ -154,7 +154,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
 
     /** dataset에 out of order data segment 추가
      * */
-    cout<<">> Out of order dataSet 추가\n";
+    cout<<">> Out of order dataSet 추가\n\n";
     iteration=0;
     for(const auto &segment : outOfOrderKeysPerSegment){
         //현재 segment의 마지막 key값보다 큰 인덱스에 랜덤 생성(offset)
@@ -187,7 +187,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
         }
 
         iteration++;
-        LOG_PROGRESS(iteration, outOfOrderKeysPerSegment);  //완료된 segment 개수에 비례하여 진행률 표시
+        VECTOR_LOG_PROGRESS(iteration, outOfOrderKeysPerSegment);  //완료된 segment 개수에 비례하여 진행률 표시
     }
 
 
@@ -202,7 +202,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio, i
 
 void DataFactory::writeToInitFile(string filePath, vector<uint64_t>& dataset) {
     ofstream outputFile(filePath);
-    std::cout << "\n>> Write to Init File Progress \n";
+    std::cout << "\n>> Write to Init File Progress \n\n";
 
     if (!outputFile.is_open()) {
         cerr << "ERR: workload dataset 파일 열기 오류" << endl;
@@ -212,10 +212,10 @@ void DataFactory::writeToInitFile(string filePath, vector<uint64_t>& dataset) {
     for(int i=0; i<dataset.size(); i++){
         outputFile << "INSERT," << dataset[i] << endl;
         if (i != 0 && i % (dataset.size() / 100) == 0) {
-            LOG_PROGRESS(i, dataset);
+            VECTOR_LOG_PROGRESS(i, dataset);
         }
     }
-    cout<<"100%\n";
+
     outputFile.close();
 }
 
@@ -237,10 +237,10 @@ void DataFactory::writeToWorkloadFile(string filePath, vector<Record>& dataset) 
         }
 
         if (i != 0 && i % (dataset.size() / 100) == 0) {
-            LOG_PROGRESS(i, dataset);
+            VECTOR_LOG_PROGRESS(i, dataset);
         }
     }
-    cout<<"100%\n file write완료\n";
+    cout<<"file write완료\n\n";
     outputFile.close();
 }
 
@@ -252,7 +252,7 @@ void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string fi
     int txnFileRecordCount = initFileRecordCount/2; // 워크로드의 INSERT 작업 개수(전체 데이터 셋의 절반)
     int singleReadCount = txnFileRecordCount * (readProportion/insertProportion) * singleReadProportion; // 단일 읽기 작업 해야할 총 횟수
     int rangeCount = txnFileRecordCount * (readProportion/insertProportion) * rangeProportion; // 범위 조회 작업 해야할 총 횟수
-    cout << ">> Generate to Workload Dataset Progress \n";
+    cout << ">> Generate to Workload Dataset Progress \n\n";
     cout<<"1) workload Insert 작업 추가\n";
     for(int i=0; i<initFileRecordCount; i++){
         Record record;
@@ -260,10 +260,10 @@ void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string fi
         record.op = "INSERT";
         dataset.push_back(record);
         if (i != 0 && i % (initFileRecordCount / 100) == 0) {
-            cout << (i * 100 / initFileRecordCount) << "%\n";
+            INT_LOG_PROGRESS(i, initFileRecordCount);
         }
     }
-    cout << "100%\n";
+
 
     int totalWorkCount = singleReadCount + rangeCount;
     int completedWorkCount = 0;
@@ -293,7 +293,7 @@ void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string fi
 
         /**진행률 출력*/
         if (completedWorkCount % (totalWorkCount / 100) == 0) {
-            cout << (completedWorkCount * 100 / totalWorkCount) << "%\n";
+            INT_LOG_PROGRESS(completedWorkCount, totalWorkCount);
         }
     }
 

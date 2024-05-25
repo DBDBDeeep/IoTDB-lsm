@@ -11,9 +11,11 @@
 
 #include "../core/DBManager.h"
 
-#define LOG_PROGRESS(iteration, datasetSize) \
-    cout << (iteration * 100 / datasetSize.size()) << "% \n";
+#define VECTOR_LOG_PROGRESS(iteration, datasetSize) \
+//    cout << (iteration * 100 / datasetSize.size()) << "% \n";
 
+#define INT_LOG_PROGRESS(iteration, Count) \
+//    cout << (iteration * 100 / Count) << "% \n";
 using namespace std;
 struct Record {
     string op;

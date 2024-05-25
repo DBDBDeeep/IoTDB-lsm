@@ -68,9 +68,9 @@ void Workload::executeWorkload(vector<Record>& dataset){
         }else{
             cerr << "ERR: 잘못된 형식의 레코드입니다: " << dataset[i].op << endl;
         }
-        /**진헹률 출력*/
+        /**진행률 출력*/
         if (i != 0 && i % (dataset.size() / 100) == 0) {
-            LOG_PROGRESS(i, dataset);
+            VECTOR_LOG_PROGRESS(i, dataset);
         }
     }
 
