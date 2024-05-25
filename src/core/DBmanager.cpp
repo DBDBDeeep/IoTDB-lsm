@@ -33,7 +33,6 @@ void DBManager::insertData(IMemtable& memtable, uint64_t key, int value){
         }
     }
     memtable.put(key, value);
-
     return;
 }
 
@@ -93,9 +92,9 @@ map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
     }
 
     if(!ids.empty()){
-        cout << "found in immMemtables ";
-        for (auto id: ids) cout << id;
-        cout << "\n";
+//        cout << "found in immMemtables ";
+//        for (auto id: ids) cout << id;
+//        cout << "\n";
     }
 
     //병합
@@ -172,7 +171,7 @@ int DBManager::flush(){
     });
 
     //파일 만들기
-    makeFile(sortedData, flag);
+//    makeFile(sortedData, flag);
 
     Disk->flush(flushMemtable);
 

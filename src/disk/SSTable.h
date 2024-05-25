@@ -4,6 +4,7 @@
 #include <cstddef> // size_t를 위한 표준 라이브러리 포함
 #include <iostream>
 #include <map>
+#include <unordered_map>
 
 using namespace std;
 
