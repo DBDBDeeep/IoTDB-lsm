@@ -32,7 +32,7 @@ class DataFactory {
 public:
     void generateNormalDataset(int n);
     void NormalTest();
-    void generateDelayedDataset(int n, double outOfOrderRatio);
+    void generateDelayedDataset(string& dataSetName, int n, double outOfOrderRatio);
     void delayedTest();
     void printDelayData();
 
@@ -42,7 +42,7 @@ public:
 
     void writeToFile(size_t bytes);
     void readFromFile(size_t bytes);
-    void generateWorkloadDataset(vector<Record>& initDataSet, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);
+    void generateWorkloadDataset(vector<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);
     void writeToWorkloadFile(string filePath, vector<Record>& dataset);
 private:
     DBManager* tree;

@@ -7,10 +7,11 @@
 
 int main(int argc, char* argv[]) {
     Workload workloadA;
-    string filePath = argv[1]; //ex) "../src/test/dataset/R0.3_I0.7_V2.txt";
-
+    string initDataNum = argv[1]; //ex) "10000";
+    string workloadFileName = argv[2]; //ex) "workloadA_r0.3_i0.7_V2";
+    string filePath = "../src/test/dataset/" + workloadFileName;
     vector<Record> datasetA = workloadA.readFile(filePath);
-    workloadA.executeWorkload(datasetA);
+    workloadA.executeWorkload(datasetA, stoi(initDataNum), workloadFileName);
     workloadA.makeSSTable();
 
 

@@ -16,7 +16,7 @@ void DataFactory:: generateNormalDataset(int n){
 
 
 /** DelayData 포함 Data 생성 함수*/
-void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio) {
+void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, double outOfOrderRatio) {
     int outOfOrderCount = static_cast<int>(dataNum * outOfOrderRatio); // out of order 데이터 총 개수
     int segmentDataNum= outOfOrderCount/2;
     int numSegments= segmentDataNum/20;  //하이퍼파라미터
@@ -211,7 +211,7 @@ void DataFactory:: generateDelayedDataset(int dataNum, double outOfOrderRatio) {
 
     /** File에 쓰기
     * */
-    string filePath = "../src/test/dataset/d"+ to_string(dataNum)+"_o"+to_string(outOfOrderRatio).substr(0, std::to_string(outOfOrderRatio).find('.') + 2)+".txt";
+    string filePath = "../src/test/dataset/"+dataSetName+ "_c"+to_string(dataNum)+"_d"+to_string(outOfOrderRatio).substr(0, std::to_string(outOfOrderRatio).find('.') + 2)+".txt";
     if (!dataSet.empty()) {
         writeToInitFile(filePath, dataSet);
     } else {
@@ -269,7 +269,7 @@ std::string to_string_with_precision(double value, int precision) {
     return out.str();
 }
 /** Workload 데이터 생성 함수*/
-void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
+void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
 
     vector<Record> dataset;
     int initFileRecordCount = initDataSet.size();   //전체 데이터셋 개수
@@ -324,10 +324,10 @@ void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, double re
     /**파일에 쓰기*/
     std::string filePath;
     if(singleReadProportion == 0.5) {
-        filePath = "../src/test/dataset/r" + to_string_with_precision(readProportion, 1) +
-                   "_i" + to_string_with_precision(insertProportion, 1) + "_V1.txt";
+        filePath = "../src/test/dataset/"+workloadDataName+"_i" + to_string_with_precision(insertProportion, 1) +
+                   "_i" + to_string_with_precision(readProportion, 1) + "_V1.txt";
     } else {
-        filePath = "../src/test/dataset/r" + to_string_with_precision(readProportion, 1) +
+        filePath = "../src/test/dataset/"+workloadDataName+"_r"+ to_string_with_precision(readProportion, 1) +
                    "_i" + to_string_with_precision(insertProportion, 1) + "_V2.txt";
     }
     writeToWorkloadFile(filePath, dataset);

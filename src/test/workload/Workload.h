@@ -16,7 +16,9 @@
 #include <ctime>
 #include <utility>
 #include <sstream>
-#include <filesystem> 
+#include <filesystem>
+#include <regex>
+
 
 class Workload {
 private:
@@ -33,7 +35,9 @@ public:
         }
     };
     vector<Record> readFile(const string& filePath);
-    void executeWorkload(vector<Record>& dataset);
+    void executeInsertWorkload(vector<Record>& dataset, int start, int end);
+    void executeMixedWorkload(vector<Record>& dataset, int start, int end);
+    void executeWorkload(vector<Record>& dataset, int initDataNum, string& filename);
     void cleanup();
     DBManager* getTree();
     void deleteAllSSTable();

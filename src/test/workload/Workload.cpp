@@ -54,30 +54,80 @@ vector<Record> Workload::readFile(const string& filePath) {
     file.close();
     return dataset;
 }
-void Workload::executeWorkload(vector<Record>& dataset){
+void Workload::executeInsertWorkload(vector<Record>& dataset, int start, int end) {
+    cout << "Workload Insert 작업 실행 시작\n";
+    for (int i = start; i <= end; ++i) {
+        if (dataset[i].op == "INSERT") {
+            tree->insert(dataset[i].key, dataset[i].key * 2);
+        } else {
+            cerr << "ERR: 잘못된 형식의 레코드입니다: " << dataset[i].op << endl;
+            return;
+        }
+        /**진행률 출력*/
+        if (i != 0 && i % (end / 100) == 0) {
+            INT_LOG_PROGRESS(i, end);
+        }
+    }
+    cout << "Workload Insert 작업 실행 끝\n";
+}
 
-    cout<<"workload 실행 시작\n";
-    for(int i=0; i<dataset.size(); i++){
-        //cout<<dataset[i].op<<" "<<dataset[i].key<<"\n";
+void Workload::executeMixedWorkload(vector<Record>& dataset, int start, int end) {
+    cout << "Workload Mixed 작업 실행 시작\n";
+    for (int i = start; i < end; ++i) {
         if (dataset[i].op == "READ") {
             tree->readData(dataset[i].key);
         } else if (dataset[i].op == "RANGE") {
             tree->range(dataset[i].start_key, dataset[i].end_key);
-        } else if(dataset[i].op == "INSERT"){
-            tree->insert(dataset[i].key, dataset[i].key*2);
-        }else{
+        } else if (dataset[i].op == "INSERT") {
+            tree->insert(dataset[i].key, dataset[i].key * 2);
+        } else {
             cerr << "ERR: 잘못된 형식의 레코드입니다: " << dataset[i].op << endl;
+            return;
         }
-        /**진행률 출력*/
-        if (i != 0 && i % (dataset.size() / 100) == 0) {
-            VECTOR_LOG_PROGRESS(i, dataset);
+        /** 진행률 출력 */
+        int currentProgress = i - start + 1;
+        if (currentProgress != 0 && i % ((end-start) / 100) == 0) {
+            INT_LOG_PROGRESS(currentProgress, (end-start));
         }
+
+
     }
-
-    cout<<"\nworkload 실행 끝\n";
-
-
+    cout << "Workload Mixed 작업 실행 끝\n";
 }
+
+void Workload::executeWorkload(vector<Record>& dataset, int initDataNum, string& fileName) {
+    cout << "workload 실행 시작\n";
+
+    executeInsertWorkload(dataset, 0, initDataNum/2);
+    executeMixedWorkload(dataset, initDataNum/2+1, dataset.size());
+
+    cout << "workload 실행 끝\n";
+}
+
+//void Workload::executeWorkload(vector<Record>& dataset){
+//
+//    cout<<"workload 실행 시작\n";
+//    for(int i=0; i<dataset.size(); i++){
+//        //cout<<dataset[i].op<<" "<<dataset[i].key<<"\n";
+//        if (dataset[i].op == "READ") {
+//            tree->readData(dataset[i].key);
+//        } else if (dataset[i].op == "RANGE") {
+//            tree->range(dataset[i].start_key, dataset[i].end_key);
+//        } else if(dataset[i].op == "INSERT"){
+//            tree->insert(dataset[i].key, dataset[i].key*2);
+//        }else{
+//            cerr << "ERR: 잘못된 형식의 레코드입니다: " << dataset[i].op << endl;
+//        }
+//        /**진행률 출력*/
+//        if (i != 0 && i % (dataset.size() / 100) == 0) {
+//            VECTOR_LOG_PROGRESS(i, dataset);
+//        }
+//    }
+//
+//    cout<<"\nworkload 실행 끝\n";
+//
+//
+//}
 
 DBManager* Workload::getTree() {
     return tree;
