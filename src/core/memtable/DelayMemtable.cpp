@@ -15,7 +15,7 @@ size_t DelayMemtable::getSize() {
 
 bool DelayMemtable::isFull () {
     size_t incomingDataSize = sizeof(uint64_t) + sizeof(int);
-    return (getSize() + incomingDataSize) >= memtableSize;
+    return (getSize() + incomingDataSize) >= memtableSize*0.8;
 }
 
 bool DelayMemtable::setState(State newState) {

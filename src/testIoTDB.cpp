@@ -9,9 +9,11 @@ int main(int argc, char* argv[]) {
     Workload workloadA;
     string initDataNum = argv[1]; //ex) "10000";
     string workloadFileName = argv[2]; //ex) "workloadA_r0.3_i0.7_V2";
-    string filePath = "../src/test/dataset/" + workloadFileName;
+    string filePath = "../src/test/dataset/" + workloadFileName+".txt";
     vector<Record> datasetA = workloadA.readFile(filePath);
     workloadA.executeWorkload(datasetA, stoi(initDataNum));
+
+    cout<<"\ndisk read 횟수 : "<<workloadA.tree->Disk->readCount<<"\n";
     
     workloadA.printDelayData();
 

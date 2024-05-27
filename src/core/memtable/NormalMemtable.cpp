@@ -15,7 +15,7 @@ size_t NormalMemtable::getSize() {
 
 bool NormalMemtable::isFull() {
     size_t incomingDataSize = sizeof(uint64_t) + sizeof(int);
-    return (getSize() + incomingDataSize) >= memtableSize;
+    return (getSize() + incomingDataSize) >= memtableSize*0.8;
 }
 
 bool NormalMemtable::put(uint64_t key, int value) {

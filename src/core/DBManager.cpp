@@ -53,7 +53,7 @@ int DBManager::readData(uint64_t key){
         // 맵에서 키 검색
         auto it = imm->mem.find(key);
         if (it != imm->mem.end()) {
-            cout<<"(found in id:"<<imm->memtableId<<")";
+           // cout<<"(found in id:"<<imm->memtableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -62,7 +62,7 @@ int DBManager::readData(uint64_t key){
 }
 
 int DBManager::DiskRead(uint64_t key){
-    cout<<"reading Disk data~";
+   // cout<<"reading Disk data~";
     Disk->readCount++;
 
     return Disk->read(key);
@@ -105,7 +105,7 @@ map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
 
 
 map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
-    cout<<"ranging Disk datas~ ";
+   // cout<<"ranging Disk datas~ ";
     map<uint64_t, int> DiskData = Disk->range(start, end);
     Disk->readCount += DiskData.size();
 
@@ -158,17 +158,17 @@ int DBManager::flush(){
 
     IMemtable* flushMemtable=immMemtableList.front();
 
-    if(immMemtableList.front()->type==NI){
-        flag=1;
-    }
+    // if(immMemtableList.front()->type==NI){
+    //     flag=1;
+    // }
 
     // unordered_map에서 데이터 추출
-    vector<std::pair<uint64_t, int>> sortedData(flushMemtable->mem.begin(), flushMemtable->mem.end());
+    // vector<std::pair<uint64_t, int>> sortedData(flushMemtable->mem.begin(), flushMemtable->mem.end());
 
-    // vector를 정렬
-    sort(sortedData.begin(), sortedData.end(), [](const auto& a, const auto& b) {
-        return a.first < b.first;
-    });
+    // // vector를 정렬
+    // sort(sortedData.begin(), sortedData.end(), [](const auto& a, const auto& b) {
+    //     return a.first < b.first;
+    // });
 
     //파일 만들기
 //    makeFile(sortedData, flag);
@@ -265,5 +265,5 @@ void DBManager::makeFile(const std::vector<std::pair<uint64_t, int>>& sortedData
         outputFile << pair.first << "\t" << pair.second << "\n";
     }
     outputFile.close();
-    cout << "Data written to " << filename << endl;
+    //cout << "Data written to " << filename << endl;
 }

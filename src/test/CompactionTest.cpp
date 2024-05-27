@@ -84,7 +84,7 @@ void CompactionTest::compactSSTables() {
             outputFile << pair.first << "\t" << pair.second << "\n";
         }
         outputFile.close();
-        std::cout << "Data written to " << filename << std::endl;
+    //    std::cout << "Data written to " << filename << std::endl;
     }
 }
 

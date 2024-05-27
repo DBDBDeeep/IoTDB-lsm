@@ -55,8 +55,8 @@
 },
 {
   "directory": "/home/haena/IoTDB-lsm/build",
-  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o -c /home/haena/IoTDB-lsm/src/makeDataset.cpp",
-  "file": "/home/haena/IoTDB-lsm/src/makeDataset.cpp",
-  "output": "CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o"
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o -c /home/haena/IoTDB-lsm/src/testIoTDB.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/testIoTDB.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o"
 }
 ]

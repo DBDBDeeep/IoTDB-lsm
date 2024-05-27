@@ -273,30 +273,6 @@ src/disk/SSTable.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/disk/SSTable.cpp.s
 .PHONY : src/disk/SSTable.cpp.s
 
-src/makeDataset.o: src/makeDataset.cpp.o
-.PHONY : src/makeDataset.o
-
-# target to build an object file
-src/makeDataset.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o
-.PHONY : src/makeDataset.cpp.o
-
-src/makeDataset.i: src/makeDataset.cpp.i
-.PHONY : src/makeDataset.i
-
-# target to preprocess a source file
-src/makeDataset.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.i
-.PHONY : src/makeDataset.cpp.i
-
-src/makeDataset.s: src/makeDataset.cpp.s
-.PHONY : src/makeDataset.s
-
-# target to generate assembly for a file
-src/makeDataset.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.s
-.PHONY : src/makeDataset.cpp.s
-
 src/test/CompactionTest.o: src/test/CompactionTest.cpp.o
 .PHONY : src/test/CompactionTest.o
 
@@ -369,6 +345,30 @@ src/test/workload/Workload.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.s
 .PHONY : src/test/workload/Workload.cpp.s
 
+src/testIoTDB.o: src/testIoTDB.cpp.o
+.PHONY : src/testIoTDB.o
+
+# target to build an object file
+src/testIoTDB.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o
+.PHONY : src/testIoTDB.cpp.o
+
+src/testIoTDB.i: src/testIoTDB.cpp.i
+.PHONY : src/testIoTDB.i
+
+# target to preprocess a source file
+src/testIoTDB.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.i
+.PHONY : src/testIoTDB.cpp.i
+
+src/testIoTDB.s: src/testIoTDB.cpp.s
+.PHONY : src/testIoTDB.s
+
+# target to generate assembly for a file
+src/testIoTDB.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/IoTDB_lsm.dir/build.make CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.s
+.PHONY : src/testIoTDB.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -396,9 +396,6 @@ help:
 	@echo "... src/disk/SSTable.o"
 	@echo "... src/disk/SSTable.i"
 	@echo "... src/disk/SSTable.s"
-	@echo "... src/makeDataset.o"
-	@echo "... src/makeDataset.i"
-	@echo "... src/makeDataset.s"
 	@echo "... src/test/CompactionTest.o"
 	@echo "... src/test/CompactionTest.i"
 	@echo "... src/test/CompactionTest.s"
@@ -408,6 +405,9 @@ help:
 	@echo "... src/test/workload/Workload.o"
 	@echo "... src/test/workload/Workload.i"
 	@echo "... src/test/workload/Workload.s"
+	@echo "... src/testIoTDB.o"
+	@echo "... src/testIoTDB.i"
+	@echo "... src/testIoTDB.s"
 .PHONY : help
 
 

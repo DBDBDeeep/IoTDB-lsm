@@ -15,12 +15,12 @@ enum Type {
 
 struct SSTable {
 public:
-    unordered_map<uint64_t, int> ss;
+    map<uint64_t, int> ss;
     Type type;
     uint64_t startKey;
     uint64_t lastKey;
     //size_t sstableSize = 16 * 1024 * 1024;
-    size_t sstableSize = 4 * 1024;
+    size_t memtableSize = 64* 1024 * 1024;
     int sstableId;
 
     SSTable(int id); // 생성자 선언

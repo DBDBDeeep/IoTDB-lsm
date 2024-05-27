@@ -28,7 +28,7 @@ public:
         Disk = new MockDisk();
     }
     int currentId = 0;
-    int memtableNum = 2;
+    int memtableNum = 4;
     list<IMemtable*> immMemtableList;
     NormalMemtable* activeNormalMemtable;
     DelayMemtable* activeDelayMemtable;

@@ -19,5 +19,5 @@ int main(int argc, char* argv[]) {
     string initfilePath = "../src/test/dataset/" + initDataName+".txt";
     vector<Record> initDataSet = workloadA.readFile(initfilePath);
 
-    factory.generateWorkloadDataset(initDataSet,workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
+    factory.generateWorkloadDataset(initDataName, initDataSet,workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
 }

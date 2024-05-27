@@ -195,19 +195,19 @@ CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.s"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haena/IoTDB-lsm/src/test/workload/Workload.cpp -o CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.s
 
-CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o: CMakeFiles/IoTDB_lsm.dir/flags.make
-CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o: /home/haena/IoTDB-lsm/src/makeDataset.cpp
-CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o: CMakeFiles/IoTDB_lsm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haena/IoTDB-lsm/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o -MF CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o.d -o CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o -c /home/haena/IoTDB-lsm/src/makeDataset.cpp
+CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o: CMakeFiles/IoTDB_lsm.dir/flags.make
+CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o: /home/haena/IoTDB-lsm/src/testIoTDB.cpp
+CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o: CMakeFiles/IoTDB_lsm.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haena/IoTDB-lsm/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o -MF CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o.d -o CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o -c /home/haena/IoTDB-lsm/src/testIoTDB.cpp
 
-CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haena/IoTDB-lsm/src/makeDataset.cpp > CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.i
+CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.i"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haena/IoTDB-lsm/src/testIoTDB.cpp > CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.i
 
-CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haena/IoTDB-lsm/src/makeDataset.cpp -o CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.s
+CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.s"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haena/IoTDB-lsm/src/testIoTDB.cpp -o CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.s
 
 # Object files for target IoTDB_lsm
 IoTDB_lsm_OBJECTS = \
@@ -220,7 +220,7 @@ IoTDB_lsm_OBJECTS = \
 "CMakeFiles/IoTDB_lsm.dir/src/test/DataFactory.cpp.o" \
 "CMakeFiles/IoTDB_lsm.dir/src/test/CompactionTest.cpp.o" \
 "CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.o" \
-"CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o"
+"CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o"
 
 # External object files for target IoTDB_lsm
 IoTDB_lsm_EXTERNAL_OBJECTS =
@@ -234,7 +234,7 @@ IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/src/disk/SSTable.cpp.o
 IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/src/test/DataFactory.cpp.o
 IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/src/test/CompactionTest.cpp.o
 IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.o
-IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o
+IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/src/testIoTDB.cpp.o
 IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/build.make
 IoTDB_lsm: CMakeFiles/IoTDB_lsm.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haena/IoTDB-lsm/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable IoTDB_lsm"

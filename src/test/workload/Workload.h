@@ -21,14 +21,14 @@
 
 
 class Workload {
-private:
+public:
     vector<int> op;    //INSERT: 0, READ: 1, RANGE: 2
     vector<uint64_t> workloadKey;
     vector<pair<uint64_t, uint64_t> > workloadRangeKey;
     DBManager* tree;
 
 
-public:
+
     Workload(){
         if (!tree) {
             tree = new DBManager();
