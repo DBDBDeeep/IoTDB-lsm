@@ -65,31 +65,34 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
         sizes.push_back(20);
     }
 
+    //생성되는 segment 개수가 1:1:2로 정수로 나누어지지 않는 경우 계산 보정
+    if(count25Percent+count25Percent+count50Percent!=numSegments){
+        sizes.push_back(20);
+    }
+
     std::shuffle(sizes.begin(), sizes.end(), g);
+
 
 
     /**out of order data segment에 들어갈 key 선정
      * */
-    std::uniform_int_distribution<> dis(1,  10);
-    int delayedKey = dis(g); // 첫번째 delaydata 선정
-    cout<<"sizes.size() : "<<sizes.size()<<"\n";
+     int distance = dataNum / numSegments; // 각 delay segment 생성될 범위 조정 (distance구간당 segment 1개씩 매핑)
+    int start=1;
+    int end=distance;
     for (size_t i = 0; i < sizes.size(); i++) {
-        // Ensure the next delayedKey is within the valid range
-        if (delayedKey + sizes[i] > dataNum) {
-            delayedKey = dataNum - sizes[i];
-        }
+        std::uniform_int_distribution<> nextDis(start, end-sizes[i]); // currentIdx 부터 distance-(생성될 segment 사이즈) 사이에서 seg에 들어갈 첫번째 delay key선정
+        int delayedKey = nextDis(g);
 
         std::cout << "\n구간 " << i + 1 << " (" << sizes[i] << "개) : " << delayedKey << " ~ " << delayedKey + sizes[i] - 1 << "\n";
+
+        start = end+1;
+        end = start+distance-1;
 
         for (int j = 0; j < sizes[i]; j++) {
             outOfOrderKeysPerSegment[i].push_back(delayedKey + j);
         }
 
-        // Update delayedKey for the next segment
-        if (i < sizes.size() - 1) {
-            std::uniform_int_distribution<> nextDis(delayedKey + sizes[i], delayedKey + sizes[i] + 300);
-            delayedKey = nextDis(g);
-        }
+
     }
 
 
@@ -155,7 +158,8 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
         }
 
         iteration++;
-        if ( iteration % (randomKeys.size() / 100) == 0) {
+//        cout<<randomKeys.size()<<endl;
+        if ( iteration % (randomKeys.size() / 10) == 0) {
             VECTOR_LOG_PROGRESS(iteration, randomKeys);
         }
 
@@ -170,26 +174,21 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
         //현재 segment의 마지막 key값보다 큰 인덱스에 랜덤 생성(offset)
         int randomChoice = rand() % 100 + 1;
         int isIndexValid;
+        if(segment.back()==0){
+            cerr << "ERR: delay segment size생성이 제대로 되지 않았습니다. 총 segment 개수와 0.25, 0.25, 0.5 비율";
+        }
         if (randomChoice <= 30) {
             randomIndex = rand() % 500 + 1; // 1~500 범위 내
             isIndexValid = segment.back() + randomIndex;
-            cout<< segment.back()<<"\n";
-            cout <<"idx : "<<isIndexValid<<"\n";
         } else if (randomChoice <= 60) {
             randomIndex = rand() % 500 + 501; // 501~1000 범위 내
             isIndexValid = segment.back() + randomIndex;
-            cout<< segment.back()<<"\n";
-            cout <<"idx : "<<isIndexValid<<"\n";
         } else if (randomChoice <= 80) {
             randomIndex = rand() % 1000 + 1001; // 1001~2000 범위 내
             isIndexValid = segment.back()  + randomIndex;
-            cout<< segment.back()<<"\n";
-            cout <<"idx : "<<isIndexValid<<"\n";
         } else {
             randomIndex = rand() % dataSet.size() + 1; // 1 ~ dataSet.size() 범위 내
             isIndexValid = segment.back() + randomIndex;
-            cout<< segment.back()<<"\n";
-            cout <<"idx : "<<isIndexValid<<"\n";
         }
 
         // 랜덤 인덱스가 dataSet 범위를 벗어나면 dataSet 뒤에 추가
@@ -201,11 +200,13 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
         else{
             for (const auto& key : segment) {
                 dataSet.insert(dataSet.begin() + isIndexValid++, key);
+
             }
         }
-
         iteration++;
-        VECTOR_LOG_PROGRESS(iteration, outOfOrderKeysPerSegment);  //완료된 segment 개수에 비례하여 진행률 표시
+        if ( iteration % (outOfOrderKeysPerSegment.size() / 10) == 0) {
+            INT_LOG_PROGRESS(iteration, outOfOrderKeysPerSegment.size());
+        }
     }
 
 
@@ -268,6 +269,7 @@ std::string to_string_with_precision(double value, int precision) {
     out << std::fixed << value;
     return out.str();
 }
+
 /** Workload 데이터 생성 함수*/
 void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
 
