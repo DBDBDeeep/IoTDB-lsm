@@ -17,6 +17,7 @@ testIoTDB: DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o S
 makeWorkload: makeWorkload.o Workload.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o
 	$(CXX) -o makeWorkload makeWorkload.o Workload.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o -lstdc++fs
 # 개별 소스 파일을 오브젝트 파일로 컴파일하는 규칙
+
 makeDataset.o: makeDataset.cpp
 	$(CXX) $(CXXFLAGS) -c makeDataset.cpp -o makeDataset.o
 

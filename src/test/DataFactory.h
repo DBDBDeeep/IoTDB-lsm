@@ -14,6 +14,7 @@
 #include <cstring>
 
 
+
 #include "../core/DBManager.h"
 
 #define VECTOR_LOG_PROGRESS(iteration, datasetSize) \
@@ -33,9 +34,8 @@ class DataFactory {
 public:
     void generateNormalDataset(int n);
     void NormalTest();
-    void generateDelayedDataset(string& dataSetName, int n, double outOfOrderRatio);
+    void generateDelayedDataset(string& dataSetName, int dataNum, double outOfOrderRatio);
     void delayedTest();
-    void printDelayData();
 
     void writeToInitFile(string filePath, vector<uint64_t>& dataset);
 

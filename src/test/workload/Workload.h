@@ -42,6 +42,7 @@ public:
     DBManager* getTree();
     void deleteAllSSTable();
     void makeSSTable();
+    void printDelayData();
 
 };
 #endif //IOTDB_LSM_WORKLOAD_H
