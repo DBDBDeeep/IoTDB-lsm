@@ -21,4 +21,10 @@ int main(int argc, char* argv[]) {
 
 
 
+    workloadA.makeSSTable();
+    
+    CompactionTest compacton;
+    compacton.runCompaction();
+
+
 }
