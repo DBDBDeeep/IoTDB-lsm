@@ -95,39 +95,20 @@ void Workload::executeMixedWorkload(vector<Record>& dataset, int start, int end)
     cout << "Workload Mixed 작업 실행 끝\n";
 }
 
-void Workload::executeWorkload(vector<Record>& dataset, int initDataNum, string& fileName) {
+void Workload::executeWorkload(vector<Record>& dataset, int initDataNum) {
     cout << "workload 실행 시작\n";
 
     executeInsertWorkload(dataset, 0, initDataNum/2);
+    auto start = chrono::high_resolution_clock::now();
     executeMixedWorkload(dataset, initDataNum/2+1, dataset.size());
+    auto end = chrono::high_resolution_clock::now();
 
     cout << "workload 실행 끝\n";
+
+    chrono::duration<double, milli> elapsed = end - start;
+    cout << "Workload 실행 시간: " << elapsed.count() << " ms" << endl;
 }
 
-//void Workload::executeWorkload(vector<Record>& dataset){
-//
-//    cout<<"workload 실행 시작\n";
-//    for(int i=0; i<dataset.size(); i++){
-//        //cout<<dataset[i].op<<" "<<dataset[i].key<<"\n";
-//        if (dataset[i].op == "READ") {
-//            tree->readData(dataset[i].key);
-//        } else if (dataset[i].op == "RANGE") {
-//            tree->range(dataset[i].start_key, dataset[i].end_key);
-//        } else if(dataset[i].op == "INSERT"){
-//            tree->insert(dataset[i].key, dataset[i].key*2);
-//        }else{
-//            cerr << "ERR: 잘못된 형식의 레코드입니다: " << dataset[i].op << endl;
-//        }
-//        /**진행률 출력*/
-//        if (i != 0 && i % (dataset.size() / 100) == 0) {
-//            VECTOR_LOG_PROGRESS(i, dataset);
-//        }
-//    }
-//
-//    cout<<"\nworkload 실행 끝\n";
-//
-//
-//}
 
 DBManager* Workload::getTree() {
     return tree;

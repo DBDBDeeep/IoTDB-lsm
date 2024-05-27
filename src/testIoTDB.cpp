@@ -11,12 +11,8 @@ int main(int argc, char* argv[]) {
     string workloadFileName = argv[2]; //ex) "workloadA_r0.3_i0.7_V2";
     string filePath = "../src/test/dataset/" + workloadFileName;
     vector<Record> datasetA = workloadA.readFile(filePath);
-    workloadA.executeWorkload(datasetA, stoi(initDataNum), workloadFileName);
+    workloadA.executeWorkload(datasetA, stoi(initDataNum));
     workloadA.makeSSTable();
-
-
-    CompactionTest compacton;
-    compacton.runCompaction();
 
 
 
