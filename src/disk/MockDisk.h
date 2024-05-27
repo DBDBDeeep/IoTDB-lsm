@@ -3,6 +3,7 @@
 
 #include <list>
 #include <limits>
+#include <algorithm>
 #include "SSTable.h" //
 #include "../core/memtable/IMemtable.h"
 

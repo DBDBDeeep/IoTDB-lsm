@@ -1,0 +1,3 @@
+/home/haena/IoTDB-lsm/build/CMakeFiles/IoTDB_lsm.dir
+/home/haena/IoTDB-lsm/build/CMakeFiles/edit_cache.dir
+/home/haena/IoTDB-lsm/build/CMakeFiles/rebuild_cache.dir

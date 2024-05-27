@@ -339,8 +339,23 @@ void DataFactory::generateWorkloadDataset(vector<Record>& initDataSet, string& w
 
 
 
+<<<<<<< HEAD
 
 
+=======
+void DataFactory::deleteAllSSTable() {
+    std::string directoryPath = "../src/test/SSTable"; // SSTable 폴더의 경로
+    try {
+        // 디렉터리 내의 모든 파일 순회
+        for (const auto& entry : std::filesystem::directory_iterator(directoryPath)) {
+            std::filesystem::remove(entry.path()); // 파일 삭제
+            std::cout << "Deleted: " << entry.path() << std::endl;
+        }
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+}
+>>>>>>> 6f99453 (haena)
 void DataFactory::printDelayData(){
 
     int delaySSTableNum= tree->Disk->delaySSTables.size();

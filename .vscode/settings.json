@@ -1,8 +1,12 @@
 {
     "files.associations": {
+<<<<<<< HEAD
         "unordered_set": "cpp",
         "algorithm": "cpp",
         "queue": "cpp",
         "limits": "cpp"
+=======
+        "string": "cpp"
+>>>>>>> 6f99453 (haena)
     }
 }

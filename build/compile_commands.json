@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/core/DBManager.cpp.o -c /home/haena/IoTDB-lsm/src/core/DBManager.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/core/DBManager.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/core/DBManager.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/core/memtable/IMemtable.cpp.o -c /home/haena/IoTDB-lsm/src/core/memtable/IMemtable.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/core/memtable/IMemtable.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/core/memtable/IMemtable.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/core/memtable/DelayMemtable.cpp.o -c /home/haena/IoTDB-lsm/src/core/memtable/DelayMemtable.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/core/memtable/DelayMemtable.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/core/memtable/DelayMemtable.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/core/memtable/NormalMemtable.cpp.o -c /home/haena/IoTDB-lsm/src/core/memtable/NormalMemtable.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/core/memtable/NormalMemtable.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/core/memtable/NormalMemtable.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/disk/MockDisk.cpp.o -c /home/haena/IoTDB-lsm/src/disk/MockDisk.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/disk/MockDisk.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/disk/MockDisk.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/disk/SSTable.cpp.o -c /home/haena/IoTDB-lsm/src/disk/SSTable.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/disk/SSTable.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/disk/SSTable.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/test/DataFactory.cpp.o -c /home/haena/IoTDB-lsm/src/test/DataFactory.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/test/DataFactory.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/test/DataFactory.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/test/CompactionTest.cpp.o -c /home/haena/IoTDB-lsm/src/test/CompactionTest.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/test/CompactionTest.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/test/CompactionTest.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.o -c /home/haena/IoTDB-lsm/src/test/workload/Workload.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/test/workload/Workload.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/test/workload/Workload.cpp.o"
+},
+{
+  "directory": "/home/haena/IoTDB-lsm/build",
+  "command": "/usr/bin/g++  -I/home/haena/IoTDB-lsm/src -I/home/haena/IoTDB-lsm/src/core -I/home/haena/IoTDB-lsm/src/core/memtable -I/home/haena/IoTDB-lsm/src/disk -g -o CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o -c /home/haena/IoTDB-lsm/src/makeDataset.cpp",
+  "file": "/home/haena/IoTDB-lsm/src/makeDataset.cpp",
+  "output": "CMakeFiles/IoTDB_lsm.dir/src/makeDataset.cpp.o"
+}
+]
