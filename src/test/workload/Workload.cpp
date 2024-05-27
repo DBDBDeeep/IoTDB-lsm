@@ -179,3 +179,24 @@ void Workload::makeSSTable() {
     }
 
 }
+
+
+void Workload::printDelayData(){
+
+    int delaySSTableNum= tree->Disk->delaySSTables.size();
+    int delaySSTableSize=0;
+    if(delaySSTableNum!= 0){
+        delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
+    }
+
+    cout<<"the number of delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
+
+    int delayImmMemtableNum=0;
+    int delayActiveMemtableNum=tree->activeDelayMemtable->mem.size();
+    for(auto memtable : tree->immMemtableList){
+        if(memtable->type=='D') delayImmMemtableNum++;
+    }
+
+    cout<<"the number of delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
+
+}

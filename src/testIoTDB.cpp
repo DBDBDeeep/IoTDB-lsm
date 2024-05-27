@@ -12,13 +12,13 @@ int main(int argc, char* argv[]) {
     string filePath = "../src/test/dataset/" + workloadFileName;
     vector<Record> datasetA = workloadA.readFile(filePath);
     workloadA.executeWorkload(datasetA, stoi(initDataNum));
-    workloadA.makeSSTable();
-
-
-
-
-    workloadA.makeSSTable();
     
+    workloadA.printDelayData();
+
+    workloadA.deleteAllSSTable();
+
+    workloadA.makeSSTable();
+
     CompactionTest compacton;
     compacton.runCompaction();
 
