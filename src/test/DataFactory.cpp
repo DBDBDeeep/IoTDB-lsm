@@ -341,7 +341,7 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.op = "INSERT";
         dataset.push_back(record);
         if (i != 0 && i % (initFileRecordCount / 100) == 0) {
-            VECTOR_LOG_PROGRESS(i, dataset);
+            INT_LOG_PROGRESS(i, initFileRecordCount);
         }
     }
 
@@ -351,8 +351,9 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.key = randomReadKey;
         record.op = "READ";
         dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
+
         if (i % (singleReadCount / 100) == 0) {
-            VECTOR_LOG_PROGRESS(singleReadCount, dataset);
+            INT_LOG_PROGRESS(i, singleReadCount);
         }
     }
     for(int i=0; i<rangeCount; i++){
@@ -367,7 +368,7 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.op = "RANGE";
         dataset.insert(dataset.begin() + initFileRecordCount / 2 + rangeStart, record);
         if (i % (rangeCount / 100) == 0) {
-            VECTOR_LOG_PROGRESS(rangeCount, dataset);
+            INT_LOG_PROGRESS(i, rangeCount);
         }
     }
 
