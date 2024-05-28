@@ -55,6 +55,7 @@ private:
     uint64_t randomIndex;  //o3 data가 삽입되는 인덱스 (o3데이터 어디에 있는지 위치 계산할 때 필요)
     string filename="dump.txt";
     vector<int> sizes; // 각 segment의 크기를 저장할 벡터
+    int randomReadKey; // 랜덤 읽기를 위한 키
 };
 
 #endif //dataFactory_H

@@ -333,7 +333,6 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
     int txnFileRecordCount = initFileRecordCount / 2;
     int singleReadCount = txnFileRecordCount * (readProportion / insertProportion) * singleReadProportion;
     int rangeCount = txnFileRecordCount * (readProportion / insertProportion) * rangeProportion;
-    int randomReadKey;
     std::cout << ">> Generate to Workload Dataset Progress \n\n";
 
     for (int i = 0; i < initFileRecordCount; ++i) {
@@ -366,12 +365,13 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.start_key = rangeStart;
         record.end_key = rangeEnd;
         record.op = "RANGE";
-        dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
+        dataset.insert(dataset.begin() + initFileRecordCount / 2 + rangeStart, record);
         if (i % (rangeCount / 100) == 0) {
             VECTOR_LOG_PROGRESS(rangeCount, dataset);
         }
     }
-//    while (singleReadCount > 0 || rangeCount > 0) {
+
+/**    while (singleReadCount > 0 || rangeCount > 0) {
 //        int randomReadKey = rand() % (initFileRecordCount / 2) + 1;
 //        Record record;
 //        if (singleReadCount > 0) {
@@ -395,7 +395,7 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
 //        if (completedWorkCount % (totalWorkCount / 100) == 0) {
 //            VECTOR_LOG_PROGRESS(completedWorkCount, dataset);
 //        }
-//    }
+**/
 
     /**파일에 쓰기*/
     std::string filePath;
