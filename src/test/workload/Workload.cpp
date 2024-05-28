@@ -3,12 +3,12 @@
 using namespace std;
 
 //파일에 있던 정보를 읽어와서 데이터셋 생성
-vector<Record> Workload::readFile(const string& filePath) {
-    vector<Record> dataset;
+deque<Record> Workload::readFile(const string& filePath) {
+    deque<Record> readFileDataset;
     ifstream file(filePath.c_str());
     if (!file.is_open()) {
         cerr << "ERR: 파일을 열 수 없습니다 " << filePath << endl;
-        return dataset;
+        return readFileDataset;
     }
 
     string line;
@@ -39,7 +39,7 @@ vector<Record> Workload::readFile(const string& filePath) {
                     continue;
                 }
             }
-            dataset.push_back(record);
+            readFileDataset.push_back(record);
         } else {
             cerr << "ERR: 잘못된 형식의 레코드입니다: " << line << endl;
         }
@@ -52,7 +52,7 @@ vector<Record> Workload::readFile(const string& filePath) {
    // cout<<filePath<<" 읽어오기 끝\n";
 
     file.close();
-    return dataset;
+    return readFileDataset;
 }
 void Workload::executeInsertWorkload(vector<Record>& dataset, int start, int end) {
   //  cout << "Workload Insert 작업 실행 시작\n";

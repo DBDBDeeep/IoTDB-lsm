@@ -34,7 +34,7 @@ public:
             tree = new DBManager();
         }
     };
-    vector<Record> readFile(const string& filePath);
+    deque<Record> readFile(const string& filePath);
     void executeInsertWorkload(vector<Record>& dataset, int start, int end);
     void executeMixedWorkload(vector<Record>& dataset, int start, int end);
     void executeWorkload(vector<Record>& dataset, int initDataNum);

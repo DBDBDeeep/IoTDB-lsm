@@ -47,8 +47,9 @@ public:
 
     void writeToFile(size_t bytes);
     void readFromFile(size_t bytes);
-    void generateWorkloadDataset(string initDataName, vector<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);
-    void writeToWorkloadFile(string filePath, vector<Record>& dataset);
+    void generateWorkloadDataset(string initDataName, deque<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);
+//    void writeToWorkloadFile(string filePath, vector<Record>& dataset);
+    void writeToWorkloadFile(const std::string& filePath, std::deque<Record>& dataset);
 private:
     DBManager* tree;
     int outOfOrderCount;    //o3 data 몇개인지 (o3데이터 어디에 있는지 위치 계산할 때 필요)

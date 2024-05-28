@@ -44,7 +44,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
      * */
     vector<uint64_t> dataSet(dataNum);
 
-   // cout<< "dataSet 1부터 dataNum까지 초기화\n";
+    // cout<< "dataSet 1부터 dataNum까지 초기화\n";
     std::iota(dataSet.begin(), dataSet.end(), 1);
     //<< "dataSet 초기화 완료\n";
 
@@ -107,14 +107,14 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
 
     /**out of order data segment에 들어갈 key 선정
      * */
-     int distance = dataNum / numSegments; // 각 delay segment 생성될 범위 조정 (distance구간당 segment 1개씩 매핑)
+    int distance = dataNum / numSegments; // 각 delay segment 생성될 범위 조정 (distance구간당 segment 1개씩 매핑)
     int start=1;
     int end=distance;
     for (size_t i = 0; i < sizes.size(); i++) {
         std::uniform_int_distribution<> nextDis(start, end-sizes[i]); // currentIdx 부터 distance-(생성될 segment 사이즈) 사이에서 seg에 들어갈 첫번째 delay key선정
         int delayedKey = nextDis(g);
 
-       // std::cout << "\n구간 " << i + 1 << " (" << sizes[i] << "개) : " << delayedKey << " ~ " << delayedKey + sizes[i] - 1 << "\n";
+        // std::cout << "\n구간 " << i + 1 << " (" << sizes[i] << "개) : " << delayedKey << " ~ " << delayedKey + sizes[i] - 1 << "\n";
 
         start = end+1;
         end = start+distance-1;
@@ -168,7 +168,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
 
     /** dataset에 단일 out of order data 추가
      * */
-   // cout<<"\n>> 단일 Out of order data 추가\n\n";
+    // cout<<"\n>> 단일 Out of order data 추가\n\n";
     for(const auto &key : randomKeys) {
         int randomChoice = rand() % 100 + 1;
         if (randomChoice <= 30) {
@@ -189,7 +189,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
         }
 
         iteration++;
-        
+
         if ( iteration % (randomKeys.size() / 10) == 0) {
             VECTOR_LOG_PROGRESS(iteration, randomKeys);
         }
@@ -199,7 +199,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
 
     /** dataset에 out of order data segment 추가
      * */
-  //  cout<<">> Out of order dataSet 추가\n\n";
+    //  cout<<">> Out of order dataSet 추가\n\n";
     iteration=0;
 
     if (outOfOrderKeysPerSegment.empty()) {
@@ -259,7 +259,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
             if (iteration % (outOfOrderKeysPerSegment.size() / 10) == 0) {
                 INT_LOG_PROGRESS(iteration, outOfOrderKeysPerSegment.size());
             }
-    }
+        }
 
     }
 
@@ -296,27 +296,27 @@ void DataFactory::writeToInitFile(string filePath, vector<uint64_t>& dataset) {
 
 
 /**File에 Workload 쓰기 함수*/
-void DataFactory::writeToWorkloadFile(string filePath, vector<Record>& dataset) {
-    ofstream outputFile(filePath);
+void DataFactory::writeToWorkloadFile(const std::string& filePath, std::deque<Record>& dataset) {
+    std::ofstream outputFile(filePath);
     if (!outputFile.is_open()) {
-        cerr << "workload dataset 파일 열기 오류" << endl;
+        std::cerr << "workload dataset 파일 열기 오류" << std::endl;
         return;
     }
     std::cout << "\n>> Write to Workload File Progress \n";
-    for(int i=0; i<dataset.size(); i++){
-        if (strcmp(dataset[i].op.c_str(), "RANGE")==0) {
-            outputFile << dataset[i].op << "," << dataset[i].start_key << " " << dataset[i].end_key << endl;
+    for (size_t i = 0; i < dataset.size(); ++i) {
+        if (dataset[i].op == "RANGE") {
+            outputFile << dataset[i].op << "," << dataset[i].start_key << " " << dataset[i].end_key << std::endl;
         } else {
-            outputFile << dataset[i].op << "," << dataset[i].key << endl;
+            outputFile << dataset[i].op << "," << dataset[i].key << std::endl;
         }
 
-        if (i != 0 && i % (dataset.size() / 100) == 0) {
+        if (i != 0 && (i * 5) % dataset.size() == 0) { // 20%마다 출력
             VECTOR_LOG_PROGRESS(i, dataset);
         }
     }
-   // cout<<"file write완료\n\n";
     outputFile.close();
 }
+
 std::string to_string_with_precision(double value, int precision) {
     std::ostringstream out;
     out.precision(precision);
@@ -325,63 +325,77 @@ std::string to_string_with_precision(double value, int precision) {
 }
 
 /** Workload 데이터 생성 함수*/
-void DataFactory::generateWorkloadDataset(string initDataName, vector<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
+void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
 
-    vector<Record> dataset;
-    int initFileRecordCount = initDataSet.size();   //전체 데이터셋 개수
-    int txnFileRecordCount = initFileRecordCount/2; // 워크로드의 INSERT 작업 개수(전체 데이터 셋의 절반)
-    int singleReadCount = txnFileRecordCount * (readProportion/insertProportion) * singleReadProportion; // 단일 읽기 작업 해야할 총 횟수
-    int rangeCount = txnFileRecordCount * (readProportion/insertProportion) * rangeProportion; // 범위 조회 작업 해야할 총 횟수
-    cout << ">> Generate to Workload Dataset Progress \n\n";
-    //cout<<"1) workload Insert 작업 추가\n";
-    for(int i=0; i<initFileRecordCount; i++){
+    std::deque<Record> dataset;
+    int initFileRecordCount = initDataSet.size();
+    int txnFileRecordCount = initFileRecordCount / 2;
+    int singleReadCount = txnFileRecordCount * (readProportion / insertProportion) * singleReadProportion;
+    int rangeCount = txnFileRecordCount * (readProportion / insertProportion) * rangeProportion;
+    int randomReadKey;
+    std::cout << ">> Generate to Workload Dataset Progress \n\n";
+
+    for (int i = 0; i < initFileRecordCount; ++i) {
         Record record;
         record.key = initDataSet[i].key;
         record.op = "INSERT";
         dataset.push_back(record);
-        if (i != 0 && i % (initFileRecordCount / 100) == 0) {
-            INT_LOG_PROGRESS(i, initFileRecordCount);
-        }
+        cout<<"push back record"<<record.key<<" "<<record.op<<endl;
+//        if (i != 0 && i % (initFileRecordCount / 100) == 0) {
+//            VECTOR_LOG_PROGRESS(i, dataset);
+//        }
     }
 
-
-    int totalWorkCount = singleReadCount + rangeCount;
-    int completedWorkCount = 0;
-   // cout<<"2) Workload read, range 작업 추가\n";
-    while (singleReadCount > 0 || rangeCount > 0) {
-        // 랜덤한 인덱스에 read 작업 레코드 추가
-        int randomReadKey = rand() % (initFileRecordCount/2) + 1;
+    for(int i=0; i< singleReadCount; i++){
+        randomReadKey = rand() % (initFileRecordCount / 2) + 1;
         Record record;
-        if (singleReadCount > 0) {                          // single read 작업일 경우
-            record.key = randomReadKey;
-            --singleReadCount;
-            record.op = "READ";
-        } else {                                            // range read 작업일 경우
-            int rangeStart = rand() % (initFileRecordCount/2) + 1;
-            int rangeEnd = rand() % (initFileRecordCount/2) + 1;
-            if (rangeStart > rangeEnd) {
-                swap(rangeStart, rangeEnd);
-            }
-            record.start_key = rangeStart;
-            record.end_key = rangeEnd;
-            record.op = "RANGE";
-            --rangeCount;
-        }
-        // 워크로드 삽입
-        dataset.insert(dataset.begin() + initFileRecordCount/2 + randomReadKey, record);
-        completedWorkCount++;
-
-        /**진행률 출력*/
-        if (completedWorkCount % (totalWorkCount / 100) == 0) {
-            INT_LOG_PROGRESS(completedWorkCount, totalWorkCount);
-        }
+        record.key = randomReadKey;
+        record.op = "READ";
+        dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
     }
+    for(int i=0; i<rangeCount; i++){
+        int rangeStart = rand() % (initFileRecordCount / 2) + 1;
+        int rangeEnd = rand() % (initFileRecordCount / 2) + 1;
+        if (rangeStart > rangeEnd) {
+            std::swap(rangeStart, rangeEnd);
+        }
+        Record record;
+        record.start_key = rangeStart;
+        record.end_key = rangeEnd;
+        record.op = "RANGE";
+        dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
+    }
+//    while (singleReadCount > 0 || rangeCount > 0) {
+//        int randomReadKey = rand() % (initFileRecordCount / 2) + 1;
+//        Record record;
+//        if (singleReadCount > 0) {
+//            record.key = randomReadKey;
+//            --singleReadCount;
+//            record.op = "READ";
+//        } else {
+//            int rangeStart = rand() % (initFileRecordCount / 2) + 1;
+//            int rangeEnd = rand() % (initFileRecordCount / 2) + 1;
+//            if (rangeStart > rangeEnd) {
+//                std::swap(rangeStart, rangeEnd);
+//            }
+//            record.start_key = rangeStart;
+//            record.end_key = rangeEnd;
+//            record.op = "RANGE";
+//            --rangeCount;
+//        }
+//        dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
+//        completedWorkCount++;
+//
+//        if (completedWorkCount % (totalWorkCount / 100) == 0) {
+//            VECTOR_LOG_PROGRESS(completedWorkCount, dataset);
+//        }
+//    }
 
     /**파일에 쓰기*/
     std::string filePath;
     if(singleReadProportion == 0.5) {
         filePath = "../src/test/dataset/workload/"+workloadDataName+"_i" + to_string_with_precision(insertProportion, 1) +
-                   "_i" + to_string_with_precision(readProportion, 1) + "_V1_"+initDataName+".txt";
+                   "_r" + to_string_with_precision(readProportion, 1) + "_V1_"+initDataName+".txt";
     } else {
         filePath = "../src/test/dataset/workload/"+workloadDataName+"_r"+ to_string_with_precision(readProportion, 1) +
                    "_i" + to_string_with_precision(insertProportion, 1) + "_V2_"+initDataName+".txt";
