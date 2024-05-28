@@ -351,8 +351,9 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.key = randomReadKey;
         record.op = "READ";
         dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
+        cout<<"single read 진행률 : "<<i<<"/"<<singleReadCount<<endl;
 
-        if (i % (singleReadCount / 100) == 0) {
+        if (i != 0 && i % (singleReadCount / 100) == 0) {
             INT_LOG_PROGRESS(i, singleReadCount);
         }
     }
@@ -367,7 +368,8 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.end_key = rangeEnd;
         record.op = "RANGE";
         dataset.insert(dataset.begin() + initFileRecordCount / 2 + rangeStart, record);
-        if (i % (rangeCount / 100) == 0) {
+        cout<<"range 진행률 : "<<i<<"/"<<rangeCount<<endl;
+        if (i != 0 && i % (rangeCount / 100) == 0) {
             INT_LOG_PROGRESS(i, rangeCount);
         }
     }
