@@ -18,12 +18,12 @@
 #include "../core/DBManager.h"
 
 #define VECTOR_LOG_PROGRESS(iteration, datasetSize) \
-    if ((iteration * 100 / datasetSize.size()) % 25 == 0) { \
+    if ((iteration * 100 / datasetSize.size()) % 1 == 0) { \
         cout << (iteration * 100 / datasetSize.size()) << "% \n"; \
     }
 
 #define INT_LOG_PROGRESS(iteration, Count) \
-    if ((iteration * 100 / Count) % 25 == 0) { \
+    if ((iteration * 100 / Count) % 1 == 0) { \
         cout << (iteration * 100 / Count) << "% \n"; \
     }
 using namespace std;
@@ -41,10 +41,9 @@ public:
     void generateDelayedDataset(string& dataSetName, int dataNum, double outOfOrderRatio);
     void delayedTest();
 
-    void writeToInitFile(string filePath, vector<uint64_t>& dataset);
+    void writeToInitFile(string filePath, deque<uint64_t>& dataset);
 
     //N바이트 쓸때 시간 측정
-
     void writeToFile(size_t bytes);
     void readFromFile(size_t bytes);
     void generateWorkloadDataset(string initDataName, deque<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);

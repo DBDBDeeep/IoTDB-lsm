@@ -42,7 +42,8 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
 
     /**1~dataNum 범위 dataset 초기화
      * */
-    vector<uint64_t> dataSet(dataNum);
+    deque<uint64_t> dataSet(dataNum);
+
 
     // cout<< "dataSet 1부터 dataNum까지 초기화\n";
     std::iota(dataSet.begin(), dataSet.end(), 1);
@@ -78,7 +79,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
     int count25Percent = std::round(numSegments * 0.25);
     int count50Percent = std::round(numSegments * 0.50);
     int totalAssigned = 2 * count25Percent + count50Percent;
-    
+
     // 비율에 따라 세그먼트 크기 추가
     for (int i = 0; i < count25Percent; ++i) {
         sizes.push_back(10);
@@ -190,7 +191,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
 
         iteration++;
 
-        if ( iteration % (randomKeys.size() / 10) == 0) {
+        if ( iteration % (randomKeys.size() / 100) == 0) {
             VECTOR_LOG_PROGRESS(iteration, randomKeys);
         }
 
@@ -255,8 +256,8 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
         }
 
         iteration++;
-        if (outOfOrderKeysPerSegment.size() > 0 && (outOfOrderKeysPerSegment.size() / 10) > 0) {
-            if (iteration % (outOfOrderKeysPerSegment.size() / 10) == 0) {
+        if (outOfOrderKeysPerSegment.size() > 0 && (outOfOrderKeysPerSegment.size() / 100) > 0) {
+            if (iteration % (outOfOrderKeysPerSegment.size() / 100) == 0) {
                 INT_LOG_PROGRESS(iteration, outOfOrderKeysPerSegment.size());
             }
         }
@@ -274,7 +275,7 @@ void DataFactory:: generateDelayedDataset(string& dataSetName, int dataNum, doub
     }
 }
 
-void DataFactory::writeToInitFile(string filePath, vector<uint64_t>& dataset) {
+void DataFactory::writeToInitFile(string filePath, deque<uint64_t>& dataset) {
     ofstream outputFile(filePath);
     std::cout << "\n>> Write to Init File Progress \n\n";
 
@@ -340,10 +341,9 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.key = initDataSet[i].key;
         record.op = "INSERT";
         dataset.push_back(record);
-        cout<<"push back record"<<record.key<<" "<<record.op<<endl;
-//        if (i != 0 && i % (initFileRecordCount / 100) == 0) {
-//            VECTOR_LOG_PROGRESS(i, dataset);
-//        }
+        if (i != 0 && i % (initFileRecordCount / 100) == 0) {
+            VECTOR_LOG_PROGRESS(i, dataset);
+        }
     }
 
     for(int i=0; i< singleReadCount; i++){
@@ -352,6 +352,9 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.key = randomReadKey;
         record.op = "READ";
         dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
+        if (i % (singleReadCount / 100) == 0) {
+            VECTOR_LOG_PROGRESS(singleReadCount, dataset);
+        }
     }
     for(int i=0; i<rangeCount; i++){
         int rangeStart = rand() % (initFileRecordCount / 2) + 1;
@@ -364,6 +367,9 @@ void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& in
         record.end_key = rangeEnd;
         record.op = "RANGE";
         dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
+        if (i % (rangeCount / 100) == 0) {
+            VECTOR_LOG_PROGRESS(rangeCount, dataset);
+        }
     }
 //    while (singleReadCount > 0 || rangeCount > 0) {
 //        int randomReadKey = rand() % (initFileRecordCount / 2) + 1;
