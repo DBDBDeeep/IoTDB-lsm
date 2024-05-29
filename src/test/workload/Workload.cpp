@@ -3,8 +3,8 @@
 using namespace std;
 
 //파일에 있던 정보를 읽어와서 데이터셋 생성
-deque<Record> Workload::readFile(const string& filePath) {
-    deque<Record> readFileDataset;
+std::list<Record> Workload::readFile(const string& filePath) {
+    std::list<Record> readFileDataset;
     ifstream file(filePath.c_str());
     if (!file.is_open()) {
         cerr << "ERR: 파일을 열 수 없습니다 " << filePath << endl;

@@ -18,6 +18,7 @@
 #include <sstream>
 #include <filesystem>
 #include <regex>
+#include <list>
 
 
 class Workload {
@@ -34,7 +35,7 @@ public:
             tree = new DBManager();
         }
     };
-    deque<Record> readFile(const string& filePath);
+    list<Record> readFile(const string& filePath);
     void executeInsertWorkload(vector<Record>& dataset, int start, int end);
     void executeMixedWorkload(vector<Record>& dataset, int start, int end);
     void executeWorkload(vector<Record>& dataset, int initDataNum);
