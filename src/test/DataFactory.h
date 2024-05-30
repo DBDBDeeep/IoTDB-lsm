@@ -41,7 +41,7 @@ public:
     void generateDelayedDataset(string& dataSetName, int dataNum, double outOfOrderRatio);
     void delayedTest();
 
-    void writeToInitFile(string filePath, deque<uint64_t>& dataset);
+    void writeToInitFile(string filePath, vector<uint64_t>& dataset, unordered_multimap<int, uint64_t>& singleRandomKeys, unordered_set<uint64_t>& segmentRandomKeys, int lineToWrite);
 
     //N바이트 쓸때 시간 측정
     void writeToFile(size_t bytes);
@@ -49,9 +49,14 @@ public:
     void generateWorkloadDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
     void writeToWorkloadFile(const std::string& filePath, std::list<Record>& dataset);
 
-    int setDelaySegmentOffset(const vector<int>& segment, size_t dataSetSize);
+    int setSegmentDelayOffset(const vector<int>& segment, size_t dataSetSize);
     void generateReadRangeDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
     void transferLinesToWorkloadFile(const std::string &filePath, int linesToRead);
+    void generateDelaySegments(std::unordered_multimap<int, vector<int>>& outOfOrderKeysPerSegment, int dataNum, int numOfSegments);
+    void generateO3Dataset(string& dataSetName, int dataNum, double outOfOrderRatio);
+    unordered_multimap<int, uint64_t> generateSingleDelayDataset(unordered_set<uint64_t>& remainingKeys, vector<uint64_t>& dataSet);
+    int setSingleDelayOffset(int key, vector<uint64_t>& dataSet);
+
 private:
     DBManager* tree;
     int outOfOrderCount;    //o3 data 몇개인지 (o3데이터 어디에 있는지 위치 계산할 때 필요)
