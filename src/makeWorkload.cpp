@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
     std::list<Record> initDataSet = workloadA.readFileFromStart(initfilePath, halfLines);
     std::list<Record> initTxnSet = workloadA.readFileFromMiddle(initfilePath, halfLines);
 
-
-    factory.generateWorkloadDataset(initDataName, workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion, initDataSet, initTxnSet);
+    factory.generateReadRangeDataset(initDataName, workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion, initDataSet, initTxnSet);
+//    factory.generateWorkloadDataset(initDataName, workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion, initDataSet, initTxnSet);
+    factory.transferLinesToWorkloadFile(initfilePath, halfLines);
 }

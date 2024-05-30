@@ -245,29 +245,22 @@ std::string to_string_with_precision(double value, int precision) {
 }
 
 
-
-/** Workload 데이터 생성 함수*/
-void DataFactory::generateWorkloadDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet) {
+void DataFactory::generateReadRangeDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet) {
+    cout<<"start"<<endl;
 
     int initFileRecordCount = initDataSet.size();
     int singleReadCount = initFileRecordCount * (readProportion / insertProportion) * singleReadProportion;
     int rangeCount = initFileRecordCount * (readProportion / insertProportion) * rangeProportion;
-    std::cout << ">> Generate to Workload Dataset Progress \n\n";
-
+    //SingleRead 총 작업 생성
     for(int i=0; i< singleReadCount; i++){
         randomReadKey = rand() % initFileRecordCount + 1;
         Record record;
         record.key = randomReadKey;
         record.op = "READ";
-        auto it = std::next(initTxnSet.begin(), randomReadKey);
-        initTxnSet.insert(it, record);
-
-//        cout<<"single read 진행률 : "<<i<<"/"<<singleReadCount<<endl;
-        if (i != 0 && i % (singleReadCount / 100) == 0) {
-            INT_LOG_PROGRESS(i, singleReadCount);
-        }
+        singleReadSet.insert({randomReadKey, record});
     }
-    for(int i=0; i<rangeCount; i++){
+    //RangeRead 총 작업 생성
+    for(int i=0; i<rangeCount; i++) {
         int rangeStart = rand() % initFileRecordCount + 1;
         int rangeEnd = rand() % initFileRecordCount + 1;
         if (rangeStart > rangeEnd) {
@@ -277,73 +270,104 @@ void DataFactory::generateWorkloadDataset(string initDataName, string& workloadD
         record.start_key = rangeStart;
         record.end_key = rangeEnd;
         record.op = "RANGE";
-        auto it = std::next(initTxnSet.begin(),  rangeStart);
-        initTxnSet.insert(it, record);
-//        cout<<"range 진행률 : "<<i<<"/"<<rangeCount<<endl;
-        if (i != 0 && i % (rangeCount / 100) == 0) {
-            INT_LOG_PROGRESS(i, rangeCount);
+        rangeSet.insert({rangeStart, record});
+    }
+    cout<<"end"<<endl;
+}
+
+
+std:: ostream& operator<<(std::ostream& os, const Record& record) {
+    if(record.op=="RANGE"){
+        os << "op: " << record.op << ", start_key: " << record.start_key << ", end_key: " << record.end_key;
+    }else{
+        os << "op: " << record.op << ", key: " << record.key;
+    }
+    return os;
+}
+
+void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, int linesToRead) {
+    //read용 dataset input file 열기
+    std::ifstream file(initFilePath.c_str());
+    if (!file.is_open()) {
+        cerr << "ERR: 파일을 열 수 없습니다 " << initFilePath << endl;
+        return;
+    }
+    //write용 workload dataset output file 열기
+    std::string outputFilePath = "../src/test/dataset/workload/new_workload.txt";
+    std::ofstream outputFile(outputFilePath);
+    if (!outputFile.is_open()) {
+        std::cerr << "ERR: workload 파일 열기 오류" << outputFilePath << std::endl;
+        return;
+    }
+
+    std::string line;
+    int lineCount = 0;
+    std::string op, key, start_key, end_key;
+    while (lineCount < linesToRead && std::getline(file, line)) {
+        lineCount++;
+    }
+    lineCount=0;
+    cout<< "generate workload Progress"<<endl;
+    while (lineCount <= linesToRead && std::getline(file, line)) {
+        std::istringstream iss(line);
+        //input file에서 한 줄 읽어오기
+        if (std::getline(iss, op, ',') && std::getline(iss, key)) {
+            outputFile << op << "," << stoull(key) << std::endl;
+        }
+        //lineCount와  singleReadSet, rangeSet의 key를 비교하여 일치하는 경우 workload dataset에 추가
+        if (singleReadSet.find(lineCount) != singleReadSet.end()) {
+            //outputFile에 singleReadSet의 record.op와 record.key를 쓰기
+            outputFile << "READ" << "," << lineCount << std::endl;
+        } else if (rangeSet.find(lineCount) != rangeSet.end()) {
+            outputFile << "RANGE" << "," << rangeSet[lineCount].start_key << " " << rangeSet[lineCount].end_key
+                       << std::endl;
+        }
+
+        lineCount++;
+        if(lineCount % (linesToRead / 10) == 0){
+            INT_LOG_PROGRESS(lineCount, linesToRead);
         }
     }
-
-
-
-    /**파일에 쓰기*/
-    std::string filePath;
-    if(singleReadProportion == 0.5) {
-        filePath = "../src/test/dataset/workload/"+workloadDataName+"_i" + to_string_with_precision(insertProportion, 1) +
-                   "_r" + to_string_with_precision(readProportion, 1) + "_V1_"+initDataName+".txt";
-    } else {
-        filePath = "../src/test/dataset/workload/"+workloadDataName+"_r"+ to_string_with_precision(readProportion, 1) +
-                   "_i" + to_string_with_precision(insertProportion, 1) + "_V2_"+initDataName+".txt";
-    }
-    writeToWorkloadFile(filePath, initTxnSet);
-
-    return;
 }
+
 
 void DataFactory::writeToInitFile(string filePath, deque<uint64_t>& dataset) {
     ofstream outputFile(filePath);
     std::cout << "\n>> Write to Init File Progress \n\n";
 
     if (!outputFile.is_open()) {
-        cerr << "ERR: workload dataset 파일 열기 오류" << endl;
+        cerr << "ERR: workload dataset 파일 열기 오류"  << endl;
         return;
     }
-    int datasetSize = dataset.size();
-    for(int i=0; i<datasetSize; i++){
-        outputFile << "INSERT," << dataset[i] << endl;
-        if (i != 0 && i % (dataset.size() / 100) == 0) {
-            VECTOR_LOG_PROGRESS(i, dataset);
-        }
-    }
-
+    std::cout << ">> Write to Init File Progress \n\n";
+    std::copy(dataset.begin(), dataset.end(), std::ostream_iterator<uint64_t>(outputFile, "\n"));
+    cout<<"filewrite완료\n";
     outputFile.close();
 }
-
 
 
 /**File에 Workload 쓰기 함수*/
-void DataFactory::writeToWorkloadFile(const std::string& filePath, std::list<Record>& dataset) {
-    std::ofstream outputFile(filePath);
-    if (!outputFile.is_open()) {
-        std::cerr << "workload dataset 파일 열기 오류" << std::endl;
-        return;
-    }
-    std::cout << "\n>> Write to Workload File Progress \n";
-    size_t datasetSize = dataset.size();
-    iteration = 0;
-
-    for (const auto& record : dataset) {
-        if (record.op == "RANGE") {
-            outputFile << record.op << "," << record.start_key << " " << record.end_key << std::endl;
-        } else {
-            outputFile << record.op << "," << record.key << std::endl;
-        }
-        iteration++;
-        if ((iteration) % datasetSize == 0) {
-            INT_LOG_PROGRESS(iteration, datasetSize);
-        }
-    }
-
-    outputFile.close();
-}
+//void DataFactory::writeToWorkloadFile(const std::string& filePath, std::list<Record>& dataset) {
+//    std::ofstream outputFile(filePath);
+//    if (!outputFile.is_open()) {
+//        std::cerr << "workload dataset 파일 열기 오류" << std::endl;
+//        return;
+//    }
+//    std::cout << "\n>> Write to Workload File Progress \n";
+//    size_t datasetSize = dataset.size();
+//    iteration = 0;
+//
+//    for (const auto& record : dataset) {
+//        if (record.op == "RANGE") {
+//            outputFile << record.op << "," << record.start_key << " " << record.end_key << std::endl;
+//        } else {
+//            outputFile << record.op << "," << record.key << std::endl;
+//        }
+//        iteration++;
+//        if ((iteration) % datasetSize == 0) {
+//            INT_LOG_PROGRESS(iteration, datasetSize);
+//        }
+//    }
+//
+//    outputFile.close();
+//}

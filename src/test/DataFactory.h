@@ -48,8 +48,10 @@ public:
     void readFromFile(size_t bytes);
     void generateWorkloadDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
     void writeToWorkloadFile(const std::string& filePath, std::list<Record>& dataset);
-    int setDelaySegmentOffset(const vector<int>& segment, size_t dataSetSize);
 
+    int setDelaySegmentOffset(const vector<int>& segment, size_t dataSetSize);
+    void generateReadRangeDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
+    void transferLinesToWorkloadFile(const std::string &filePath, int linesToRead);
 private:
     DBManager* tree;
     int outOfOrderCount;    //o3 data 몇개인지 (o3데이터 어디에 있는지 위치 계산할 때 필요)
@@ -58,6 +60,9 @@ private:
     vector<int> sizes; // 각 segment의 크기를 저장할 벡터
     int randomReadKey; // 랜덤 읽기를 위한 키
     int iteration = 0; // 진행률 표시를 위한 변수
+    unordered_map<int, Record> singleReadSet;
+    unordered_map<int, Record> rangeSet;
+    int rangeSetIdx=0;
 };
 
 #endif //dataFactory_H
