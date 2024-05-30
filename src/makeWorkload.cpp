@@ -17,7 +17,11 @@ int main(int argc, char* argv[]) {
     double rangeReadProportion = stod(argv[6]); // range 읽기 작업 비율
 
     string initfilePath = "../src/test/dataset/" + initDataName+".txt";
-    std::list<Record> initDataSet = workloadA.readFile(initfilePath);
+    int halfLines = workloadA.extractHalfLinesFromFilename(initfilePath);
 
-    factory.generateWorkloadDataset(initDataName, initDataSet,workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion);
+    std::list<Record> initDataSet = workloadA.readFileFromStart(initfilePath, halfLines);
+    std::list<Record> initTxnSet = workloadA.readFileFromMiddle(initfilePath, halfLines);
+
+
+    factory.generateWorkloadDataset(initDataName, workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion, initDataSet, initTxnSet);
 }

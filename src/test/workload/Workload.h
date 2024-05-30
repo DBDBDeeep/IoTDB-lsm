@@ -18,7 +18,8 @@
 #include <sstream>
 #include <filesystem>
 #include <regex>
-#include <list>
+#include <unordered_map>
+
 
 
 class Workload {
@@ -35,15 +36,24 @@ public:
             tree = new DBManager();
         }
     };
-    list<Record> readFile(const string& filePath);
-    void executeInsertWorkload(vector<Record>& dataset, int start, int end);
-    void executeMixedWorkload(vector<Record>& dataset, int start, int end);
-    void executeWorkload(vector<Record>& dataset, int initDataNum);
+    list<Record> readFileFromStart(const std::string& filePath, int linesToRead);
+    list<Record> readFileFromMiddle(const std::string& filePath, int linesToRead);
+    list<Record> readFileWhole(const string& filePath);
+//    int extractHalfLinesFromFilename(const string& filePath);
+    void executeInsertWorkload(list<Record>& dataset, int start, int end);
+    void executeMixedWorkload(list<Record>& dataset, int start, int end);
+    void executeWorkload(list<Record>& dataset, bool isMixedWorkload);
     void cleanup();
     DBManager* getTree();
     void deleteAllSSTable();
     void makeSSTable();
     void printDelayData();
+    int extractHalfLinesFromFilename(const string& filePath);
+    void printReadFileDataset(const std::list<Record>& readFileDataset);
 
+
+private:
+    void readLines(ifstream& file, std::list<Record>& dataset, int linesToRead);
+    int iteration=0;
 };
 #endif //IOTDB_LSM_WORKLOAD_H
