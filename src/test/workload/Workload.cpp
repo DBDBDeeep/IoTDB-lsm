@@ -136,9 +136,10 @@ void Workload::makeSSTable() {
 
     int fileCounter=0;
 
-    string filename="../src/test/SSTable/NormalSStable";
+    string filename="../src/test/SSTable";
 
     for(auto sstable:tree->Disk->normalSSTables){
+
 
         ofstream outputFile(filename);
         if (!outputFile.is_open()) {
@@ -146,7 +147,7 @@ void Workload::makeSSTable() {
             return;
         }
 
-        filename+=  to_string(++fileCounter) + ".txt";
+        filename="/NormalSStable"+ to_string(++fileCounter) + ".txt";
         outputFile<<sstable->ss.size()<<"\n";  //사이즈
         outputFile<<sstable->ss.begin()->first<<"\t"<<sstable->ss.end()->first<<"\n"; //처음키, 마지막키
         for (const auto& pair : sstable->ss) {
@@ -158,9 +159,11 @@ void Workload::makeSSTable() {
 
     fileCounter=0;
 
-     filename="../src/test/SSTable/DelaySStable";
+    
 
     for(auto sstable:tree->Disk->delaySSTables){
+
+    
 
         ofstream outputFile(filename);
         if (!outputFile.is_open()) {
@@ -168,7 +171,7 @@ void Workload::makeSSTable() {
             return;
         }
 
-        filename+=  to_string(++fileCounter) + ".txt";
+        filename="/DelaySStable"+ to_string(++fileCounter) + ".txt";
         outputFile<<sstable->ss.size()<<"\n";  //사이즈
         outputFile<<sstable->ss.begin()->first<<"\t"<<sstable->ss.end()->first<<"\n"; //처음키, 마지막키
         for (const auto& pair : sstable->ss) {
@@ -183,20 +186,21 @@ void Workload::makeSSTable() {
 
 void Workload::printDelayData(){
 
-    int delaySSTableNum= tree->Disk->delaySSTables.size();
-    int delaySSTableSize=0;
-    if(delaySSTableNum!= 0){
-        delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
-    }
-
-   // cout<<"the number of delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
-
     int delayImmMemtableNum=0;
     int delayActiveMemtableNum=tree->activeDelayMemtable->mem.size();
     for(auto memtable : tree->immMemtableList){
         if(memtable->type=='D') delayImmMemtableNum++;
     }
 
-   // cout<<"the number of delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
+    int delaySSTableNum= tree->Disk->delaySSTables.size();
+    int delaySSTableSize=0;
+    if(delaySSTableNum!= 0){
+        delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
+    }
 
+    cout<<"delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
+
+   cout<<"delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
+
+    
 }
