@@ -244,70 +244,23 @@ std::string to_string_with_precision(double value, int precision) {
     return out.str();
 }
 
-///** Workload 데이터 생성 함수*/
-//void DataFactory::generateWorkloadDataset(string initDataName, deque<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
-//
-//    int initFileRecordCount = initDataSet.size();
-//    int txnFileRecordCount = initFileRecordCount / 2;
-//    int singleReadCount = txnFileRecordCount * (readProportion / insertProportion) * singleReadProportion;
-//    int rangeCount = txnFileRecordCount * (readProportion / insertProportion) * rangeProportion;
-//    std::cout << ">> Generate to Workload Dataset Progress \n\n";
-//
-///**    for (int i = 0; i < initFileRecordCount; ++i) {
-////        Record record;
-////        record.key = initDataSet[i].key;
-////        record.op = "INSERT";
-////        dataset.push_back(record);
-////        if (i != 0 && i % (initFileRecordCount / 100) == 0) {
-////            INT_LOG_PROGRESS(i, initFileRecordCount);
-////        }
-//*/
-//
-//    for(int i=0; i< singleReadCount; i++){
-//        randomReadKey = rand() % (initFileRecordCount / 2) + 1;
-//        Record record;
-//        record.key = randomReadKey;
-//        record.op = "READ";
-//        initDataSet.insert(initDataSet.begin() + initFileRecordCount / 2 + randomReadKey, record);
-////        cout<<"single read 진행률 : "<<i<<"/"<<singleReadCount<<endl;
-//
-//        if (i != 0 && i % (singleReadCount / 100) == 0) {
-//            INT_LOG_PROGRESS(i, singleReadCount);
-//        }
-//    }
-//    for(int i=0; i<rangeCount; i++){
-//        int rangeStart = rand() % (initFileRecordCount / 2) + 1;
-//        int rangeEnd = rand() % (initFileRecordCount / 2) + 1;
-//        if (rangeStart > rangeEnd) {
-//            std::swap(rangeStart, rangeEnd);
-//        }
-//        Record record;
-//        record.start_key = rangeStart;
-//        record.end_key = rangeEnd;
-//        record.op = "RANGE";
-//        initDataSet.insert(initDataSet.begin() + initFileRecordCount / 2 + rangeStart, record);
-////        cout<<"range 진행률 : "<<i<<"/"<<rangeCount<<endl;
-//        if (i != 0 && i % (rangeCount / 100) == 0) {
-//            INT_LOG_PROGRESS(i, rangeCount);
-//        }
-//    }
+
 
 /** Workload 데이터 생성 함수*/
-void DataFactory::generateWorkloadDataset(string initDataName, list<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion) {
+void DataFactory::generateWorkloadDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet) {
 
     int initFileRecordCount = initDataSet.size();
-    int txnFileRecordCount = initFileRecordCount / 2;
-    int singleReadCount = txnFileRecordCount * (readProportion / insertProportion) * singleReadProportion;
-    int rangeCount = txnFileRecordCount * (readProportion / insertProportion) * rangeProportion;
+    int singleReadCount = initFileRecordCount * (readProportion / insertProportion) * singleReadProportion;
+    int rangeCount = initFileRecordCount * (readProportion / insertProportion) * rangeProportion;
     std::cout << ">> Generate to Workload Dataset Progress \n\n";
 
     for(int i=0; i< singleReadCount; i++){
-        randomReadKey = rand() % (initFileRecordCount / 2) + 1;
+        randomReadKey = rand() % initFileRecordCount + 1;
         Record record;
         record.key = randomReadKey;
         record.op = "READ";
-        auto it = std::next(initDataSet.begin(), initFileRecordCount / 2 + randomReadKey);
-        initDataSet.insert(it, record);
+        auto it = std::next(initTxnSet.begin(), randomReadKey);
+        initTxnSet.insert(it, record);
 
 //        cout<<"single read 진행률 : "<<i<<"/"<<singleReadCount<<endl;
         if (i != 0 && i % (singleReadCount / 100) == 0) {
@@ -315,8 +268,8 @@ void DataFactory::generateWorkloadDataset(string initDataName, list<Record>& ini
         }
     }
     for(int i=0; i<rangeCount; i++){
-        int rangeStart = rand() % (initFileRecordCount / 2) + 1;
-        int rangeEnd = rand() % (initFileRecordCount / 2) + 1;
+        int rangeStart = rand() % initFileRecordCount + 1;
+        int rangeEnd = rand() % initFileRecordCount + 1;
         if (rangeStart > rangeEnd) {
             std::swap(rangeStart, rangeEnd);
         }
@@ -324,39 +277,15 @@ void DataFactory::generateWorkloadDataset(string initDataName, list<Record>& ini
         record.start_key = rangeStart;
         record.end_key = rangeEnd;
         record.op = "RANGE";
-        auto it = std::next(initDataSet.begin(), initFileRecordCount / 2 + rangeStart);
-        initDataSet.insert(it, record);
+        auto it = std::next(initTxnSet.begin(),  rangeStart);
+        initTxnSet.insert(it, record);
 //        cout<<"range 진행률 : "<<i<<"/"<<rangeCount<<endl;
         if (i != 0 && i % (rangeCount / 100) == 0) {
             INT_LOG_PROGRESS(i, rangeCount);
         }
     }
 
-/**    while (singleReadCount > 0 || rangeCount > 0) {
-//        int randomReadKey = rand() % (initFileRecordCount / 2) + 1;
-//        Record record;
-//        if (singleReadCount > 0) {
-//            record.key = randomReadKey;
-//            --singleReadCount;
-//            record.op = "READ";
-//        } else {
-//            int rangeStart = rand() % (initFileRecordCount / 2) + 1;
-//            int rangeEnd = rand() % (initFileRecordCount / 2) + 1;
-//            if (rangeStart > rangeEnd) {
-//                std::swap(rangeStart, rangeEnd);
-//            }
-//            record.start_key = rangeStart;
-//            record.end_key = rangeEnd;
-//            record.op = "RANGE";
-//            --rangeCount;
-//        }
-//        dataset.insert(dataset.begin() + initFileRecordCount / 2 + randomReadKey, record);
-//        completedWorkCount++;
-//
-//        if (completedWorkCount % (totalWorkCount / 100) == 0) {
-//            VECTOR_LOG_PROGRESS(completedWorkCount, dataset);
-//        }
-**/
+
 
     /**파일에 쓰기*/
     std::string filePath;
@@ -367,7 +296,7 @@ void DataFactory::generateWorkloadDataset(string initDataName, list<Record>& ini
         filePath = "../src/test/dataset/workload/"+workloadDataName+"_r"+ to_string_with_precision(readProportion, 1) +
                    "_i" + to_string_with_precision(insertProportion, 1) + "_V2_"+initDataName+".txt";
     }
-    writeToWorkloadFile(filePath, initDataSet);
+    writeToWorkloadFile(filePath, initTxnSet);
 
     return;
 }
@@ -380,8 +309,8 @@ void DataFactory::writeToInitFile(string filePath, deque<uint64_t>& dataset) {
         cerr << "ERR: workload dataset 파일 열기 오류" << endl;
         return;
     }
-
-    for(int i=0; i<dataset.size(); i++){
+    int datasetSize = dataset.size();
+    for(int i=0; i<datasetSize; i++){
         outputFile << "INSERT," << dataset[i] << endl;
         if (i != 0 && i % (dataset.size() / 100) == 0) {
             VECTOR_LOG_PROGRESS(i, dataset);
@@ -402,64 +331,19 @@ void DataFactory::writeToWorkloadFile(const std::string& filePath, std::list<Rec
     }
     std::cout << "\n>> Write to Workload File Progress \n";
     size_t datasetSize = dataset.size();
-    size_t i = 0;
+    iteration = 0;
+
     for (const auto& record : dataset) {
         if (record.op == "RANGE") {
             outputFile << record.op << "," << record.start_key << " " << record.end_key << std::endl;
         } else {
             outputFile << record.op << "," << record.key << std::endl;
         }
-
-        if (i != 0 && i % datasetSize == 0) {
-            INT_LOG_PROGRESS(i, datasetSize);
+        iteration++;
+        if ((iteration) % datasetSize == 0) {
+            INT_LOG_PROGRESS(iteration, datasetSize);
         }
-        ++i;
     }
-    outputFile.close();
+
     outputFile.close();
 }
-
-//void DataFactory::writeToFile(size_t bytes){
-//
-//    ofstream file(filename, ios::binary);
-//    vector<char> data(bytes);
-//
-//    if(!file.is_open()){
-//        cerr << "ERR: 파일 open 오류\n";
-//    }
-//
-//    // 데이터를 무작위로 생성
-//    random_device rd;
-//    mt19937 gen(rd());
-//    uniform_int_distribution<> distrib(0, 255);
-//
-//    for (size_t i = 0; i < bytes; ++i) {
-//        data[i] = static_cast<char>(distrib(gen));
-//    }
-//
-//    auto start = chrono::high_resolution_clock::now();
-//    file.write(data.data(), data.size());
-//    auto end = chrono::high_resolution_clock::now();
-//
-//    chrono::duration<double, milli> elapsed = end - start;
-//    cout << "Write time: " << elapsed.count() << " ms" << endl;
-//
-//    file.close();
-//
-//}
-//
-//void DataFactory::readFromFile(size_t bytes){
-//
-//    ifstream file(filename, ios::binary);
-//    vector<char> data(bytes);
-//
-//    auto start = chrono::high_resolution_clock::now();
-//    file.read(data.data(), bytes);
-//    auto end = chrono::high_resolution_clock::now();
-//
-//    chrono::duration<double, milli> elapsed = end - start;
-//    cout << "Read time: " << elapsed.count() << " ms" << endl;
-//
-//    file.close();
-//
-//}

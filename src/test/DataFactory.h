@@ -46,8 +46,7 @@ public:
     //N바이트 쓸때 시간 측정
     void writeToFile(size_t bytes);
     void readFromFile(size_t bytes);
-    void generateWorkloadDataset(string initDataName, list<Record>& initDataSet, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion);
-//    void writeToWorkloadFile(string filePath, vector<Record>& dataset);
+    void generateWorkloadDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
     void writeToWorkloadFile(const std::string& filePath, std::list<Record>& dataset);
     int setDelaySegmentOffset(const vector<int>& segment, size_t dataSetSize);
 
