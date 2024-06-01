@@ -52,7 +52,7 @@ public:
     void transferLinesToWorkloadFile(const std::string &filePath, int linesToRead);
     void generateDelaySegments(std::vector<std::vector<int>>& outOfOrderKeysPerSegment, int dataNum, int numOfSegments, int segmentDataNum);
     void generateO3Dataset(string& dataSetName, int dataNum, double outOfOrderRatio);
-    map<int, int> generateSingleDelayDataset(std::set<int>& remainingKeys,  set<int>& dataSet, int dataNum);
+    map<int, int> generateSingleDelayDataset(set<int>& dataSet, vector<int> copyDataSet, int dataNum);
     void setSingleDelayOffset(int key,  set<int>& dataSet);
     void setSegmentDelayOffset(const vector<int>& segment, size_t dataSetSize);
 
@@ -68,7 +68,7 @@ private:
     unordered_map<int, Record> rangeSet;
     vector<int> singleDelayOffsets;
     vector<int> segmentDelayOffsets;
-    map<int, int>  singleDelayKeys;
+    map<int, int>  singleDelayKeys; //0
     map<int, int> randomSingleKeys;
     std::vector<uint64_t > segmentDelayKeys;
     int rangeSetIdx=0;
