@@ -12,6 +12,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cstring>
+#include <set>
 
 
 
@@ -23,9 +24,7 @@
     }
 
 #define INT_LOG_PROGRESS(iteration, Count) \
-    if ((iteration * 100 / Count) % 5 == 0) { \
-        cout << (iteration * 100 / Count) << "% \n"; \
-    }
+     cout << (iteration * 100 / Count) << "% \n"; \
 using namespace std;
 struct Record {
     string op;
@@ -41,7 +40,7 @@ public:
     void generateDelayedDataset(string& dataSetName, int dataNum, double outOfOrderRatio);
     void delayedTest();
 
-    void writeToInitFile(string filePath, vector<uint64_t>& dataset, unordered_multimap<int, uint64_t>& singleRandomKeys, unordered_set<uint64_t>& segmentRandomKeys, int lineToWrite);
+    void writeToInitFile(string filePath,  set<int>& dataSet, vector<std::vector<int>> segmentRandomKeys, int lineToWrite);
 
     //N바이트 쓸때 시간 측정
     void writeToFile(size_t bytes);
@@ -49,13 +48,13 @@ public:
     void generateWorkloadDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
     void writeToWorkloadFile(const std::string& filePath, std::list<Record>& dataset);
 
-    int setSegmentDelayOffset(const vector<int>& segment, size_t dataSetSize);
     void generateReadRangeDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
     void transferLinesToWorkloadFile(const std::string &filePath, int linesToRead);
-    void generateDelaySegments(std::unordered_multimap<int, vector<int>>& outOfOrderKeysPerSegment, int dataNum, int numOfSegments);
+    void generateDelaySegments(std::vector<std::vector<int>>& outOfOrderKeysPerSegment, int dataNum, int numOfSegments, int segmentDataNum);
     void generateO3Dataset(string& dataSetName, int dataNum, double outOfOrderRatio);
-    unordered_multimap<int, uint64_t> generateSingleDelayDataset(unordered_set<uint64_t>& remainingKeys, vector<uint64_t>& dataSet);
-    int setSingleDelayOffset(int key, vector<uint64_t>& dataSet);
+    map<int, int> generateSingleDelayDataset(std::set<int>& remainingKeys,  set<int>& dataSet, int dataNum);
+    void setSingleDelayOffset(int key,  set<int>& dataSet);
+    void setSegmentDelayOffset(const vector<int>& segment, size_t dataSetSize);
 
 private:
     DBManager* tree;
@@ -67,7 +66,13 @@ private:
     int iteration = 0; // 진행률 표시를 위한 변수
     unordered_map<int, Record> singleReadSet;
     unordered_map<int, Record> rangeSet;
+    vector<int> singleDelayOffsets;
+    vector<int> segmentDelayOffsets;
+    map<int, int>  singleDelayKeys;
+    map<int, int> randomSingleKeys;
+    std::vector<uint64_t > segmentDelayKeys;
     int rangeSetIdx=0;
+    unordered_set<int> randomIndexMap;
 };
 
 #endif //dataFactory_H
