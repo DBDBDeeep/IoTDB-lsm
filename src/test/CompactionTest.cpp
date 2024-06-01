@@ -33,6 +33,7 @@ std::vector<std::pair<uint64_t, int>> CompactionTest::readFileToVector(const std
 
 }
 
+
 void CompactionTest::loadFiles() {
     for (const auto& entry : fs::directory_iterator("../src/test/SSTable")) {
         if (entry.is_regular_file()) {

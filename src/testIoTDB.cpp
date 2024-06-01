@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     string initFileName = argv[2]; //ex) "dataB_c20000000_d0.2";
     string workloadFileName = argv[3]; //ex) "workloadA_r0.3_i0.7_V2";
 
-    string initFilePath = "../src/test/dataset/" + initFileName+".txt";
+    string initFilePath = "../src/test/dataset/" + initFileName
     string workloadFilePath = "../src/test/dataset/workload/" + workloadFileName+".txt";
     int halfLines = workloadA.extractHalfLinesFromFilename(initFilePath);
 
