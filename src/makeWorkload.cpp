@@ -24,5 +24,5 @@ int main(int argc, char* argv[]) {
 
     factory.generateReadRangeDataset(initDataName, workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion, initDataSet, initTxnSet);
 //    factory.generateWorkloadDataset(initDataName, workloadDataName, readProportion, insertProportion, singleReadProportion, rangeReadProportion, initDataSet, initTxnSet);
-    factory.transferLinesToWorkloadFile(initfilePath, halfLines);
+    factory.transferLinesToWorkloadFile(initfilePath, workloadDataName, halfLines,readProportion,insertProportion,singleReadProportion,rangeReadProportion);
 }

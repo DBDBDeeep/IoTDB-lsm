@@ -6,23 +6,41 @@
 using namespace std;
 
 std::mt19937 gen;
+/**
+ * double형을 string으로 변환하는 함수
+ * */
+std::string to_string_with_precision(double value, int precision) {
+    std::ostringstream out;
+    out.precision(precision);
+    out << std::fixed << value;
+    return out.str();
+}
+/**
+ * opertor<< 오버로딩 함수
+ * */
+std:: ostream& operator<<(std::ostream& os, const Record& record) {
+    if(record.op=="RANGE"){
+        os << "op: " << record.op << ", start_key: " << record.start_key << ", end_key: " << record.end_key;
+    }else{
+        os << "op: " << record.op << ", key: " << record.key;
+    }
+    return os;
+}
 void DataFactory::generateO3Dataset(string& dataSetName, int dataNum, double outOfOrderRatio){
+    string filePath = "../src/test/dataset/" + dataSetName + "_" + to_string(dataNum) + "_" + to_string_with_precision(outOfOrderRatio,2) + ".txt";
     outOfOrderCount = static_cast<int>(dataNum * outOfOrderRatio); // out of order 데이터 총 개수
     int segmentDataNum= outOfOrderCount/2;
     int numOfSegments= std::ceil(segmentDataNum/20.0);  //하이퍼파라미터
 
     cout << segmentDataNum << " , " << numOfSegments << endl;
     std::vector<std::vector<int>> outOfOrderKeysPerSegment(numOfSegments);
-    cout << ">> Generate O3 Dataset Progress \n\n";
+//    cout << ">> Generate O3 Dataset Progress \n\n";
 
     generateDelaySegments(outOfOrderKeysPerSegment, dataNum, numOfSegments, segmentDataNum);
 
     /**1~dataNum 범위 dataset 초기화
     * */
     std::set<int> dataSet;
-//    deque<uint64_t> dataSet(dataNum);
-//    std::iota(dataSet.begin(), dataSet.end(), 1);
-//    cout<< "dataset size :"<<dataSet.size()<<endl;
     for (int i = 1; i <= dataNum; ++i) {
         dataSet.insert(i);
     }
@@ -32,15 +50,6 @@ void DataFactory::generateO3Dataset(string& dataSetName, int dataNum, double out
 
     /**out of order segment에 포함되는 key들 찾아 dataSet에서 제거
      * */
-   // outOfOrderKeysPerSegment 출력
-
-    // 2차원 벡터의 모든 요소 출력
-//    cout << "outOfOrderKeysPerSegment: " << outOfOrderKeysPerSegment.size() <<std::endl;
-//    for (const auto& segment : outOfOrderKeysPerSegment) {
-//        std::cout << "Segment: ";
-//        cout<<"seg size"<<segment.size()<<endl;
-//        std::cout << std::endl;
-//    }
 
     vector<int> removeSegmentKeys;
     for (const auto& segment : outOfOrderKeysPerSegment) {
@@ -59,31 +68,30 @@ void DataFactory::generateO3Dataset(string& dataSetName, int dataNum, double out
 
 
 
-    //single delay key 생성
+    /**
+     * single delay key 생성
+     * */
     std::vector<int> copyDataSet(dataSet.begin(), dataSet.end());
 
     generateSingleDelayDataset(dataSet, copyDataSet, dataNum);
-    //생성된 randomSingleKeys의 key를 기존 dataset에서 제거(중복 key 방지)
-    //dataset출력
+    //생성된 singleDelayKeys의 key를 기존 dataset에서 제거(중복 key 방지)
 
     for (const auto& it : singleDelayKeys) {
-        if (dataSet.erase(it.second) > 0) {
+        dataSet.erase(it.second);
+//        if (dataSet.erase(it.second) > 0) {
 //            std::cout << "Erased value: " << it.second << std::endl;
-        } else {
-            std::cout << "Key not found: " << it.second << std::endl;
-        }
+//        } else {
+//            std::cout << "Key not found: " << it.second << std::endl;
+//        }
     }
-    cout <<"dataset size :"<<dataSet.size()<<endl;
-    cout <<"singleDelayKeys size"<<singleDelayKeys.size()<<endl;
-
-    cout<< "dataset size :"<<dataSet.size()<<endl;
-
-
+//    cout <<"dataset size :"<<dataSet.size()<<endl;
+//    cout <<"singleDelayKeys size"<<singleDelayKeys.size()<<endl;
+//    cout<< "dataset size :"<<dataSet.size()<<endl;
 
 
 
     int lineToWrite = dataNum;
-    writeToInitFile(dataSetName, dataSet, outOfOrderKeysPerSegment, lineToWrite);
+    writeToInitFile(filePath, dataSet, outOfOrderKeysPerSegment, lineToWrite);
 
 }
 
@@ -91,16 +99,17 @@ void DataFactory::generateO3Dataset(string& dataSetName, int dataNum, double out
  * Segment단위 delay data 생성 함수
  * */
 void DataFactory::generateDelaySegments(std::vector<std::vector<int>>& outOfOrderKeysPerSegment, int dataNum, int numOfSegments, int segmentDataNum) {
-    cout << ">> Generate Delay Segment Progress \n\n";
+//    cout << ">> Generate Delay Segment Progress \n\n";
     std::random_device rd;
     std::mt19937 g(rd());
     /**out of order data 각 segment 크기 설정
      * */
     int count25Percent =(numOfSegments * 0.25);
     int count50Percent = (numOfSegments * 0.50);
-//    int totalAssigned = 2 * count25Percent + count50Percent;
     int totalAssigned = count25Percent*10 + count25Percent*30 + count50Percent*20;
-    // 비율에 따라 세그먼트 크기 추가
+    /**
+     * 비율에 따라 세그먼트 크기 추가
+     * */
     for (int i = 0; i < count25Percent; ++i) {
         sizes.push_back(10);
     }
@@ -115,7 +124,7 @@ void DataFactory::generateDelaySegments(std::vector<std::vector<int>>& outOfOrde
 
     // 생성된 segment 개수와 총 segment개수 불일치할 경우 계산 보정
     if(totalAssigned < segmentDataNum) {
-        cout <<"보정"<<segmentDataNum-totalAssigned<<endl;
+//        cout <<"보정"<<segmentDataNum-totalAssigned<<endl;
         sizes.push_back(segmentDataNum-totalAssigned);
     } else if(totalAssigned > segmentDataNum) {
         int diff = totalAssigned - segmentDataNum;
@@ -137,7 +146,7 @@ void DataFactory::generateDelaySegments(std::vector<std::vector<int>>& outOfOrde
 
         delayedKey = nextDis(g);
 
-         std::cout << "\n구간 " << i + 1 << " (" << sizes[i] << "개) : " << delayedKey << " ~ " << delayedKey + sizes[i] - 1 << "\n";
+//         std::cout << "\n구간 " << i + 1 << " (" << sizes[i] << "개) : " << delayedKey << " ~ " << delayedKey + sizes[i] - 1 << "\n";
 
         for (int j = 0; j < sizes[i]; j++) {
             outOfOrderKeysPerSegment[i].push_back(delayedKey + j);
@@ -147,13 +156,13 @@ void DataFactory::generateDelaySegments(std::vector<std::vector<int>>& outOfOrde
         end = start+distance-1;
 
     }
-    cout << ">> Generate Delay Segment Complete \n\n";
+//    cout << ">> Generate Delay Segment Complete \n\n";
 }
 /**
  * single delay data 생성 함수
  * */
 std::map<int, int> DataFactory::generateSingleDelayDataset( set<int>& dataSet, vector<int> copyDataSet, int dataNum) {
-    cout << ">> Generate Single Delay Progress \n\n";
+//    cout << ">> Generate Single Delay Progress \n\n";
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -164,12 +173,10 @@ std::map<int, int> DataFactory::generateSingleDelayDataset( set<int>& dataSet, v
 
 
     int numberOfKeysToSelect = outOfOrderCount / 2;
-    cout << outOfOrderCount << " " << numberOfKeysToSelect << "\n";
     //numberOfKeysToSelect만큼의 single delay key 생성
     int distance = dataSet.size() / numberOfKeysToSelect; // delay segment 생성될 구간 설정
     int start=0;
     int end=distance;
-    int randomIndex=0;
     int delayIndex;
     unordered_set<int> copySingleDelayKeys;
     for(int i=0; i<numberOfKeysToSelect; i++){
@@ -187,7 +194,6 @@ std::map<int, int> DataFactory::generateSingleDelayDataset( set<int>& dataSet, v
         }
     }
     cout <<"single delay key 생성 완료"<<dataSet.size()<<endl;
-//    cout << ">> Generate Single Delay Complete \n\n" << numberOfKeysToSelect << " " << randomSingleKeys.size() << "\n";
     return singleDelayKeys;
 }
 
@@ -213,7 +219,6 @@ void DataFactory::setSingleDelayOffset(int key,  set<int>& dataSet) {
 /** Delay Segment Offset 설정 함수
  * */
 void DataFactory::setSegmentDelayOffset(const vector<int> &segment, size_t dataSetSize) {
-    //현재 segment의 마지막 key값보다 큰 인덱스에 랜덤 생성(offset)
 
     std::uniform_int_distribution<> dis(1, 100); // 1~1000 범위 내 난수 생성
     int randomChoice = dis(gen);
@@ -245,28 +250,6 @@ void DataFactory::setSegmentDelayOffset(const vector<int> &segment, size_t dataS
 
 
 
-
-
-/**
- * double형을 string으로 변환하는 함수
- * */
-std::string to_string_with_precision(double value, int precision) {
-    std::ostringstream out;
-    out.precision(precision);
-    out << std::fixed << value;
-    return out.str();
-}
-/**
- * opertor<< 오버로딩 함수
- * */
-std:: ostream& operator<<(std::ostream& os, const Record& record) {
-    if(record.op=="RANGE"){
-        os << "op: " << record.op << ", start_key: " << record.start_key << ", end_key: " << record.end_key;
-    }else{
-        os << "op: " << record.op << ", key: " << record.key;
-    }
-    return os;
-}
 /**
  * Workload에 추가할 Read, Range 작업 생성 함수
  * */
@@ -302,15 +285,22 @@ void DataFactory::generateReadRangeDataset(string initDataName, string& workload
 
 
 
-void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, int linesToRead) {
+void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, string &workloadDataName, int linesToRead, double readProportion,
+                                              double insertProportion, double singleReadProportion,
+                                              double rangeReadProportion) {
     //read용 dataset input file 열기
     std::ifstream file(initFilePath.c_str());
     if (!file.is_open()) {
         cerr << "ERR: 파일을 열 수 없습니다 " << initFilePath << endl;
         return;
     }
+    string version;
+    if(singleReadProportion==0.5){
+       version = "V1";
+    }
+
     //write용 workload dataset output file 열기
-    std::string outputFilePath = "../src/test/dataset/workload/new_workload.txt";
+    std::string outputFilePath = "../src/test/dataset/workload/"+workloadDataName+"i"+to_string_with_precision(insertProportion,2)+"r"+to_string_with_precision(readProportion,2)+"_"+initFilePath.substr(initFilePath.find_last_of("/")+1);
     std::ofstream outputFile(outputFilePath);
     if (!outputFile.is_open()) {
         std::cerr << "ERR: workload 파일 열기 오류" << outputFilePath << std::endl;
@@ -324,7 +314,8 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, i
         lineCount++;
     }
     lineCount=0;
-    cout<< "generate workload Progress"<<endl;
+
+//    cout<< "generate workload Progress"<<endl;
     while (lineCount <= linesToRead && std::getline(file, line)) {
         std::istringstream iss(line);
         //input file에서 한 줄 읽어오기
@@ -348,81 +339,75 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, i
 }
 
 
-void DataFactory::writeToInitFile(string fileName,  set<int>& dataSet, vector<std::vector<int>> segmentRandomKeys, int lineToWrite){
-    string filePath = "../src/test/dataset/" + fileName + ".txt";
+void DataFactory::writeToInitFile(string filePath,  set<int>& dataSet, vector<std::vector<int>> segmentRandomKeys, int lineToWrite){
+
     ofstream outputFile(filePath);
     int lineCount = 0;
+    //segmentRandomKeys 총 크기만큼 vec<int>와 offset을 저장할 map<int,vec<int>> 생성(vector<vector<int>>는 find로 lineCount비교 오래 걸려서)
+    std::map<int,vector<int>> copyOutofOrderKeysPerSegment;
+    auto offsetIdx=0;
+
+    for(const auto &segment : segmentRandomKeys){
+        for(const auto &key : segment){
+            copyOutofOrderKeysPerSegment[segmentDelayOffsets[offsetIdx]].push_back(key);
+        }
+        offsetIdx++;
+    }
 
     if (!outputFile.is_open()) {
         cerr << "ERR: workload dataset 파일 열기 오류"  << endl;
         return;
     }
-    std::cout << ">> Write to Init File Progress \n\n";
+    std::cout << ">> Write to File Progress \n\n";
 
-    int count=0;
-    cout<<"single delay:" << singleDelayKeys.size()<<endl;
 
-    auto its = singleDelayKeys.begin();
+    auto singleIt = singleDelayKeys.begin();
+    auto segIt = copyOutofOrderKeysPerSegment.begin();
+
     for (const auto& element : dataSet) {
         outputFile << "INSERT," << element << std::endl;
         lineCount++;
 
         //singleDelayKeys의 0번째 key와 lineCount가 일치하는 경우, outputFile에 쓰기
-        if(its->first==lineCount){
-            outputFile << "INSERT," << its->second << std::endl;
-            its++;
-            count++;
+        if(singleIt->first==lineCount){
+            outputFile << "INSERT," << singleIt->second << std::endl;
+            singleIt++;
         }
 
-
-
-        auto it = std::find(segmentDelayOffsets.begin(), segmentDelayOffsets.end(), lineCount);
-        if (it != segmentDelayOffsets.end()) {
-            int segmentIndex = it - segmentDelayOffsets.begin();
-            std::vector<int>& keys = segmentRandomKeys[segmentIndex];
-
-            // outputFile에 쓴 key를 삭제하면서 반복
-            for (auto it = keys.rbegin(); it != keys.rend(); ++it) {
-                outputFile << "INSERT," << *it << std::endl;
-                keys.pop_back(); // 끝 요소를 삭제
+        //copyOutofOrderKeysPerSegment의 key와 lineCount가 일치하는 경우, copyOutofOrderKeysPerSegment의 value를 outputFile에 쓰기
+        if(segIt->first==lineCount){
+            for(const auto &key : segIt->second){
+                outputFile << "INSERT," << key << std::endl;
             }
+            segIt++;
         }
+
 
         if (lineCount % (lineToWrite / 10) == 0) {
             INT_LOG_PROGRESS(lineCount, lineToWrite);
         }
     }
 
-    int i=0;
-
-    cout <<"offset size : "<<singleDelayOffsets.size()<<endl;
-    cout<<"single delay remain:" << singleDelayKeys.size()<<endl;
 
 
-    //singleDelayOffsets의 요소중에 lineCount보다 큰값이 있다면 singleDelayKeys의 key를 파일에 쓰기
-    for(auto it = singleDelayOffsets.begin(); it != singleDelayOffsets.end(); ++it){
-        if(*it > lineCount){
-            outputFile << "INSERT," << singleDelayKeys[i] << std::endl;
-            i++;
-        }
-    }
-    //randomSingleKeys남아있는 요소가 있다면 파일에 쓰기
-    while((its->first>lineCount)&& its!=singleDelayKeys.end()){
-        outputFile << "INSERT," << its->second << std::endl;
-        its++;
-        count++;
+    /**
+     * singleDelayKeys에 남아있는 요소가 있다면 파일에 쓰기
+     * */
+    while((singleIt->first>lineCount)&& singleIt!=singleDelayKeys.end()){
+        outputFile << "INSERT," << singleIt->second << std::endl;
+        singleIt++;
     }
 
-    cout<<"count log : "<<count<<endl;
-    //segmentRandomKeys안에 남은 요소들을 파일에 쓰기
-    for (const auto& keys : segmentRandomKeys) {
-        for (const auto& key : keys) {
+
+    /**
+     * copyOutofOrderKeysPerSegment의 key가 lineCount보다 큰 경우 copyOutofOrderKeysPerSegment의 value를 파일에 쓰기
+     * */
+   while((segIt->first>lineCount)&& segIt!=copyOutofOrderKeysPerSegment.end()){
+        for(const auto &key : segIt->second){
             outputFile << "INSERT," << key << std::endl;
         }
-    }
-
-
-    cout<<"remain seg count log : "<<count<<endl;
+        segIt++;
+   }
 
     cout<<"filewrite완료\n";
     outputFile.close();
