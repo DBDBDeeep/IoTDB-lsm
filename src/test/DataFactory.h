@@ -27,6 +27,8 @@
      if ((iteration * 100 / Count) % 10 == 0) { \
         cout << (iteration * 100 / Count) << "% \n"; \
     }
+#define FILE_LOG_PROGRESS(iteration, Count) \
+        cout << (iteration * 100 / Count) << "% \n"; \
 
 using namespace std;
 struct Record {
@@ -41,7 +43,7 @@ public:
 
     void writeToInitFile(string filePath,  set<int>& dataSet, vector<std::vector<int>> segmentRandomKeys, int lineToWrite);
     void generateReadRangeDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
-    void transferLinesToWorkloadFile(const std::string &initFilePath, string& workloadDataName, int linesToRead, double readProportion,double insertProportion,double singleReadProportion,double rangeReadProportion);
+    void transferLinesToWorkloadFile(const std::string &initFilePath, string& workloadDataName, int linesToRead, double readProportion,double insertProportion,double singleReadProportion);
     void generateDelaySegments(std::vector<std::vector<int>>& outOfOrderKeysPerSegment, int dataNum, int numOfSegments, int segmentDataNum);
     void generateO3Dataset(string& dataSetName, int dataNum, double outOfOrderRatio);
     std::map<int, int> generateSingleDelayDataset(set<int>& dataSet, vector<int> copyDataSet, int dataNum);

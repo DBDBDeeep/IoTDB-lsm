@@ -27,7 +27,7 @@ std:: ostream& operator<<(std::ostream& os, const Record& record) {
     return os;
 }
 void DataFactory::generateO3Dataset(string& dataSetName, int dataNum, double outOfOrderRatio){
-    string filePath = "../src/test/dataset/" + dataSetName + "_" + to_string(dataNum) + "_" + to_string_with_precision(outOfOrderRatio,2) + ".txt";
+    string filePath = "../src/test/dataset/" + dataSetName + "_c" + to_string(dataNum) + "_d" + to_string_with_precision(outOfOrderRatio,2) + ".txt";
     outOfOrderCount = static_cast<int>(dataNum * outOfOrderRatio); // out of order 데이터 총 개수
     int segmentDataNum= outOfOrderCount/2;
     int numOfSegments= std::ceil(segmentDataNum/20.0);  //하이퍼파라미터
@@ -286,8 +286,7 @@ void DataFactory::generateReadRangeDataset(string initDataName, string& workload
 
 
 void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, string &workloadDataName, int linesToRead, double readProportion,
-                                              double insertProportion, double singleReadProportion,
-                                              double rangeReadProportion) {
+                                              double insertProportion, double singleReadProportion) {
     //read용 dataset input file 열기
     std::ifstream file(initFilePath.c_str());
     if (!file.is_open()) {
@@ -295,12 +294,16 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, s
         return;
     }
     string version;
+    // 10% 간격으로 진행률을 출력하기 위해 필요한 변수
+    int nextLogProgress = linesToRead / 10;
+    int progressStep = linesToRead / 10;
+
     if(singleReadProportion==0.5){
        version = "V1";
     }
 
     //write용 workload dataset output file 열기
-    std::string outputFilePath = "../src/test/dataset/workload/"+workloadDataName+"i"+to_string_with_precision(insertProportion,2)+"r"+to_string_with_precision(readProportion,2)+"_"+initFilePath.substr(initFilePath.find_last_of("/")+1);
+    std::string outputFilePath = "../src/test/dataset/workload/"+workloadDataName+"_i"+to_string_with_precision(insertProportion,2)+"_r"+to_string_with_precision(readProportion,2)+"_"+version+"_"+initFilePath.substr(initFilePath.find_last_of("/")+1);
     std::ofstream outputFile(outputFilePath);
     if (!outputFile.is_open()) {
         std::cerr << "ERR: workload 파일 열기 오류" << outputFilePath << std::endl;
@@ -313,9 +316,9 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, s
     while (lineCount < linesToRead && std::getline(file, line)) {
         lineCount++;
     }
+    int remainingLines = linesToRead - lineCount;
     lineCount=0;
 
-//    cout<< "generate workload Progress"<<endl;
     while (lineCount <= linesToRead && std::getline(file, line)) {
         std::istringstream iss(line);
         //input file에서 한 줄 읽어오기
@@ -332,8 +335,9 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, s
         }
 
         lineCount++;
-        if(lineCount % (linesToRead / 10) == 0){
-            INT_LOG_PROGRESS(lineCount, linesToRead);
+        if (lineCount >= nextLogProgress) {
+            INT_LOG_PROGRESS(lineCount,remainingLines );
+            nextLogProgress += progressStep;
         }
     }
 }
