@@ -19,12 +19,12 @@
 #include "../core/DBManager.h"
 
 #define VECTOR_LOG_PROGRESS(iteration, datasetSize) \
-    if ((iteration * 100 / datasetSize.size()) % 1 == 0) { \
+    if ((iteration * 100 / datasetSize.size()) % 10 == 0) { \
         cout << (iteration * 100 / datasetSize.size()) << "% \n"; \
     }
 
 #define INT_LOG_PROGRESS(iteration, Count) \
-    if ((iteration * 100 / Count) % 1 == 0) { \
+    if ((iteration * 100 / Count) % 10 == 0) { \
         cout << (iteration * 100 / Count) << "% \n"; \
     }
 // FILE_LOG_PROGRESS 함수 선언

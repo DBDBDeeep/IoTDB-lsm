@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     double singleReadProportion = stod(argv[5]); // 단일 read 작업에 대한 비율
     double rangeReadProportion = stod(argv[6]); // range 읽기 작업 비율
 
-    string initfilePath = "../src/test/dataset/" + initDataName+".txt";
+    string initfilePath = "../test/dataset/" + initDataName+".txt";
     int halfLines = workloadA.extractHalfLinesFromFilename(initfilePath);
 
     //initFile 1~halfLines까지 읽어서 initDataSet에 저장

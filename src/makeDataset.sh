@@ -1,7 +1,7 @@
 EXECUTABLE="./makeDataset"
 
 dataSetName="data"
-init_data_count=50000000
+init_data_count=100000000
 out_of_order_ratios=(0.1 0.2 0.3) # 예: out of order 비율
 
 
