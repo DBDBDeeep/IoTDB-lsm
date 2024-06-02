@@ -27,8 +27,12 @@
      if ((iteration * 100 / Count) % 10 == 0) { \
         cout << (iteration * 100 / Count) << "% \n"; \
     }
-#define FILE_LOG_PROGRESS(iteration, Count) \
-        cout << (iteration * 100 / Count) << "% \n"; \
+// FILE_LOG_PROGRESS 함수 선언
+#define FILE_LOG_PROGRESS(iteration, total) \
+    do { \
+        double progress = static_cast<double>(iteration) / total * 100; \
+        std::cout << progress << "%" << std::endl; \
+    } while (0)
 
 using namespace std;
 struct Record {
@@ -42,7 +46,7 @@ class DataFactory {
 public:
 
     void writeToInitFile(string filePath,  set<int>& dataSet, vector<std::vector<int>> segmentRandomKeys, int lineToWrite);
-    void generateReadRangeDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet);
+    void generateReadRangeDataset(double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet);
     void transferLinesToWorkloadFile(const std::string &initFilePath, string& workloadDataName, int linesToRead, double readProportion,double insertProportion,double singleReadProportion);
     void generateDelaySegments(std::vector<std::vector<int>>& outOfOrderKeysPerSegment, int dataNum, int numOfSegments, int segmentDataNum);
     void generateO3Dataset(string& dataSetName, int dataNum, double outOfOrderRatio);

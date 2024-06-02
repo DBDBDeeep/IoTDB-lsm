@@ -73,27 +73,27 @@ list<Record> Workload::readFileFromStart(const std::string &filePath, int linesT
     return readFileDataset;
 }
 
-list<Record> Workload::readFileFromMiddle(const string& filePath, int linesToRead) {
-    std::list<Record> readFileDataset;
-    ifstream file(filePath.c_str());
-    if (!file.is_open()) {
-        cerr << "ERR: 파일을 열 수 없습니다 " << filePath << endl;
-        return readFileDataset;
-    }
-
-    int skipLines = extractHalfLinesFromFilename(filePath);
-    file.clear();
-    file.seekg(0, ios::beg);
-
-    string line;
-    for (int i = 0; i < skipLines && getline(file, line); ++i) {
-        // Skip the first half lines
-    }
-
-    readLines(file, readFileDataset, linesToRead);
-    file.close();
-    return readFileDataset;
-}
+//list<Record> Workload::readFileFromMiddle(const string& filePath, int linesToRead) {
+//    std::list<Record> readFileDataset;
+//    ifstream file(filePath.c_str());
+//    if (!file.is_open()) {
+//        cerr << "ERR: 파일을 열 수 없습니다 " << filePath << endl;
+//        return readFileDataset;
+//    }
+//
+//    int skipLines = extractHalfLinesFromFilename(filePath);
+//    file.clear();
+//    file.seekg(0, ios::beg);
+//
+//    string line;
+//    for (int i = 0; i < skipLines && getline(file, line); ++i) {
+//        // Skip the first half lines
+//    }
+//
+//    readLines(file, readFileDataset, linesToRead);
+//    file.close();
+//    return readFileDataset;
+//}
 
 list<Record> Workload::readFileWhole(const string& filePath) {
     std::list<Record> readFileDataset;

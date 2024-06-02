@@ -37,9 +37,7 @@ public:
         }
     };
     list<Record> readFileFromStart(const std::string& filePath, int linesToRead);
-    list<Record> readFileFromMiddle(const std::string& filePath, int linesToRead);
     list<Record> readFileWhole(const string& filePath);
-//    int extractHalfLinesFromFilename(const string& filePath);
     void executeInsertWorkload(list<Record>& dataset, int start, int end);
     void executeMixedWorkload(list<Record>& dataset, int start, int end);
     void executeWorkload(list<Record>& dataset, bool isMixedWorkload);
@@ -50,6 +48,8 @@ public:
     void printDelayData();
     int extractHalfLinesFromFilename(const string& filePath);
     void printReadFileDataset(const std::list<Record>& readFileDataset);
+    //    list<Record> readFileFromMiddle(const std::string& filePath, int linesToRead);
+
 
 
 private:

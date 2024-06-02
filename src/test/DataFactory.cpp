@@ -253,7 +253,7 @@ void DataFactory::setSegmentDelayOffset(const vector<int> &segment, size_t dataS
 /**
  * Workload에 추가할 Read, Range 작업 생성 함수
  * */
-void DataFactory::generateReadRangeDataset(string initDataName, string& workloadDataName, double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet, list<Record>& initTxnSet) {
+void DataFactory::generateReadRangeDataset(double readProportion, double insertProportion, double singleReadProportion, double rangeProportion, list<Record>& initDataSet) {
     cout<<"start"<<endl;
 
     int initFileRecordCount = initDataSet.size();
@@ -294,9 +294,6 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, s
         return;
     }
     string version;
-    // 10% 간격으로 진행률을 출력하기 위해 필요한 변수
-    int nextLogProgress = linesToRead / 10;
-    int progressStep = linesToRead / 10;
 
     if(singleReadProportion==0.5){
        version = "V1";
@@ -316,9 +313,9 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, s
     while (lineCount < linesToRead && std::getline(file, line)) {
         lineCount++;
     }
-    int remainingLines = linesToRead - lineCount;
     lineCount=0;
-
+    int nextLogProgress = linesToRead / 10;
+    int progressStep = linesToRead / 10;
     while (lineCount <= linesToRead && std::getline(file, line)) {
         std::istringstream iss(line);
         //input file에서 한 줄 읽어오기
@@ -335,8 +332,9 @@ void DataFactory::transferLinesToWorkloadFile(const std::string &initFilePath, s
         }
 
         lineCount++;
+       //진행률
         if (lineCount >= nextLogProgress) {
-            INT_LOG_PROGRESS(lineCount,remainingLines );
+            FILE_LOG_PROGRESS(lineCount, linesToRead);
             nextLogProgress += progressStep;
         }
     }
