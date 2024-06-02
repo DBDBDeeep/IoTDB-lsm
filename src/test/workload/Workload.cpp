@@ -28,9 +28,11 @@ int Workload::extractHalfLinesFromFilename(const string& filePath) {
 void Workload::readLines(std::ifstream& file, std::list<Record>& dataset, int linesToRead) {
     std::string line;
     int lineCount = 0;
+    cout<<"file 읽는 중\n";
     while (std::getline(file, line) && (linesToRead == -1 || lineCount < linesToRead)) {
         std::istringstream iss(line);
         std::string op;
+
         if (std::getline(iss, op, ',')) {
             Record record;
             record.op = op;
@@ -112,10 +114,7 @@ void Workload::executeInsertWorkload(list<Record>& dataset, int start, int end) 
     for (const auto& record : dataset) {
         tree->insert(record.key, record.key * 2);
         iteration++;
-        /**진행률 출력*/
-        if (iteration != 0 && iteration % (end / 100) == 0) {
-            INT_LOG_PROGRESS(iteration, end);
-        }
+
     }
 
 }
@@ -137,10 +136,7 @@ void Workload::executeMixedWorkload(list<Record>& dataset, int start, int end) {
         }
         /** 진행률 출력 */
         iteration++;
-        int currentProgress = iteration - start + 1;
-        if (currentProgress != 0 && iteration % ((end-start) / 100) == 0) {
-            INT_LOG_PROGRESS(currentProgress, (end-start));
-        }
+
     }
 
     //cout << "Workload Mixed 작업 실행 끝\n";
@@ -154,7 +150,7 @@ void Workload::executeWorkload(list<Record>& dataset, bool isMixedWorkload) {
         return;
     }else {
         auto start = chrono::high_resolution_clock::now();
-        executeInsertWorkload(dataset, 0, dataset.size());
+        executeMixedWorkload(dataset, 0, dataset.size());
         auto end = chrono::high_resolution_clock::now();
         chrono::duration<double, milli> elapsed = end - start;
         cout << "Workload 실행 시간: " << elapsed.count() << " ms" << endl;

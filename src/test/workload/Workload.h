@@ -20,7 +20,10 @@
 #include <regex>
 #include <unordered_map>
 
-
+#define INT_LOG_PROGRESS(iteration, count) \
+    if (count > 0 && ((iteration * 100 / count) % 10 == 0) && (iteration * 100 % count == 0)) { \
+        std::cout << (iteration * 100 / count) << "% \n"; \
+    }
 
 class Workload {
 public:
