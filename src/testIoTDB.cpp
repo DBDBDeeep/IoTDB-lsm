@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     string initFileName = argv[2]; //ex) "dataB_c20000000_d0.2";
     string workloadFileName = argv[3]; //ex) "workloadA_r0.3_i0.7_V2";
 
-    string initFilePath = "../src/test/dataset/" + initFileName
+    string initFilePath = "../src/test/dataset/" + initFileName+".txt";
     string workloadFilePath = "../src/test/dataset/workload/" + workloadFileName+".txt";
     int halfLines = workloadA.extractHalfLinesFromFilename(initFilePath);
 
@@ -26,15 +26,17 @@ int main(int argc, char* argv[]) {
     workloadA.executeWorkload(mixedWorkload, true);
 
     cout<<"\ndisk read 횟수 : "<<workloadA.tree->Disk->readCount<<"\n";
+
     
     workloadA.printDelayData();
 
-    workloadA.deleteAllSSTable();
+    //Conpaction test
 
-    workloadA.makeSSTable();
+    // workloadA.makeSSTable();
 
-    CompactionTest compacton;
-    compacton.runCompaction();
+    // CompactionTest compacton;
+    // compacton.runCompaction();
+    cout<<"\n\n";
 
 
 }

@@ -169,11 +169,22 @@ void Workload::cleanup() {
 }
 
 void Workload::deleteAllSSTable() {
-    std::string directoryPath = "../src/test/SSTable"; // SSTable 폴더의 경로
+    std::string directoryPath = "/home/haena/DBDBDeep/IoTDB-lsm/src/test/SSTable"; 
     try {
         // 디렉터리 내의 모든 파일 순회
         for (const auto& entry : filesystem::directory_iterator(directoryPath)) {
             filesystem::remove(entry.path()); // 파일 삭제
+            cout<<"삭제\n";
+        }
+    } catch (const std::filesystem::filesystem_error& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+    directoryPath = "/home/haena/DBDBDeep/IoTDB-lsm/src/test/compactionSSTable"; 
+    try {
+        // 디렉터리 내의 모든 파일 순회
+        for (const auto& entry : filesystem::directory_iterator(directoryPath)) {
+            filesystem::remove(entry.path()); // 파일 삭제
+            cout<<"삭제\n";
         }
     } catch (const std::filesystem::filesystem_error& e) {
         cerr << "Error: " << e.what() << endl;
@@ -184,21 +195,22 @@ void Workload::makeSSTable() {
 
     deleteAllSSTable(); //기존 파일 삭제
 
+    cout<<"makeSSTable\n";
+
     int fileCounter=0;
 
-    string filename="../src/test/SSTable";
+    string filename="/home/haena/DBDBDeep/IoTDB-lsm/src/test/SSTable/NormalSStable";
 
     for(auto sstable:tree->Disk->normalSSTables){
 
+        filename="/home/haena/DBDBDeep/IoTDB-lsm/src/test/SSTable/NormalSStable"+to_string(++fileCounter) + ".txt";
 
         ofstream outputFile(filename);
         if (!outputFile.is_open()) {
-            cerr << "Failed to open output file: " << filename << endl;
+            cerr << "Failed to open output file: ??" << filename << endl;
             return;
         }
 
-        filename="/NormalSStable"+ to_string(++fileCounter) + ".txt";
-        outputFile<<sstable->ss.size()<<"\n";  //사이즈
         outputFile<<sstable->ss.begin()->first<<"\t"<<sstable->ss.end()->first<<"\n"; //처음키, 마지막키
         for (const auto& pair : sstable->ss) {
             outputFile << pair.first << "\t" << pair.second << "\n";
@@ -208,12 +220,13 @@ void Workload::makeSSTable() {
     }
 
     fileCounter=0;
-
     
 
+
+    
     for(auto sstable:tree->Disk->delaySSTables){
 
-    
+        filename="/home/haena/DBDBDeep/IoTDB-lsm/src/test/SSTable/DelaySStable"+to_string(++fileCounter) + ".txt";
 
         ofstream outputFile(filename);
         if (!outputFile.is_open()) {
@@ -221,8 +234,6 @@ void Workload::makeSSTable() {
             return;
         }
 
-        filename="/DelaySStable"+ to_string(++fileCounter) + ".txt";
-        outputFile<<sstable->ss.size()<<"\n";  //사이즈
         outputFile<<sstable->ss.begin()->first<<"\t"<<sstable->ss.end()->first<<"\n"; //처음키, 마지막키
         for (const auto& pair : sstable->ss) {
             outputFile << pair.first << "\t" << pair.second << "\n";
@@ -238,8 +249,10 @@ void Workload::printDelayData(){
 
     int delayImmMemtableNum=0;
     int delayActiveMemtableNum=tree->activeDelayMemtable->mem.size();
+    int normalImmMemtableNum=0;
     for(auto memtable : tree->immMemtableList){
-        if(memtable->type=='D') delayImmMemtableNum++;
+        if(memtable->type=='DI') delayImmMemtableNum++;
+        else normalImmMemtableNum++;
     }
 
     int delaySSTableNum= tree->Disk->delaySSTables.size();
@@ -248,9 +261,16 @@ void Workload::printDelayData(){
         delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
     }
 
-    cout<<"delay data in Memory : "<< delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum<<"\n";
-
-   cout<<"delay data in Disk : "<<delaySSTableNum*delaySSTableSize<<"\n";
+    int memory = delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum;
+    int disk= delaySSTableNum*delaySSTableSize;
+    int normal = normalImmMemtableNum * delaySSTableSize;
+    // cout<<"delay delay data in Active Memtable : "<< delayActiveMemtableNum<<"\n";
+    // cout<<"delay delay data in Imm Memtable : "<< delayImmMemtableNum*delaySSTableSize<<"\n";
+    cout<<"delay data in Memory : "<< memory<<"\n";
+    cout<<"delay data in Disk : "<<disk<<"\n";
+    cout<<"normal data in Disk : "<<normal<<"\n";
+    cout<<"delay rate : "<< disk/(disk+normal)<<"\n";
+    cout<<"total delay: "<<memory+disk<<"\n";
 
     
 }

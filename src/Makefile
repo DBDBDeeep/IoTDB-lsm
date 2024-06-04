@@ -10,8 +10,8 @@ makeDataset: makeDataset.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o
 	$(CXX) -o makeDataset makeDataset.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o -lstdc++fs
 
 # testIoTDB 타겟
-testIoTDB: DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o DataFactory.o CompactionTest.o Workload.o testIoTDB.o
-	$(CXX) -o testIoTDB DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o DataFactory.o CompactionTest.o Workload.o testIoTDB.o -lstdc++fs
+testIoTDB: DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o DataFactory.o testSSTable.o CompactionTest.o Workload.o testIoTDB.o
+	$(CXX) -o testIoTDB DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o DataFactory.o testSSTable.o CompactionTest.o Workload.o testIoTDB.o -lstdc++fs
 
 # makeWorkload 타겟
 makeWorkload: makeWorkload.o Workload.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o
@@ -45,14 +45,20 @@ MockDisk.o: disk/MockDisk.cpp
 SSTable.o: disk/SSTable.cpp
 	$(CXX) $(CXXFLAGS) -c disk/SSTable.cpp -o SSTable.o
 
+testSSTable.o: test/testSSTable.cpp
+	$(CXX) $(CXXFLAGS) -c test/testSSTable.cpp -o testSSTable.o
+
 CompactionTest.o: test/CompactionTest.cpp
 	$(CXX) $(CXXFLAGS) -c test/CompactionTest.cpp -o CompactionTest.o
 
 Workload.o: test/workload/Workload.cpp
 	$(CXX) $(CXXFLAGS) -c test/workload/Workload.cpp -o Workload.o
 
+
+
 testIoTDB.o: testIoTDB.cpp
 	$(CXX) $(CXXFLAGS) -c testIoTDB.cpp -o testIoTDB.o
+
 
 # 클린업 타겟
 clean:

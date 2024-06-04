@@ -2,10 +2,10 @@
 
 EXECUTABLE="./makeWorkload"
 
-datasets=(data_100000000_0.10 data_100000000_0.20 data_100000000_0.30)
+datasets=(data_c100000000_d0.05 data_c100000000_d0.10 data_c100000000_d0.20 data_c100000000_d0.30 data_c100000000_d0.40)
 workload="workload"
-readings=(2 10 20)
-insertings=(98 90 80)
+readings=(0 0.02 0.1 0.2)
+insertings=(1 0.98 0.9 0.8)
 
 length=${#readings[@]}
 

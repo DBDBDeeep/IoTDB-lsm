@@ -14,6 +14,8 @@
 #include <utility>
 #include <filesystem> // C++17부터 사용 가능
 #include <list>
+#include "testSSTable.cpp"
+
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -28,7 +30,7 @@ public:
 
     std::vector<std::pair<uint64_t, int>> readFileToVector(const std::string& filename);
     void loadFiles();
-    void compactSSTables();
+    void compactSSTables(std::vector<testSSTable>& normalTables, std::vector<testSSTable>& delayTables, const std::string& outputDir);
     void runCompaction();
 
 };
