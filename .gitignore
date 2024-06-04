@@ -39,3 +39,4 @@ tests/lib/
 
 src/test/SSTable/
 src/test/dataset/
+src/test/SSTable/
