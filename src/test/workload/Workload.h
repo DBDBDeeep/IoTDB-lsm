@@ -32,12 +32,8 @@ public:
     vector<pair<uint64_t, uint64_t> > workloadRangeKey;
     DBManager* tree;
 
-
-
     Workload(){
-        if (!tree) {
-            tree = new DBManager();
-        }
+        tree = new DBManager();
     };
     list<Record> readFileFromStart(const std::string& filePath, int linesToRead);
     list<Record> readFileWhole(const string& filePath);
