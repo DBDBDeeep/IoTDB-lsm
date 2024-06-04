@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "disk/MockDisk.h"
 #include "stdexcept"
+#include "FlushController.h"
 
 
 using namespace std;
@@ -26,6 +27,7 @@ public:
         activeNormalMemtable = new NormalMemtable(++currentId);
         activeDelayMemtable = new DelayMemtable(++currentId);
         Disk = new MockDisk();
+        flushController = new FlushController(Disk, immMemtableList);
     }
     int currentId = 0;
     int memtableNum = 4;
@@ -33,6 +35,7 @@ public:
     NormalMemtable* activeNormalMemtable;
     DelayMemtable* activeDelayMemtable;
     MockDisk* Disk;
+    FlushController* flushController;
     int fileCounter = 0;  //testㅑㅜ
 
     bool isDelayData(uint64_t key);

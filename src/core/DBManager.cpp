@@ -75,6 +75,9 @@ map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
 
     // unordered_map을 스캔하여 범위 내 데이터 추출
     for (auto imm : immMemtableList) {
+        if(imm->startKey < start || imm->lastKey > end)
+            continue;
+
         flag = false;
         for (const auto& entry : imm->mem) {
             if (entry.first >= start && entry.first <= end) {
@@ -157,7 +160,10 @@ int DBManager::flush(){
     int flag=0; //0: delay, 1: normal
 
     IMemtable* flushMemtable=immMemtableList.front();
-
+    if(flushMemtable->type == NI)
+        flushController->start(N);
+    else if(flushMemtable->type == DI)
+        flushController->start(D);
     // if(immMemtableList.front()->type==NI){
     //     flag=1;
     // }
@@ -173,9 +179,8 @@ int DBManager::flush(){
     //파일 만들기
 //    makeFile(sortedData, flag);
 
-    Disk->flush(flushMemtable);
-
-    immMemtableList.pop_front();
+//    Disk->flush(flushMemtable);
+//    immMemtableList.pop_front();
 
     return 0;
 
