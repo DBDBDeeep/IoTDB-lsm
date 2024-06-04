@@ -41,6 +41,10 @@ void Workload::readLines(std::ifstream& file, std::list<Record>& dataset, int li
                 if (std::getline(iss, startKeyStr, ' ') && std::getline(iss, endKeyStr)) {
                     record.start_key = std::stoull(startKeyStr);
                     record.end_key = std::stoull(endKeyStr);
+                    if(record.end_key-record.start_key>=5000){
+                        std::cerr << "range 범위 오류" << line << std::endl;
+                        continue;
+                    }
                 } else {
                     std::cerr << "ERR: 잘못된 형식의 RANGE 레코드입니다: " << line << std::endl;
                     continue;
