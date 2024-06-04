@@ -31,10 +31,9 @@ public:
     vector<uint64_t> workloadKey;
     vector<pair<uint64_t, uint64_t> > workloadRangeKey;
     DBManager* tree;
-
     Workload(){
         tree = new DBManager();
-    };
+    }
     list<Record> readFileFromStart(const std::string& filePath, int linesToRead);
     list<Record> readFileWhole(const string& filePath);
     void executeInsertWorkload(list<Record>& dataset, int start, int end);

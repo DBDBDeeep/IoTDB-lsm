@@ -269,10 +269,14 @@ void DataFactory::generateReadRangeDataset(double readProportion, double insertP
     }
     //RangeRead 총 작업 생성
     for(int i=0; i<rangeCount; i++) {
-        int rangeStart = rand() % initFileRecordCount + 1;
-        int rangeEnd = rand() % initFileRecordCount + 1;
-        if (rangeStart > rangeEnd) {
-            std::swap(rangeStart, rangeEnd);
+        int rangeStart = rand() % (initFileRecordCount-5000) + 1;   //start+5000이 end가 될 수 있으므로 총 레코드 개수와 최대 오프셋 고려
+        int rangeEnd;
+        if (rand() % 2 == 0) {
+            // start+1부터 start+500 사이
+            rangeEnd = rangeStart + 1 + (rand() % 500);
+        } else {
+            // start+501부터 start+5000 사이
+            rangeEnd = rangeStart + 501 + (rand() % (5000 - 500));
         }
         Record record;
         record.start_key = rangeStart;
