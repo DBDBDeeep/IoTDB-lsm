@@ -33,6 +33,10 @@ public:
     DBManager* tree;
     Workload(){
         tree = new DBManager();
+        
+        if(!tree){
+            tree=new DBManager();
+        }
     }
     list<Record> readFileFromStart(const std::string& filePath, int linesToRead);
     list<Record> readFileWhole(const string& filePath);

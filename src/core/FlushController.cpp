@@ -2,8 +2,8 @@
 // Created by 강지윤 on 6/4/24.
 //
 
-#ifndef IOTDB_LSM_FLUSHCONTROLLER_H
-#define IOTDB_LSM_FLUSHCONTROLLER_H
+#ifndef IOTDB_LSM_FLUSHCONTROLLER_CPP
+#define IOTDB_LSM_FLUSHCONTROLLER_CPP
 
 #include <condition_variable>
 #include <iostream>
@@ -11,6 +11,7 @@
 #include <chrono>
 #include <atomic>
 #include <mutex>
+#include "MockDisk.h"
 
 using namespace std;
 
@@ -85,4 +86,4 @@ private:
 
 
 
-#endif //IOTDB_LSM_FLUSHCONTROLLER_H
+#endif //IOTDB_LSM_FLUSHCONTROLLER_CPP

@@ -10,7 +10,7 @@
 #include <algorithm>
 #include "disk/MockDisk.h"
 #include "stdexcept"
-#include "FlushController.h"
+#include "FlushController.cpp"
 
 
 using namespace std;

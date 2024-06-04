@@ -10,8 +10,8 @@ makeDataset: makeDataset.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o
 	$(CXX) -o makeDataset makeDataset.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o -lstdc++fs
 
 # testIoTDB 타겟
-testIoTDB: DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o DataFactory.o testSSTable.o CompactionTest.o Workload.o testIoTDB.o
-	$(CXX) -o testIoTDB DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o DataFactory.o testSSTable.o CompactionTest.o Workload.o testIoTDB.o -lstdc++fs
+testIoTDB: DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o FlushController.o SSTable.o DataFactory.o testSSTable.o CompactionTest.o Workload.o testIoTDB.o
+	$(CXX) -o testIoTDB DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o FlushController.o SSTable.o DataFactory.o testSSTable.o CompactionTest.o Workload.o testIoTDB.o -lstdc++fs
 
 # makeWorkload 타겟
 makeWorkload: makeWorkload.o Workload.o DataFactory.o DBManager.o IMemtable.o DelayMemtable.o NormalMemtable.o MockDisk.o SSTable.o
@@ -38,6 +38,9 @@ DelayMemtable.o: core/memtable/DelayMemtable.cpp
 
 NormalMemtable.o: core/memtable/NormalMemtable.cpp
 	$(CXX) $(CXXFLAGS) -c core/memtable/NormalMemtable.cpp -o NormalMemtable.o
+
+FlushController.o: core/FlushController.cpp
+	$(CXX) $(CXXFLAGS) -c core/FlushController.cpp -o FlushController.o
 
 MockDisk.o: disk/MockDisk.cpp
 	$(CXX) $(CXXFLAGS) -c disk/MockDisk.cpp -o MockDisk.o

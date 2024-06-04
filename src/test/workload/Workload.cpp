@@ -273,7 +273,7 @@ void Workload::printDelayData(){
     cout<<"delay data in Memory : "<< memory<<"\n";
     cout<<"delay data in Disk : "<<disk<<"\n";
     cout<<"normal data in Disk : "<<normal<<"\n";
-    cout<<"delay rate : "<< disk/(disk+normal)<<"\n";
+    cout<<"delay rate : "<< disk+normal<<"\n";
     cout<<"total delay: "<<memory+disk<<"\n";
 
     
