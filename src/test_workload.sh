@@ -3,11 +3,11 @@
 PROGRAM="./testIoTDB"  # 실행 파일 경로를 지정하세요
 
 size=100000000
-datas=("data_c100000000_d0.05" "data_c100000000_d0.10" "data_c100000000_d0.20" "data_c100000000_d0.30")
+datas=("data_c100000000_d0.10" "data_c100000000_d0.20" "data_c100000000_d0.30")
 
 if [ "$#" -ne 1 ]; then
   echo "Usage: $0 <value>"
-  echo "Allowed values: A B C D E F G"
+  echo "Allowed values: A B D"
   exit 1
 fi
 
@@ -16,26 +16,16 @@ VALUE=$1
 # data와 files 배열 설정
 case $VALUE in
   A)
-    files=("workloadA_data_c100000000_d0.05" "workloadA_data_c100000000_d0.10" "workloadA_data_c100000000_d0.20" "workloadA_data_c100000000_d0.30")
+    files=("workloadA_data_c100000000_d0.10" "workloadA_data_c100000000_d0.20" "workloadA_data_c100000000_d0.30")
     ;;
   B)
-    files=("workloadB_data_c100000000_d0.05" "workloadB_data_c100000000_d0.10" "workloadB_data_c100000000_d0.20" "workloadB_data_c100000000_d0.30")
+    files=("workloadB_data_c100000000_d0.10" "workloadB_data_c100000000_d0.20" "workloadB_data_c100000000_d0.30")
     ;;
-  C)
-    files=("workloadC_data_c100000000_d0.05" "workloadC_data_c100000000_d0.10" "workloadC_data_c100000000_d0.20" "workloadC_data_c100000000_d0.30")
-    ;;
+
   D)
-    files=("workloadD_data_c100000000_d0.05" "workloadD_data_c100000000_d0.10" "workloadD_data_c100000000_d0.20" "workloadD_data_c100000000_d0.30")
+    files=( "workloadD_data_c100000000_d0.10" "workloadD_data_c100000000_d0.20" "workloadD_data_c100000000_d0.30")
     ;;
-  E)
-    files=("workloadE_data_c100000000_d0.05" "workloadE_data_c100000000_d0.10" "workloadE_data_c100000000_d0.20" "workloadE_data_c100000000_d0.30")
-    ;;
-  F)
-    files=("workloadF_data_c100000000_d0.05" "workloadF_data_c100000000_d0.10" "workloadF_data_c100000000_d0.20" "workloadF_data_c100000000_d0.30")
-    ;;
-  G)
-    files=("workloadG_data_c100000000_d0.05" "workloadG_data_c100000000_d0.10" "workloadG_data_c100000000_d0.20" "workloadG_data_c100000000_d0.30")
-    ;;
+  
   *)
     echo "Invalid value: $VALUE"
     echo "Allowed values: A, B, C, D, E, F, G"
