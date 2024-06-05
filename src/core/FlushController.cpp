@@ -12,6 +12,7 @@
 #include <atomic>
 #include <mutex>
 #include "MockDisk.h"
+#include "queue"
 
 using namespace std;
 
@@ -23,6 +24,21 @@ public:
     void start(Type t) {
         std::lock_guard<std::mutex> lock(m_mutex);
         workers.emplace_back(&FlushController::run, this, t);
+    }
+
+    bool waitAndStop() {
+        if(!workers.empty()){
+            for (auto& worker : workers) {
+                if (worker.joinable()) {
+//                    worker.detach();
+                    cout<<""<<endl;
+                    worker.join();
+                }
+            }
+            workers.clear();
+            workers.shrink_to_fit();
+        }
+        condition.notify_all();
     }
 
     ~FlushController() { }
