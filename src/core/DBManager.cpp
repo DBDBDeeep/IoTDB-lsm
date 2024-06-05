@@ -118,7 +118,7 @@ map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
 
 IMemtable* DBManager::transformActiveToImm(IMemtable* memtable) {
 
-    if(immMemtableList.size()==memtableNum){
+    if(immMemtableList.size()>=memtableNum){
         flush();
     }
 

@@ -57,29 +57,30 @@ private:
     }
 
     void doFlush(Type t) {
-//        while (true) {
-            IMemtable *memtable = nullptr;
-            // flushQueue 락
-            {
+        IMemtable *memtable = nullptr;
+        // flushQueue 락
+        while(true) {
+//            {
                 std::unique_lock<std::mutex> lock(flushQueueMutex);
                 if (!flushQueue.empty()) {
-//                    cout<<t<<"doFlush - !empty\n";
+                    cout << flushQueue.size() << "->";
                     memtable = flushQueue.front();
-                    flushQueue.pop_front();
                 } else {
-//                    cout<<t<<"doFlush - empty\n";
 //                    break;
                     return;
                 }
-            }
 
-            if (memtable != nullptr) {
-//                cout<<t<<"disk->flush\n";
-                if (disk->flush(memtable, t)) {
-                    delete memtable;
+                if (memtable != nullptr) {
+                    if (disk->flush(memtable)) {
+//                        flushQueue.pop_front();
+                        flushQueue.pop();
+                        cout << flushQueue.size() << endl;
+                        lock.unlock();
+                        delete memtable;
+                    }
                 }
-            }
-//        }
+//            }
+        }
     }
 };
 
