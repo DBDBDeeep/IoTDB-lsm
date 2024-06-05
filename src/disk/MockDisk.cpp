@@ -92,7 +92,7 @@ map<uint64_t, int> MockDisk::range(uint64_t start, uint64_t end) {
     return results;
 }
 
-bool MockDisk::flush(IMemtable* mem, Type t) {
+bool MockDisk::flush(IMemtable* mem) {
     SSTable* newSSTable = new SSTable(mem->memtableId);
 
     // uint64_t minKey = std::numeric_limits<uint64_t>::max();
@@ -100,29 +100,21 @@ bool MockDisk::flush(IMemtable* mem, Type t) {
 
     for (const auto& entry : mem->mem) {
         newSSTable->put(entry.first, entry.second);
-        // if (entry.first < minKey) {
-        //     minKey = entry.first;
-        // }
-        // if (entry.first > maxKey) {
-        //     maxKey = entry.first;
-        // }
     }
 
-    // if (minKey != std::numeric_limits<uint64_t>::max()) {
-    //     newSSTable->setStartKey(minKey);
-    // }
-    // if (maxKey != std::numeric_limits<uint64_t>::min()) {
-    //     newSSTable->setLastKey(maxKey);
-    // }
-
-    newSSTable->setType(t);
-    if(t == N){
+    if(mem->type == NI){
+        cout << "flush N : " <<mem->memtableId<< endl;
+        newSSTable->setType(N);
         normalSSTables.push_back(newSSTable);
-    }else if(t==D){
+        return true;
+    }else if(mem->type == DI){
+        cout << "flush D : " <<mem->memtableId<< endl;
+        newSSTable->setType(D);
         delaySSTables.push_back(newSSTable);
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 void MockDisk::printSSTableList() {
