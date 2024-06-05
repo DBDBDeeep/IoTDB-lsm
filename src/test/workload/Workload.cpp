@@ -250,31 +250,46 @@ void Workload::makeSSTable() {
 
 
 void Workload::printDelayData(){
+//    tree->flushController->waitAndStop();
 
+    int disk_delay = 0;
+    int disk_normal = 0;
     int delayImmMemtableNum=0;
-    int delayActiveMemtableNum=tree->activeDelayMemtable->mem.size();
+    int delayActiveMemtableNum = tree->activeDelayMemtable->mem.size();
     int normalImmMemtableNum=0;
+    int normalActiveMemtableNum = tree->activeNormalMemtable->mem.size();
+
+    std::queue<IMemtable*> tempQueue = tree->flushQueue;
+    while (!tempQueue.empty()) {
+        IMemtable* mem = tempQueue.front();
+        if(mem->type == DI){
+            disk_delay += mem->mem.size();
+        }else if(mem->type == NI){
+//            cout<<memtable->memtableId<<"in 4"<<endl;
+            disk_normal += mem->mem.size();
+        }
+        tempQueue.pop();
+    }
+
     for(auto memtable : tree->immMemtableList){
-        if(memtable->type=='DI') delayImmMemtableNum++;
+        if(memtable->type== DI) delayImmMemtableNum++;
         else normalImmMemtableNum++;
     }
 
     int delaySSTableNum= tree->Disk->delaySSTables.size();
-    int delaySSTableSize=0;
-    if(delaySSTableNum!= 0){
-        delaySSTableSize= tree->Disk->delaySSTables.front()->ss.size();
-    }
+    int normalSSTableNum= tree->Disk->normalSSTables.size();
+    int Size=tree->immMemtableList.front()->mem.size();
 
-    int memory = delayImmMemtableNum*delaySSTableSize+delayActiveMemtableNum;
-    int disk= delaySSTableNum*delaySSTableSize;
-    int normal = normalImmMemtableNum * delaySSTableSize;
+    int memory_delay = delayActiveMemtableNum + (delayImmMemtableNum * Size);
+    disk_delay += (delaySSTableNum) * Size;
+    int memory_normal = normalActiveMemtableNum + (normalImmMemtableNum * Size);
+    disk_normal += (normalSSTableNum) * Size;
     // cout<<"delay delay data in Active Memtable : "<< delayActiveMemtableNum<<"\n";
     // cout<<"delay delay data in Imm Memtable : "<< delayImmMemtableNum*delaySSTableSize<<"\n";
-    cout<<"delay data in Memory : "<< memory<<"\n";
-    cout<<"delay data in Disk : "<<disk<<"\n";
-    cout<<"normal data in Disk : "<<normal<<"\n";
-    cout<<"delay rate : "<< disk+normal<<"\n";
-    cout<<"total delay: "<<memory+disk<<"\n";
-
-    
+    cout<<"delay data in Memory : "<< memory_delay<<"\n";
+    cout<<"delay data in Disk : "<<disk_delay<<"\n";
+    cout<<"normal data in Memory : "<<memory_normal<<"\n";
+    cout<<"normal data in Disk : "<<disk_normal<<"\n";
+    cout<<"total delay: "<<memory_delay+disk_delay<<"\n";
+    cout<<"total data: "<<memory_delay + disk_delay + memory_normal + disk_normal<<"\n";
 }

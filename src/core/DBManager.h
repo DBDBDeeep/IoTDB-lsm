@@ -27,11 +27,12 @@ public:
         activeNormalMemtable = new NormalMemtable(++currentId);
         activeDelayMemtable = new DelayMemtable(++currentId);
         Disk = new MockDisk();
-        flushController = new FlushController(Disk, immMemtableList);
+        flushController = new FlushController(Disk, flushQueue);
     }
     int currentId = 0;
     int memtableNum = 4;
     list<IMemtable*> immMemtableList;
+    queue<IMemtable*> flushQueue;
     NormalMemtable* activeNormalMemtable;
     DelayMemtable* activeDelayMemtable;
     MockDisk* Disk;

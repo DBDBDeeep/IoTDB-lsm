@@ -12,24 +12,40 @@
 #include <atomic>
 #include <mutex>
 #include "MockDisk.h"
+#include "queue"
 
 using namespace std;
 
 
 class FlushController {
 public:
-    FlushController(MockDisk* mockDisk, list<IMemtable*>& immMemtableList) : disk(mockDisk), flushQueue(immMemtableList){}
+    FlushController(MockDisk* mockDisk, queue<IMemtable*>& q) : disk(mockDisk), flushQueue(q){}
     // 시작 메소드
     void start(Type t) {
         std::lock_guard<std::mutex> lock(m_mutex);
         workers.emplace_back(&FlushController::run, this, t);
     }
 
+    bool waitAndStop() {
+        if(!workers.empty()){
+            for (auto& worker : workers) {
+                if (worker.joinable()) {
+//                    worker.detach();
+                    cout<<""<<endl;
+                    worker.join();
+                }
+            }
+            workers.clear();
+            workers.shrink_to_fit();
+        }
+        condition.notify_all();
+    }
+
     ~FlushController() { }
 private:
     vector<thread> workers;
     std::condition_variable condition;
-    list<IMemtable*>& flushQueue;
+    queue<IMemtable*>& flushQueue;
     std::mutex flushQueueMutex;
     mutex m_mutex;
     MockDisk* disk;
@@ -57,29 +73,30 @@ private:
     }
 
     void doFlush(Type t) {
-//        while (true) {
-            IMemtable *memtable = nullptr;
-            // flushQueue 락
-            {
+        IMemtable *memtable = nullptr;
+        // flushQueue 락
+        while(true) {
+//            {
                 std::unique_lock<std::mutex> lock(flushQueueMutex);
                 if (!flushQueue.empty()) {
-//                    cout<<t<<"doFlush - !empty\n";
+                    cout << flushQueue.size() << "->";
                     memtable = flushQueue.front();
-                    flushQueue.pop_front();
                 } else {
-//                    cout<<t<<"doFlush - empty\n";
 //                    break;
                     return;
                 }
-            }
 
-            if (memtable != nullptr) {
-//                cout<<t<<"disk->flush\n";
-                if (disk->flush(memtable, t)) {
-                    delete memtable;
+                if (memtable != nullptr) {
+                    if (disk->flush(memtable)) {
+//                        flushQueue.pop_front();
+                        flushQueue.pop();
+                        cout << flushQueue.size() << endl;
+                        lock.unlock();
+                        delete memtable;
+                    }
                 }
-            }
-//        }
+//            }
+        }
     }
 };
 
