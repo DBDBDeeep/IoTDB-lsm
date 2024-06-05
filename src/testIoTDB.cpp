@@ -26,9 +26,9 @@ int main(int argc, char* argv[]) {
     workloadA.executeWorkload(mixedWorkload, true);
 
     cout<<"\ndisk read 횟수 : "<<workloadA.tree->Disk->readCount<<"\n";
-
+    workloadA.tree->Disk->printSSTableList();
     
-    workloadA.printDelayData();
+//    workloadA.printDelayData();
 
     //Conpaction test
 

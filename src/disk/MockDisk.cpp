@@ -7,23 +7,32 @@ bool MockDisk::compaction() {
 }
 
 int MockDisk::read(uint64_t key) {
-
     //normal SStale 뒤지기
     for (auto ss : normalSSTables) {
+        if(ss->startKey > key || ss->lastKey < key)
+            continue;
         // 맵에서 키 검색
+//        DBManager->readCount++;
+        readCount++;
+//        cout<<"read"<<endl;
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
-    //        cout<<"(found in normalSSTable:"<<ss->sstableId<<")";
+            //        cout<<"(found in normalSSTable:"<<ss->sstableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
+
     }
 
     //없으면 delay SStale 뒤지기
     for (auto ss : delaySSTables) {
+        if(ss->startKey > key || ss->lastKey < key)
+            continue;
         // 맵에서 키 검색
+        readCount++;
+//        cout<<"read"<<endl;
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
-    //        cout<<"(found in delaySStale:"<<ss->sstableId<<")";
+            //        cout<<"(found in delaySStale:"<<ss->sstableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -40,9 +49,10 @@ map<uint64_t, int> MockDisk::range(uint64_t start, uint64_t end) {
     map<uint64_t, int> results;
 
     for (auto ss : normalSSTables) {
-        if(ss->startKey < start || ss->lastKey > end)
+        if(end< ss->startKey && start > ss->lastKey)
             continue;
-
+        readCount++;
+//        cout<<"read"<<endl;
         auto itStart = ss->ss.lower_bound(start); // start 이상의 첫 번째 요소를 찾음
         auto itEnd = ss->ss.upper_bound(end);     // end 이하의 마지막 요소의 다음 요소를 찾음
 
