@@ -31,6 +31,7 @@ public:
     vector<uint64_t> workloadKey;
     vector<pair<uint64_t, uint64_t> > workloadRangeKey;
     DBManager* tree;
+
     Workload(){
         tree = new DBManager();
         
