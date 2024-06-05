@@ -160,10 +160,20 @@ int DBManager::flush(){
     int flag=0; //0: delay, 1: normal
 
     IMemtable* flushMemtable=immMemtableList.front();
-    if(flushMemtable->type == NI)
+    if(flushMemtable->type == NI) {
+        if(flushQueue.empty()) {
+            flushQueue.push(immMemtableList.front());
+            immMemtableList.pop_front();
+        }
         flushController->start(N);
-    else if(flushMemtable->type == DI)
+    }
+    else if(flushMemtable->type == DI) {
+        if(flushQueue.empty()) {
+            flushQueue.push(immMemtableList.front());
+            immMemtableList.pop_front();
+        }
         flushController->start(D);
+    }
     // if(immMemtableList.front()->type==NI){
     //     flag=1;
     // }

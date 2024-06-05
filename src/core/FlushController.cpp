@@ -18,7 +18,7 @@ using namespace std;
 
 class FlushController {
 public:
-    FlushController(MockDisk* mockDisk, list<IMemtable*>& immMemtableList) : disk(mockDisk), flushQueue(immMemtableList){}
+    FlushController(MockDisk* mockDisk, queue<IMemtable*>& q) : disk(mockDisk), flushQueue(q){}
     // 시작 메소드
     void start(Type t) {
         std::lock_guard<std::mutex> lock(m_mutex);
@@ -29,7 +29,7 @@ public:
 private:
     vector<thread> workers;
     std::condition_variable condition;
-    list<IMemtable*>& flushQueue;
+    queue<IMemtable*>& flushQueue;
     std::mutex flushQueueMutex;
     mutex m_mutex;
     MockDisk* disk;
