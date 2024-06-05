@@ -62,8 +62,8 @@ int DBManager::readData(uint64_t key){
 }
 
 int DBManager::DiskRead(uint64_t key){
-   // cout<<"reading Disk data~";
-    Disk->readCount++;
+//    cout<<"reading Disk data~";
+//    Disk->readCount++;
 
     return Disk->read(key);
 }
@@ -110,7 +110,7 @@ map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
 map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
    // cout<<"ranging Disk datas~ ";
     map<uint64_t, int> DiskData = Disk->range(start, end);
-    Disk->readCount += DiskData.size();
+//    Disk->readCount += DiskData.size();
 
     return DiskData;
 }

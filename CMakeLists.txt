@@ -15,7 +15,7 @@ add_executable(IoTDB_lsm
         src/test/CompactionTest.cpp
         src/test/workload/Workload.cpp
         src/core/FlushController.cpp
-        #        src/makeDataset.cpp
+#                src/makeDataset.cpp
                 src/testIoTDB.cpp
 #        src/makeWorkload.cpp
 )
