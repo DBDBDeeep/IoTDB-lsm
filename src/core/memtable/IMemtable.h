@@ -22,7 +22,7 @@ public:
     uint64_t startKey;
     uint64_t lastKey;
 //    size_t memtableSize = 16 * 1024 * 1024;
-    size_t memtableSize = 64* 1024 * 1024; // delay == normal ?
+    size_t memtableSize = 6* 1024 * 1024; // delay == normal ?
     int memtableId = 0;
 
     virtual ~IMemtable() = default;
