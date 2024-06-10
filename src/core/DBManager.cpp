@@ -63,45 +63,52 @@ int DBManager::readData(uint64_t key){
 
 int DBManager::DiskRead(uint64_t key){
 //    cout<<"reading Disk data~";
-//    Disk->readCount++;
+    //Disk->readCount++;
 
-    return Disk->read(key);
+    int value= Disk->read(key);
+    if(value!=NULL){
+        diskReadCnt++;
+        diskReadData++;
+    }
+
+    return value;
 }
 
 map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
-    list<string> ids;
-    bool flag;
+    //list<string> ids;
+   // bool flag;
     map<uint64_t, int> results;
 
     // unordered_map을 스캔하여 범위 내 데이터 추출
     for (auto imm : immMemtableList) {
-        if(imm->startKey < start || imm->lastKey > end)
+        if(imm->startKey > end || imm->lastKey < start)
             continue;
 
-        flag = false;
+        //flag = false;
         for (const auto& entry : imm->mem) {
             if (entry.first >= start && entry.first <= end) {
                 results[entry.first] = entry.second;
-                flag = true;
+                //flag = true;
             }
         }
-        if(flag) ids.push_back("("+to_string(imm->memtableId)+")");
+        //if(flag) ids.push_back("("+to_string(imm->memtableId)+")");
     }
 
     // 만약 start 범위가 Disk일 가능성이 있을때
     map<uint64_t, int> DiskData;
-    if(results.empty() || start < results.begin()->first || end != results.rbegin()->first){
+    if(results.size()!=(end-start+1)){
         DiskData = DiskRange(start, end);
+        results.insert(DiskData.begin(), DiskData.end());
     }
 
-    if(!ids.empty()){
-//        cout << "found in immMemtables ";
-//        for (auto id: ids) cout << id;
-//        cout << "\n";
-    }
+//     if(!ids.empty()){
+// //        cout << "found in immMemtables ";
+// //        for (auto id: ids) cout << id;
+// //        cout << "\n";
+//     }
 
     //병합
-    results.insert(DiskData.begin(), DiskData.end());
+
 
     return results;
 }
@@ -110,7 +117,12 @@ map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
 map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
    // cout<<"ranging Disk datas~ ";
     map<uint64_t, int> DiskData = Disk->range(start, end);
-//    Disk->readCount += DiskData.size();
+    //Disk->readCount += DiskData.size();
+
+    if(!DiskData.empty()){
+        diskReadCnt++;
+        diskReadData+=DiskData.size();
+    }
 
     return DiskData;
 }
@@ -118,8 +130,26 @@ map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
 
 IMemtable* DBManager::transformActiveToImm(IMemtable* memtable) {
 
-    if(immMemtableList.size()>=memtableNum){
-        flush();
+    if(immMemtableList.size()>=memtableNum){ //예스스레드
+    //while(immMemtableList.size()>=memtableNum){ //노스레드
+        // flush();
+        IMemtable* flushMemtable=immMemtableList.front();
+        if(flushMemtable->type == NI) {
+           // if(flushQueue.empty()) { //해나
+                flushQueue.push(immMemtableList.front());
+                immMemtableList.pop_front();
+           // }
+            flushController->start(N); //예스스레드
+            //flushController->doFlushWithNoThread();//노스레드
+        }
+        else if(flushMemtable->type == DI) {
+            //if(flushQueue.empty()) { //해나
+                flushQueue.push(immMemtableList.front());
+                immMemtableList.pop_front();
+            //}
+            flushController->start(D); //예스스레드
+            //flushController->doFlushWithNoThread(); //노스레드
+        }
     }
 
     uint64_t minKey = numeric_limits<uint64_t>::max();

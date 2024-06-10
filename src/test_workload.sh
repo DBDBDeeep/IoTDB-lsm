@@ -23,7 +23,7 @@ case $VALUE in
     ;;
 
   D)
-    files=( "workloadD_data_c100000000_d0.10" "workloadD_data_c100000000_d0.20" "workloadD_data_c100000000_d0.30")
+    files=("workloadC_data_c100000000_d0.10" "workloadD_data_c100000000_d0.20" "workloadD_data_c100000000_d0.30")
     ;;
   
   *)

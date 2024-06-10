@@ -178,7 +178,7 @@ void Workload::deleteAllSSTable() {
         // 디렉터리 내의 모든 파일 순회
         for (const auto& entry : filesystem::directory_iterator(directoryPath)) {
             filesystem::remove(entry.path()); // 파일 삭제
-            cout<<"삭제\n";
+            //cout<<"삭제\n";
         }
     } catch (const std::filesystem::filesystem_error& e) {
         cerr << "Error: " << e.what() << endl;
@@ -188,7 +188,7 @@ void Workload::deleteAllSSTable() {
         // 디렉터리 내의 모든 파일 순회
         for (const auto& entry : filesystem::directory_iterator(directoryPath)) {
             filesystem::remove(entry.path()); // 파일 삭제
-            cout<<"삭제\n";
+            //"삭제\n";
         }
     } catch (const std::filesystem::filesystem_error& e) {
         cerr << "Error: " << e.what() << endl;
@@ -270,11 +270,14 @@ void Workload::printDelayData(){
         }
         tempQueue.pop();
     }
+    cout<<"flush queue (N / D)"<<disk_normal<<" / " <<disk_delay<<"\n";
 
     for(auto memtable : tree->immMemtableList){
         if(memtable->type== DI) delayImmMemtableNum++;
         else normalImmMemtableNum++;
     }
+
+    cout<<"[ Imm ] : "<<tree->immMemtableList.size()<<"\n";
 
     int delaySSTableNum= tree->Disk->delaySSTables.size();
     int normalSSTableNum= tree->Disk->normalSSTables.size();
@@ -286,6 +289,8 @@ void Workload::printDelayData(){
     disk_normal += (normalSSTableNum) * Size;
     // cout<<"delay delay data in Active Memtable : "<< delayActiveMemtableNum<<"\n";
     // cout<<"delay delay data in Imm Memtable : "<< delayImmMemtableNum*delaySSTableSize<<"\n";
+    cout<<"disk read : "<<tree->diskReadCnt<<"\n";
+    cout<<"disk read data : "<<tree->diskReadData<<"\n";
     cout<<"delay data in Memory : "<< memory_delay<<"\n";
     cout<<"delay data in Disk : "<<disk_delay<<"\n";
     cout<<"normal data in Memory : "<<memory_normal<<"\n";

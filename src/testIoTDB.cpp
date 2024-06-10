@@ -22,10 +22,11 @@ int main(int argc, char* argv[]) {
 
     //initWorkload을 이용해서 INSERT 작업 진행
     workloadA.executeWorkload(initWorkload, false);
+    initWorkload.clear();
     //mixedWorkload을 이용해서 INSERT, READ, RANGE 작업 진행
     workloadA.executeWorkload(mixedWorkload, true);
 
-    cout<<"\ndisk read 횟수 : "<<workloadA.tree->Disk->readCount<<"\n";
+  //  cout<<"\ndisk read 횟수 : "<<workloadA.tree->Disk->readCount<<"\n";
 //    workloadA.tree->Disk->printSSTableList();
 
     workloadA.printDelayData();
