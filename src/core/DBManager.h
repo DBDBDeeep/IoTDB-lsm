@@ -37,7 +37,9 @@ public:
     DelayMemtable* activeDelayMemtable;
     MockDisk* Disk;
     FlushController* flushController;
-    int fileCounter = 0;  //testㅑㅜ
+    int fileCounter = 0;  //test
+    int diskReadCnt=0;
+    int diskReadData=0;
 
     bool isDelayData(uint64_t key);
     void insert(uint64_t key, int value);

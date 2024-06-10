@@ -31,7 +31,7 @@ public:
             for (auto& worker : workers) {
                 if (worker.joinable()) {
 //                    worker.detach();
-                    cout<<""<<endl;
+                    //cout<<""<<endl;//해나
                     worker.join();
                 }
             }
@@ -39,6 +39,26 @@ public:
             workers.shrink_to_fit();
         }
         condition.notify_all();
+    }
+
+    void doFlushWithNoThread() {
+        IMemtable *memtable = nullptr;
+            std::unique_lock<std::mutex> lock(flushQueueMutex);
+            if (!flushQueue.empty()) {
+                //cout << flushQueue.size() << "->"; //해나
+                memtable = flushQueue.front();
+            } else {
+                return;
+            }
+
+            if (memtable != nullptr) {
+                if (disk->flush(memtable)) {
+                    flushQueue.pop();
+                   // cout << flushQueue.size() << endl;
+                    lock.unlock();
+                    delete memtable;
+                }
+            }
     }
 
     ~FlushController() { }
@@ -79,7 +99,7 @@ private:
 //            {
                 std::unique_lock<std::mutex> lock(flushQueueMutex);
                 if (!flushQueue.empty()) {
-                    cout << flushQueue.size() << "->";
+                    //cout << flushQueue.size() << "->"; //해나
                     memtable = flushQueue.front();
                 } else {
 //                    break;
@@ -90,7 +110,7 @@ private:
                     if (disk->flush(memtable)) {
 //                        flushQueue.pop_front();
                         flushQueue.pop();
-                        cout << flushQueue.size() << endl;
+                        //cout << flushQueue.size() << endl;
                         lock.unlock();
                         delete memtable;
                     }

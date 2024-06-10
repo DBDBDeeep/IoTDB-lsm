@@ -1,8 +1,8 @@
 EXECUTABLE="./makeDataset"
 
 dataSetName="data"
-init_data_count=100000000
-out_of_order_ratios=(0.05 0.1 0.2 0.3) # 예: out of order 비율
+init_data_count=1000000
+out_of_order_ratios=(0.2) # 예: out of order 비율
 
 
 for out_of_order_ratio in "${out_of_order_ratios[@]}"; do

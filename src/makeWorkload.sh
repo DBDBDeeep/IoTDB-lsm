@@ -2,10 +2,10 @@
 
 EXECUTABLE="./makeWorkload"
 
-datasets=(data_c100000000_d0.05 data_c100000000_d0.10 data_c100000000_d0.20 data_c100000000_d0.30 data_c100000000_d0.40)
+datasets=(data_c1000000_d0.20)
 workload="workload"
-readings=(0 0.02 0.1 0.2)
-insertings=(1 0.98 0.9 0.8)
+readings=(0.02)
+insertings=(0.98)
 
 length=${#readings[@]}
 
@@ -16,8 +16,8 @@ for dataset in "${datasets[@]}"; do
         echo "Workload with dataset=${dataset} and Reading: ${readings[$i]}, Inserting: ${insertings[$i]}, V1"
         $EXECUTABLE $dataset $workload ${readings[$i]} ${insertings[$i]} 0.5 0.5
 
-        echo "Workload with dataset=${dataset} and Reading: ${readings[$i]}, Inserting: ${insertings[$i]}, V2"
-        $EXECUTABLE $dataset $workload ${readings[$i]} ${insertings[$i]} 0.2 0.8
+        # echo "Workload with dataset=${dataset} and Reading: ${readings[$i]}, Inserting: ${insertings[$i]}, V2"
+        # $EXECUTABLE $dataset $workload ${readings[$i]} ${insertings[$i]} 0.2 0.8
     done
 done
 

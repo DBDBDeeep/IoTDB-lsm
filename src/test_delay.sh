@@ -25,7 +25,7 @@ case $VALUE in
     ;;
   0.3)
     data=("data_c100000000_d0.30")
-    files=("workloadA_data_c100000000_d0.30" "workloadB_data_c100000000_d0.30" "workloadC_data_c100000000_d0.30" "workloadD_data_c100000000_d0.30" "workloadE_data_c100000000_d0.30" "workloadF_data_c100000000_d0.30" "workloadG_data_c100000000_d0.30")
+    files=("workloadB_data_c100000000_d0.30" "workloadD_data_c100000000_d0.30")
     ;;
   *)
     echo "Invalid value: $VALUE"
