@@ -16,8 +16,6 @@ private:
 public:
     list<SSTable*> normalSSTables;
     list<SSTable*> delaySSTables;
-    int readCount=0;
-    bool compaction();
     int read(uint64_t key);
     map<uint64_t, int> range(uint64_t start, uint64_t end);
     bool flush(IMemtable* mem);

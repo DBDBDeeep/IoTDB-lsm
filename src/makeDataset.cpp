@@ -1,13 +1,8 @@
-//
-// Created by 이해나 on 5/25/24.
-//
+
 #include "test/DataFactory.h"
 
-/**
- * init
- * */
-
 int main(int argc, char* argv[]) {
+    
     DataFactory factory;
 
     string dataSetName = argv[1]; //ex) "dataA";
@@ -15,4 +10,5 @@ int main(int argc, char* argv[]) {
     double outOfOrderRatio = stod(argv[3]); // out of order 비율
 
     factory.generateO3Dataset(dataSetName, initDataCount, outOfOrderRatio);
+
 }

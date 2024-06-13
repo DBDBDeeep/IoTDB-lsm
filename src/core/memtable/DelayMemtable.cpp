@@ -33,11 +33,6 @@ bool DelayMemtable::setStartKey(uint64_t key) {
 }
 
 bool DelayMemtable::setLastKey(uint64_t key) {
-//    if (!mem.empty()) {
-//        lastKey = (--mem.end())->first;
-//    } else {
-//        lastKey = 0; // Or any other default value to indicate an empty memtable
-//    }
     lastKey=key;
     return true;
 }

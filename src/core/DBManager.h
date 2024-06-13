@@ -39,7 +39,49 @@ public:
     FlushController* flushController;
     int fileCounter = 0;  //test
     int diskReadCnt=0;
-    int diskReadData=0;
+    uint64_t diskReadData=0;
+
+    map<int, uint64_t> Nstart;
+    map<int, uint64_t> Nlast;
+    map<int, uint64_t> Dstart;
+    map<int, uint64_t> Dlast;
+    int Nmin=0;
+    int Nmax=0;
+    int Dmin=0;
+    int Dmax=0;
+
+    void deleteMem(map<int, uint64_t> imm,int id){
+        imm.erase(id);
+
+    }
+
+    // 최소값을 반환하는 함수
+uint64_t setMin(const std::map<int, uint64_t>& m) {
+    if (m.empty()) {
+        throw std::runtime_error("Map is empty");
+    }
+    int minKey = std::numeric_limits<int>::max();
+    for (const auto& [key, value] : m) {
+        if (key < minKey) {
+            minKey = key;
+        }
+    }
+    return minKey;
+}
+
+// 최대값을 반환하는 함수
+uint64_t setMax(const std::map<int, uint64_t>& m) {
+    if (m.empty()) {
+        throw std::runtime_error("Map is empty");
+    }
+    int maxKey = std::numeric_limits<int>::min();
+    for (const auto& [key, value] : m) {
+        if (key > maxKey) {
+            maxKey = key;
+        }
+    }
+    return maxKey;
+}
 
     bool isDelayData(uint64_t key);
     void insert(uint64_t key, int value);

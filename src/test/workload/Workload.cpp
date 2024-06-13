@@ -270,14 +270,14 @@ void Workload::printDelayData(){
         }
         tempQueue.pop();
     }
-    cout<<"flush queue (N / D)"<<disk_normal<<" / " <<disk_delay<<"\n";
+    //cout<<"flush queue (N / D)"<<disk_normal<<" / " <<disk_delay<<"\n";
 
     for(auto memtable : tree->immMemtableList){
         if(memtable->type== DI) delayImmMemtableNum++;
         else normalImmMemtableNum++;
     }
 
-    cout<<"[ Imm ] : "<<tree->immMemtableList.size()<<"\n";
+    //cout<<"[ Imm ] : "<<tree->immMemtableList.size()<<"\n";
 
     int delaySSTableNum= tree->Disk->delaySSTables.size();
     int normalSSTableNum= tree->Disk->normalSSTables.size();
@@ -289,8 +289,8 @@ void Workload::printDelayData(){
     disk_normal += (normalSSTableNum) * Size;
     // cout<<"delay delay data in Active Memtable : "<< delayActiveMemtableNum<<"\n";
     // cout<<"delay delay data in Imm Memtable : "<< delayImmMemtableNum*delaySSTableSize<<"\n";
-    cout<<"disk read : "<<tree->diskReadCnt<<"\n";
-    cout<<"disk read data : "<<tree->diskReadData<<"\n";
+    cout<<"\ndisk read : "<<tree->diskReadCnt<<"\n";
+    cout<<"disk read data : "<<tree->diskReadData<<"\n\n";
     cout<<"delay data in Memory : "<< memory_delay<<"\n";
     cout<<"delay data in Disk : "<<disk_delay<<"\n";
     cout<<"normal data in Memory : "<<memory_normal<<"\n";
