@@ -21,8 +21,8 @@ public:
     MemType type;
     uint64_t startKey;
     uint64_t lastKey;
-//    size_t memtableSize = 16 * 1024 * 1024;
-    size_t memtableSize = 6* 1024 * 1024; // delay == normal ?
+    size_t memtableSize = 6.4 * 1024 * 1024; //시연용
+//    size_t memtableSize = 64* 1024 * 1024; 
     int memtableId = 0;
 
     virtual ~IMemtable() = default;

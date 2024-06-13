@@ -7,7 +7,7 @@ datas=("data_c100000000_d0.10" "data_c100000000_d0.20" "data_c100000000_d0.30")
 
 if [ "$#" -ne 1 ]; then
   echo "Usage: $0 <value>"
-  echo "Allowed values: A B D"
+  echo "Allowed values: A B C D"
   exit 1
 fi
 
@@ -20,6 +20,9 @@ case $VALUE in
     ;;
   B)
     files=("workloadB_data_c100000000_d0.10" "workloadB_data_c100000000_d0.20" "workloadB_data_c100000000_d0.30")
+    ;;
+  C)
+    files=("workloadC_data_c100000000_d0.10" "workloadC_data_c100000000_d0.20" "workloadC_data_c100000000_d0.30")
     ;;
 
   D)

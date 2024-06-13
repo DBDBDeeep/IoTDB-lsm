@@ -3,13 +3,6 @@
 
 
 bool DBManager::isDelayData(uint64_t key){
-    //비어있을때도 start key는 있음
-//    if(activeNormalMemtable->mem.empty()){ //비어있을때는 delay data가 아니다.
-//        return false;
-//    }else{
-//        return activeNormalMemtable->mem.begin()->first > key;
-//
-//    }
 
     return activeNormalMemtable->startKey > key;
 
@@ -53,7 +46,6 @@ int DBManager::readData(uint64_t key){
         // 맵에서 키 검색
         auto it = imm->mem.find(key);
         if (it != imm->mem.end()) {
-           // cout<<"(found in id:"<<imm->memtableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
@@ -62,8 +54,6 @@ int DBManager::readData(uint64_t key){
 }
 
 int DBManager::DiskRead(uint64_t key){
-//    cout<<"reading Disk data~";
-    //Disk->readCount++;
 
     int value= Disk->read(key);
     if(value!=NULL){
@@ -75,24 +65,51 @@ int DBManager::DiskRead(uint64_t key){
 }
 
 map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
-    //list<string> ids;
-   // bool flag;
+
     map<uint64_t, int> results;
 
     // unordered_map을 스캔하여 범위 내 데이터 추출
-    for (auto imm : immMemtableList) {
-        if(imm->startKey > end || imm->lastKey < start)
-            continue;
+    if(Nmin > end || Nmax < start){ //Normal Imm 안읽어도됨
+        
+        if(Dmin > end || Dmax < start){ //delay Imm 안읽어도됨
 
-        //flag = false;
-        for (const auto& entry : imm->mem) {
-            if (entry.first >= start && entry.first <= end) {
-                results[entry.first] = entry.second;
-                //flag = true;
+
+        }else{
+
+            for (auto imm : immMemtableList) {
+                if(imm->type==DI) continue;
+                if(imm->startKey > end || imm->lastKey < start)
+                    continue;
+
+                for (const auto& entry : imm->mem) {
+                    if (entry.first >= start && entry.first <= end) {
+                        results[entry.first] = entry.second;
+                        //flag = true;
+                    }
+                }
+
             }
+            
         }
-        //if(flag) ids.push_back("("+to_string(imm->memtableId)+")");
+
+
+    }else{  //그냥 다 읽자
+
+        for (auto imm : immMemtableList) {
+            if(imm->startKey > end || imm->lastKey < start)
+                continue;
+
+            for (const auto& entry : imm->mem) {
+                if (entry.first >= start && entry.first <= end) {
+                    results[entry.first] = entry.second;
+
+                }
+            }
+   
+        }
+        
     }
+    
 
     // 만약 start 범위가 Disk일 가능성이 있을때
     map<uint64_t, int> DiskData;
@@ -101,24 +118,14 @@ map<uint64_t, int> DBManager::range(uint64_t start, uint64_t end){
         results.insert(DiskData.begin(), DiskData.end());
     }
 
-//     if(!ids.empty()){
-// //        cout << "found in immMemtables ";
-// //        for (auto id: ids) cout << id;
-// //        cout << "\n";
-//     }
-
-    //병합
-
-
     return results;
 }
 
 
 map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
-   // cout<<"ranging Disk datas~ ";
-    map<uint64_t, int> DiskData = Disk->range(start, end);
-    //Disk->readCount += DiskData.size();
 
+    map<uint64_t, int> DiskData = Disk->range(start, end);
+    
     if(!DiskData.empty()){
         diskReadCnt++;
         diskReadData+=DiskData.size();
@@ -131,24 +138,30 @@ map<uint64_t, int> DBManager::DiskRange(uint64_t start, uint64_t end){
 IMemtable* DBManager::transformActiveToImm(IMemtable* memtable) {
 
     if(immMemtableList.size()>=memtableNum){ //예스스레드
-    //while(immMemtableList.size()>=memtableNum){ //노스레드
-        // flush();
+
         IMemtable* flushMemtable=immMemtableList.front();
         if(flushMemtable->type == NI) {
-           // if(flushQueue.empty()) { //해나
                 flushQueue.push(immMemtableList.front());
                 immMemtableList.pop_front();
-           // }
+                deleteMem(Nstart, flushMemtable->memtableId);
+                deleteMem(Nlast, flushMemtable->memtableId);
+                Nmin=setMin(Nstart);
+                Nmax=setMax(Nlast);
+
             flushController->start(N); //예스스레드
-            //flushController->doFlushWithNoThread();//노스레드
+
         }
         else if(flushMemtable->type == DI) {
-            //if(flushQueue.empty()) { //해나
+
                 flushQueue.push(immMemtableList.front());
                 immMemtableList.pop_front();
-            //}
+                deleteMem(Dstart, flushMemtable->memtableId);
+                deleteMem(Dlast, flushMemtable->memtableId);
+                Dmin=setMin(Dstart);
+                Dmax=setMax(Dlast);
+
             flushController->start(D); //예스스레드
-            //flushController->doFlushWithNoThread(); //노스레드
+
         }
     }
 
@@ -170,14 +183,26 @@ IMemtable* DBManager::transformActiveToImm(IMemtable* memtable) {
         immMemtableList.push_back(memtablePtr);
     };
 
+
+
     if (auto normalPtr = dynamic_cast<NormalMemtable*>(memtable)){
         updateKeys(activeNormalMemtable);
         activeNormalMemtable = new NormalMemtable(++currentId);
         activeNormalMemtable->setStartKey(maxKey);
+
+        Nstart[memtable->memtableId]=memtable->startKey;
+        Nlast[memtable->memtableId]=memtable->lastKey;
+        Nmin=setMin(Nstart);
+        Nmax=setMax(Nlast);
+
         return dynamic_cast<NormalMemtable*>(activeNormalMemtable);
     } else if (auto delayPtr = dynamic_cast<DelayMemtable*>(memtable)){
         updateKeys(activeDelayMemtable);
         activeDelayMemtable = new DelayMemtable(++currentId);
+        Dstart[memtable->memtableId]=memtable->startKey;
+        Dlast[memtable->memtableId]=memtable->lastKey;
+        Dmin=setMin(Dstart);
+        Dmax=setMax(Dlast);
         return dynamic_cast<DelayMemtable*>(activeDelayMemtable);
     } else {
         throw logic_error("transformActiveToImm 주소비교.. 뭔가 문제가 있는 듯 하오.");
@@ -204,23 +229,7 @@ int DBManager::flush(){
         }
         flushController->start(D);
     }
-    // if(immMemtableList.front()->type==NI){
-    //     flag=1;
-    // }
 
-    // unordered_map에서 데이터 추출
-    // vector<std::pair<uint64_t, int>> sortedData(flushMemtable->mem.begin(), flushMemtable->mem.end());
-
-    // // vector를 정렬
-    // sort(sortedData.begin(), sortedData.end(), [](const auto& a, const auto& b) {
-    //     return a.first < b.first;
-    // });
-
-    //파일 만들기
-//    makeFile(sortedData, flag);
-
-//    Disk->flush(flushMemtable);
-//    immMemtableList.pop_front();
 
     return 0;
 

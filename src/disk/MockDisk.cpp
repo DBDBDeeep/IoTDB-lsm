@@ -1,10 +1,6 @@
 #include "MockDisk.h"
 
 
-bool MockDisk::compaction() {
-    //Todo: 구현
-    return true;
-}
 
 int MockDisk::read(uint64_t key) {
     //normal SStale 뒤지기
@@ -12,15 +8,11 @@ int MockDisk::read(uint64_t key) {
         if(ss->startKey > key || ss->lastKey < key)
             continue;
         // 맵에서 키 검색
-//        DBManager->readCount++;
- //       readCount++;
-//        cout<<"read"<<endl;
+
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
-            //        cout<<"(found in normalSSTable:"<<ss->sstableId<<")";
             return it->second;  // 키를 찾았으면 값 반환
         }
-
     }
 
     //없으면 delay SStale 뒤지기
@@ -28,16 +20,14 @@ int MockDisk::read(uint64_t key) {
         if(ss->startKey > key || ss->lastKey < key)
             continue;
         // 맵에서 키 검색
-      //  readCount++;
-//        cout<<"read"<<endl;
+
         auto it = ss->ss.find(key);
         if (it != ss->ss.end()) {
-            //        cout<<"(found in delaySStale:"<<ss->sstableId<<")";
+
             return it->second;  // 키를 찾았으면 값 반환
         }
     }
 
-    //없어요
     return NULL;
 }
 
@@ -51,8 +41,6 @@ map<uint64_t, int> MockDisk::range(uint64_t start, uint64_t end) {
     for (auto ss : normalSSTables) {
         if(ss->startKey > end || ss->lastKey < start)
             continue;
-        //readCount++;
-//        cout<<"read"<<endl;
         auto itStart = ss->ss.lower_bound(start); // start 이상의 첫 번째 요소를 찾음
         auto itEnd = ss->ss.upper_bound(end);     // end 이하의 마지막 요소의 다음 요소를 찾음
 
@@ -89,12 +77,12 @@ bool MockDisk::flush(IMemtable* mem) {
     newSSTable->setLastKey(newSSTable->ss.rbegin()->first);
 
     if(mem->type == NI){
-        //cout << "flush N : " <<mem->memtableId<< endl;
+
         newSSTable->setType(N);
         normalSSTables.push_back(newSSTable);
         return true;
     }else if(mem->type == DI){
-        //cout << "flush D : " <<mem->memtableId<< endl;
+
         newSSTable->setType(D);
         delaySSTables.push_back(newSSTable);
         return true;
